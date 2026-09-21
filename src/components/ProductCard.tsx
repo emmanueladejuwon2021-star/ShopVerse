@@ -20,13 +20,12 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.06, duration: 0.4 }}
-      className="group relative bg-white rounded-2xl sm:rounded-3xl border border-gray-100 overflow-hidden card-hover w-full min-w-0"
+      className="group relative bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl border border-gray-100 dark:border-slate-700 overflow-hidden card-hover w-full min-w-0"
     >
-      {/* Image Section */}
       <Link to={`/product/${product.id}`} className="relative block">
-        <div className="relative aspect-square overflow-hidden bg-gray-100">
+        <div className="relative aspect-square overflow-hidden bg-gray-100 dark:bg-slate-700">
           {!imageLoaded && (
-            <div className="absolute inset-0 bg-gray-100 shimmer" />
+            <div className="absolute inset-0 bg-gray-100 dark:bg-slate-700 shimmer" />
           )}
           <img
             src={product.image}
@@ -34,11 +33,7 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
             onLoad={() => setImageLoaded(true)}
             className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
           />
-          
-          {/* Overlay on hover */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-          
-          {/* Badges */}
           <div className="absolute top-2 left-2 sm:top-3 sm:left-3 flex flex-col gap-1.5 sm:gap-2">
             {product.originalPrice && (
               <span className="px-2 sm:px-2.5 py-0.5 sm:py-1 bg-rose-500 text-white text-[10px] sm:text-[11px] font-bold rounded-md sm:rounded-lg shadow-lg shadow-rose-500/30">
@@ -51,31 +46,26 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
               </span>
             )}
           </div>
-
           {!product.inStock && (
-            <div className="absolute inset-0 bg-white/70 backdrop-blur-sm flex items-center justify-center">
-              <span className="px-3 sm:px-4 py-1.5 sm:py-2 bg-gray-900 text-white text-xs sm:text-sm font-bold rounded-lg sm:rounded-xl">Out of Stock</span>
+            <div className="absolute inset-0 bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm flex items-center justify-center">
+              <span className="px-3 sm:px-4 py-1.5 sm:py-2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-xs sm:text-sm font-bold rounded-lg sm:rounded-xl">Out of Stock</span>
             </div>
           )}
-
-          {/* Quick actions - hidden on touch devices */}
           <div className="absolute top-2 right-2 sm:top-3 sm:right-3 flex flex-col gap-1.5 sm:gap-2 opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-300 hidden sm:flex">
             <button
               onClick={(e) => { e.preventDefault(); setIsLiked(!isLiked); }}
               className={`p-2 sm:p-2.5 rounded-lg sm:rounded-xl shadow-lg transition-all ${
-                isLiked ? 'bg-rose-500 text-white' : 'bg-white text-gray-600 hover:text-rose-500'
+                isLiked ? 'bg-rose-500 text-white' : 'bg-white dark:bg-slate-800 text-gray-600 dark:text-slate-300 hover:text-rose-500'
               }`}
             >
               <Heart className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${isLiked ? 'fill-current' : ''}`} />
             </button>
           </div>
-
-          {/* Quick Add Button - always visible on mobile */}
           <div className="absolute bottom-2 left-2 right-2 sm:bottom-3 sm:left-3 sm:right-3 sm:opacity-0 sm:group-hover:opacity-100 sm:translate-y-2 sm:group-hover:translate-y-0 transition-all duration-300">
             <button
               onClick={(e) => { e.preventDefault(); if (product.inStock) addToCart(product); }}
               disabled={!product.inStock}
-              className="w-full flex items-center justify-center gap-1.5 sm:gap-2 py-2 sm:py-2.5 bg-white/95 backdrop-blur-sm text-gray-900 font-semibold text-xs sm:text-sm rounded-lg sm:rounded-xl hover:bg-white shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-center gap-1.5 sm:gap-2 py-2 sm:py-2.5 bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm text-gray-900 dark:text-white font-semibold text-xs sm:text-sm rounded-lg sm:rounded-xl hover:bg-white dark:hover:bg-slate-700 shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <ShoppingCart className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               <span>Quick Add</span>
@@ -83,31 +73,24 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
           </div>
         </div>
       </Link>
-
-      {/* Info Section */}
       <div className="p-3 sm:p-4 pt-2.5 sm:pt-3.5">
-        {/* Category & Rating */}
         <div className="flex items-center justify-between mb-1.5 sm:mb-2 gap-2">
-          <span className="text-[10px] sm:text-[11px] font-semibold text-gray-400 uppercase tracking-wider truncate">{product.category}</span>
+          <span className="text-[10px] sm:text-[11px] font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wider truncate">{product.category}</span>
           <div className="flex items-center gap-0.5 sm:gap-1 shrink-0">
             <Star className="h-3 w-3 sm:h-3.5 sm:w-3.5 fill-amber-400 text-amber-400 shrink-0" />
-            <span className="text-[11px] sm:text-xs font-semibold text-gray-700">{product.rating}</span>
-            <span className="text-[10px] sm:text-xs text-gray-400 hidden sm:inline">({product.reviews > 999 ? `${(product.reviews / 1000).toFixed(1)}k` : product.reviews})</span>
+            <span className="text-[11px] sm:text-xs font-semibold text-gray-700 dark:text-slate-200">{product.rating}</span>
+            <span className="text-[10px] sm:text-xs text-gray-400 dark:text-slate-500 hidden sm:inline">({product.reviews > 999 ? `${(product.reviews / 1000).toFixed(1)}k` : product.reviews})</span>
           </div>
         </div>
-
-        {/* Name */}
         <Link to={`/product/${product.id}`}>
-          <h3 className="font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors text-xs sm:text-sm leading-snug line-clamp-2">
+          <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors text-xs sm:text-sm leading-snug line-clamp-2">
             {product.name}
           </h3>
         </Link>
-
-        {/* Price */}
         <div className="flex items-center gap-1.5 sm:gap-2 mt-2 sm:mt-3 flex-wrap">
-          <span className="text-base sm:text-lg font-bold text-gray-900">${product.price.toFixed(2)}</span>
+          <span className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">${product.price.toFixed(2)}</span>
           {product.originalPrice && (
-            <span className="text-xs sm:text-sm text-gray-400 line-through">${product.originalPrice.toFixed(2)}</span>
+            <span className="text-xs sm:text-sm text-gray-400 dark:text-slate-500 line-through">${product.originalPrice.toFixed(2)}</span>
           )}
         </div>
       </div>

@@ -32,7 +32,7 @@ export default function Home() {
                 <span className="text-xs sm:text-sm font-medium text-indigo-700">New Season Collection 2026</span>
               </div>
               
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-[1.1] tracking-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-[1.1] tracking-tight">
                 Discover Products
                 <span className="block mt-1 sm:mt-2">
                   You'll <span className="text-gradient">Absolutely</span>
@@ -40,7 +40,7 @@ export default function Home() {
                 <span className="block">Love.</span>
               </h1>
               
-              <p className="mt-4 sm:mt-6 text-base sm:text-lg text-gray-500 max-w-lg mx-auto lg:mx-0 leading-relaxed">
+              <p className="mt-4 sm:mt-6 text-base sm:text-lg text-gray-500 dark:text-slate-400 max-w-lg mx-auto lg:mx-0 leading-relaxed">
                 Curated collection of premium products designed for modern living. 
                 Free shipping on orders over $50, hassle-free returns.
               </p>
@@ -65,18 +65,18 @@ export default function Home() {
               {/* Stats */}
               <div className="mt-8 sm:mt-12 flex items-center justify-center lg:justify-start flex-wrap gap-x-6 sm:gap-x-8 gap-y-4">
                 <div className="text-center lg:text-left">
-                  <p className="text-xl sm:text-2xl font-bold text-gray-900">50K+</p>
-                  <p className="text-xs sm:text-sm text-gray-500">Happy Customers</p>
+                  <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">50K+</p>
+                  <p className="text-xs sm:text-sm text-gray-500 dark:text-slate-400">Happy Customers</p>
                 </div>
-                <div className="hidden sm:block h-10 w-px bg-gray-200" />
+                <div className="hidden sm:block h-10 w-px bg-gray-200 dark:bg-slate-700" />
                 <div className="text-center lg:text-left">
-                  <p className="text-xl sm:text-2xl font-bold text-gray-900">4.9★</p>
-                  <p className="text-xs sm:text-sm text-gray-500">Average Rating</p>
+                  <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">4.9★</p>
+                  <p className="text-xs sm:text-sm text-gray-500 dark:text-slate-400">Average Rating</p>
                 </div>
-                <div className="hidden sm:block h-10 w-px bg-gray-200" />
+                <div className="hidden sm:block h-10 w-px bg-gray-200 dark:bg-slate-700" />
                 <div className="text-center lg:text-left">
-                  <p className="text-xl sm:text-2xl font-bold text-gray-900">24/7</p>
-                  <p className="text-xs sm:text-sm text-gray-500">Support</p>
+                  <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">24/7</p>
+                  <p className="text-xs sm:text-sm text-gray-500 dark:text-slate-400">Support</p>
                 </div>
               </div>
             </motion.div>

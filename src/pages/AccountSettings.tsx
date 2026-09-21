@@ -7,6 +7,7 @@ import {
   Smartphone, Package, Heart, Settings as SettingsIcon
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { Address, PaymentMethod, NotificationPreferences } from '../types';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -57,13 +58,13 @@ export default function AccountSettings() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Header */}
         <div className="mb-6 sm:mb-8">
-          <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-gray-400 mb-2 sm:mb-3 flex-wrap">
-            <Link to="/" className="hover:text-indigo-600 transition-colors shrink-0">Home</Link>
+          <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-gray-400 dark:text-slate-500 mb-2 sm:mb-3 flex-wrap">
+            <Link to="/" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors shrink-0">Home</Link>
             <span className="shrink-0">/</span>
-            <span className="text-gray-900 font-medium">Account Settings</span>
+            <span className="text-gray-900 dark:text-white font-medium">Account Settings</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">Account Settings</h1>
-          <p className="text-gray-500 mt-1 sm:mt-2 text-sm sm:text-base">Manage your account preferences and personal information</p>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Account Settings</h1>
+          <p className="text-gray-500 dark:text-slate-400 mt-1 sm:mt-2 text-sm sm:text-base">Manage your account preferences and personal information</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
@@ -80,8 +81,8 @@ export default function AccountSettings() {
                       onClick={() => setActiveSection(section.id)}
                       className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium whitespace-nowrap transition-all ${
                         activeSection === section.id
-                          ? 'bg-gray-900 text-white shadow-md'
-                          : 'bg-white text-gray-600 border border-gray-200 hover:border-gray-300'
+                          ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900 shadow-md'
+                          : 'bg-white dark:bg-slate-800 text-gray-600 dark:text-slate-300 border border-gray-200 dark:border-slate-700 hover:border-gray-300 dark:hover:border-slate-600'
                       }`}
                     >
                       <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
@@ -93,16 +94,16 @@ export default function AccountSettings() {
             </div>
 
             {/* Desktop: Vertical Sidebar */}
-            <nav className="hidden lg:block bg-white rounded-2xl shadow-sm shadow-gray-200/50 border border-gray-100 p-2 sticky top-24">
+            <nav className="hidden lg:block bg-white dark:bg-slate-800 rounded-2xl shadow-sm shadow-gray-200/50 dark:shadow-black/20 border border-gray-100 dark:border-slate-700 p-2 sticky top-24">
               {/* User Card */}
-              <div className="p-3 mb-2 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl">
+              <div className="p-3 mb-2 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:to-purple-900/30 rounded-xl">
                 <div className="flex items-center gap-3">
                   <div className="h-11 w-11 rounded-xl bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center shadow-md shadow-indigo-500/20 shrink-0">
                     <span className="text-white text-sm font-bold">{user.name?.charAt(0).toUpperCase()}</span>
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm font-semibold text-gray-900 truncate">{user.name}</p>
-                    <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{user.name}</p>
+                    <p className="text-xs text-gray-500 dark:text-slate-400 truncate">{user.email}</p>
                   </div>
                 </div>
               </div>
@@ -117,23 +118,23 @@ export default function AccountSettings() {
                     className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all mb-0.5 ${
                       isActive
                         ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/20'
-                        : 'text-gray-600 hover:bg-gray-50'
+                        : 'text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700/50'
                     }`}
                   >
-                    <Icon className={`h-4 w-4 shrink-0 ${isActive ? 'text-white' : 'text-gray-400'}`} />
+                    <Icon className={`h-4 w-4 shrink-0 ${isActive ? 'text-white' : 'text-gray-400 dark:text-slate-500'}`} />
                     <div className="flex-1 min-w-0">
                       <p className={`text-sm font-medium ${isActive ? 'text-white' : ''}`}>{section.label}</p>
-                      <p className={`text-[10px] ${isActive ? 'text-white/70' : 'text-gray-400'}`}>{section.description}</p>
+                      <p className={`text-[10px] ${isActive ? 'text-white/70' : 'text-gray-400 dark:text-slate-500'}`}>{section.description}</p>
                     </div>
                     {isActive && <ChevronRight className="h-4 w-4 text-white/70 shrink-0" />}
                   </button>
                 );
               })}
 
-              <div className="border-t border-gray-100 my-2 pt-2">
+              <div className="border-t border-gray-100 dark:border-slate-700 my-2 pt-2">
                 <button
                   onClick={() => { logout(); navigate('/'); }}
-                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-red-600 hover:bg-red-50 transition-all"
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all"
                 >
                   <LogOut className="h-4 w-4 shrink-0" />
                   <span className="text-sm font-medium">Sign Out</span>
@@ -997,9 +998,9 @@ function NotificationsSection({ showToast }: { showToast: (m: string, t?: 'succe
 
 // ============== PREFERENCES SECTION ==============
 function PreferencesSection({ showToast }: { showToast: (m: string, t?: 'success' | 'error') => void }) {
+  const { theme, setTheme } = useTheme();
   const [language, setLanguage] = useState('en');
   const [currency, setCurrency] = useState('usd');
-  const [theme, setTheme] = useState('light');
 
   const languages = [
     { code: 'en', name: 'English', flag: '🇺🇸' },
@@ -1092,11 +1093,11 @@ function PreferencesSection({ showToast }: { showToast: (m: string, t?: 'success
           </div>
         </div>
         <div className="grid grid-cols-3 gap-2 sm:gap-3">
-          {[
-            { id: 'light', label: 'Light', preview: 'bg-white border-gray-200' },
-            { id: 'dark', label: 'Dark', preview: 'bg-gray-900 border-gray-700' },
-            { id: 'system', label: 'System', preview: 'bg-gradient-to-r from-white to-gray-900 border-gray-300' },
-          ].map((t) => (
+          {([
+            { id: 'light' as const, label: 'Light', preview: 'bg-white border-gray-200' },
+            { id: 'dark' as const, label: 'Dark', preview: 'bg-gray-900 border-gray-700' },
+            { id: 'system' as const, label: 'System', preview: 'bg-gradient-to-r from-white to-gray-900 border-gray-300' },
+          ] as const).map((t) => (
             <button
               key={t.id}
               onClick={() => { setTheme(t.id); showToast('Theme updated'); }}

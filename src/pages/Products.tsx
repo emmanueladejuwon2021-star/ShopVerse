@@ -66,21 +66,21 @@ export default function Products() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-6 sm:mb-8"
         >
-          <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-gray-400 mb-2 sm:mb-3 flex-wrap">
+          <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-gray-400 dark:text-slate-500 mb-2 sm:mb-3 flex-wrap">
             <span>Home</span>
             <span>/</span>
-            <span className="text-gray-900 font-medium break-all">
+            <span className="text-gray-900 dark:text-white font-medium break-all">
               {searchQuery ? 'Search Results' : activeCategory === 'All' ? 'All Products' : activeCategory}
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 break-words">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white break-words">
             {searchQuery ? (
               <>Results for "<span className="text-gradient break-all">{searchQuery}</span>"</>
             ) : (
               activeCategory === 'All' ? 'All Products' : activeCategory
             )}
           </h1>
-          <p className="text-gray-500 mt-1 sm:mt-2 text-sm sm:text-base">{filteredProducts.length} products found</p>
+          <p className="text-gray-500 dark:text-slate-400 mt-1 sm:mt-2 text-sm sm:text-base">{filteredProducts.length} products found</p>
         </motion.div>
 
         {/* Filters Bar */}
@@ -88,7 +88,7 @@ export default function Products() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white rounded-2xl shadow-sm shadow-gray-200/50 border border-gray-100 p-3 sm:p-4 mb-6 sm:mb-8"
+          className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm shadow-gray-200/50 dark:shadow-black/20 border border-gray-100 dark:border-slate-700 p-3 sm:p-4 mb-6 sm:mb-8"
         >
           <div className="flex flex-col gap-3 sm:gap-4">
             {/* Categories */}
@@ -100,8 +100,8 @@ export default function Products() {
                   onClick={() => setCategory(cat)}
                   className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium whitespace-nowrap transition-all shrink-0 ${
                     activeCategory === cat
-                      ? 'bg-gray-900 text-white shadow-md'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900 shadow-md'
+                      : 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300 hover:bg-gray-200 dark:hover:bg-slate-600'
                   }`}
                 >
                   {cat}
@@ -114,7 +114,7 @@ export default function Products() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="flex-1 sm:flex-none px-3 sm:px-4 py-2 sm:py-2.5 bg-gray-100 border-0 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 cursor-pointer min-w-0"
+                className="flex-1 sm:flex-none px-3 sm:px-4 py-2 sm:py-2.5 bg-gray-100 dark:bg-slate-700 border-0 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium text-gray-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 cursor-pointer min-w-0"
               >
                 <option value="featured">Featured</option>
                 <option value="price-low">Price: Low → High</option>

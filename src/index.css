@@ -1,14 +1,38 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-surface: #ffffff;
+  --color-surface-soft: #f8fafc;
+  --color-surface-muted: #f1f5f9;
+  --color-surface-card: #ffffff;
+  --color-surface-elevated: #ffffff;
+  --color-foreground: #0f172a;
+  --color-foreground-secondary: #475569;
+  --color-foreground-muted: #94a3b8;
+  --color-border-default: #e2e8f0;
+  --color-border-soft: #f1f5f9;
+  --color-input-bg: #f8fafc;
+}
+
 @layer base {
   html {
     overflow-x: hidden;
   }
   body {
-    @apply antialiased text-gray-900;
+    @apply antialiased;
     font-feature-settings: "cv11", "ss01";
     font-variation-settings: "opsz" 32;
     overflow-x: hidden;
+    background-color: var(--color-surface-soft);
+    color: var(--color-foreground);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  .dark body {
+    background-color: #020617;
+    color: #f8fafc;
   }
 
   ::selection {
@@ -46,13 +70,18 @@
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.3);
   }
-  .glass-dark {
-    background: rgba(15, 23, 42, 0.8);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+  .dark .glass {
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid rgba(51, 65, 85, 0.3);
   }
   .text-gradient {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .dark .text-gradient {
+    background: linear-gradient(135deg, #a5b4fc 0%, #c4b5fd 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -64,7 +93,7 @@
     background-clip: text;
   }
   .bg-mesh {
-    background-color: #f8fafc;
+    background-color: var(--color-surface-soft);
     background-image: 
       radial-gradient(at 40% 20%, rgba(99, 102, 241, 0.08) 0px, transparent 50%),
       radial-gradient(at 80% 0%, rgba(168, 85, 247, 0.06) 0px, transparent 50%),
@@ -72,19 +101,37 @@
       radial-gradient(at 80% 50%, rgba(236, 72, 153, 0.04) 0px, transparent 50%),
       radial-gradient(at 0% 100%, rgba(99, 102, 241, 0.04) 0px, transparent 50%);
   }
+  .dark .bg-mesh {
+    background-color: #020617;
+    background-image: 
+      radial-gradient(at 40% 20%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+      radial-gradient(at 80% 0%, rgba(168, 85, 247, 0.12) 0px, transparent 50%),
+      radial-gradient(at 0% 50%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
+      radial-gradient(at 80% 50%, rgba(236, 72, 153, 0.08) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, rgba(99, 102, 241, 0.08) 0px, transparent 50%);
+  }
   .card-hover {
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
   @media (hover: hover) {
     .card-hover:hover {
       transform: translateY(-4px);
+    }
+    .card-hover:hover:not(.dark *) {
       box-shadow: 0 20px 60px -12px rgba(0, 0, 0, 0.12);
+    }
+    .dark .card-hover:hover {
+      box-shadow: 0 20px 60px -12px rgba(0, 0, 0, 0.5);
     }
   }
   .shimmer {
     background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
     background-size: 200% 100%;
     animation: shimmer 2s infinite;
+  }
+  .dark .shimmer {
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+    background-size: 200% 100%;
   }
   @keyframes shimmer {
     0% { background-position: -200% 0; }
@@ -134,8 +181,16 @@
   border-radius: 3px;
 }
 
+.dark ::-webkit-scrollbar-thumb {
+  background: #475569;
+}
+
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
 }
 
 html {
@@ -143,12 +198,10 @@ html {
 }
 
 img {
-  background-color: #f1f5f9;
   max-width: 100%;
   height: auto;
 }
 
-/* Prevent layout shift from scrollbar */
 body {
   width: 100%;
   max-width: 100vw;
@@ -157,4 +210,12 @@ body {
 #root {
   width: 100%;
   overflow-x: hidden;
+}
+
+/* Theme transition */
+.theme-transition,
+.theme-transition *,
+.theme-transition *::before,
+.theme-transition *::after {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease !important;
 }
