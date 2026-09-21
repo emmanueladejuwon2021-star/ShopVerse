@@ -200,56 +200,77 @@ export default function Home() {
       </section>
 
       {/* Featured Products */}
-      <section className="py-12 sm:py-16 md:py-20 bg-white/50">
+      <section className="py-12 sm:py-16 md:py-20 bg-white/50 dark:bg-slate-900/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-end justify-between mb-6 sm:mb-10 gap-4">
             <div className="min-w-0">
-              <div className="inline-flex items-center gap-2 px-2.5 sm:px-3 py-1 bg-indigo-50 rounded-full mb-2 sm:mb-3">
+              <div className="inline-flex items-center gap-2 px-2.5 sm:px-3 py-1 bg-indigo-50 dark:bg-indigo-500/10 rounded-full mb-2 sm:mb-3">
                 <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-indigo-500 shrink-0" />
-                <span className="text-[10px] sm:text-xs font-semibold text-indigo-600 uppercase tracking-wider">Featured</span>
+                <span className="text-[10px] sm:text-xs font-semibold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">Featured</span>
               </div>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">Handpicked for You</h2>
-              <p className="text-gray-500 mt-1 sm:mt-2 text-sm sm:text-base">Our editors' top picks this week</p>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Handpicked for You</h2>
+              <p className="text-gray-500 dark:text-slate-400 mt-1 sm:mt-2 text-sm sm:text-base">Our editors' top picks this week</p>
             </div>
             <Link
               to="/products"
-              className="hidden sm:inline-flex items-center text-sm font-semibold text-indigo-600 hover:text-indigo-700 group shrink-0"
+              className="hidden sm:inline-flex items-center text-sm font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 group shrink-0"
             >
               View All
               <ArrowRight className="ml-1.5 h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
-            {featuredProducts.map((product, index) => (
-              <ProductCard key={product.id} product={product} index={index} />
-            ))}
-          </div>
-          <div className="mt-6 text-center sm:hidden">
-            <Link to="/products" className="inline-flex items-center text-sm font-semibold text-indigo-600">
-              View All Products <ArrowRight className="ml-1.5 h-4 w-4" />
-            </Link>
-          </div>
+          {featuredProducts.length === 0 ? (
+            <div className="text-center py-12 sm:py-16">
+              <div className="h-16 w-16 bg-gray-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Sparkles className="h-8 w-8 text-gray-400 dark:text-slate-500" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No featured products yet</h3>
+              <p className="text-sm text-gray-500 dark:text-slate-400 mb-6">Check back soon for our latest curated selections</p>
+              <Link
+                to="/products"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-indigo-500/25 transition-all"
+              >
+                Browse All Products
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
+                {featuredProducts.map((product, index) => (
+                  <ProductCard key={product.id} product={product} index={index} />
+                ))}
+              </div>
+              <div className="mt-6 text-center sm:hidden">
+                <Link to="/products" className="inline-flex items-center text-sm font-semibold text-indigo-600 dark:text-indigo-400">
+                  View All Products <ArrowRight className="ml-1.5 h-4 w-4" />
+                </Link>
+              </div>
+            </>
+          )}
         </div>
       </section>
 
       {/* Trending Products */}
-      <section className="py-12 sm:py-16 md:py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-6 sm:mb-10">
-            <div className="inline-flex items-center gap-2 px-2.5 sm:px-3 py-1 bg-rose-50 rounded-full mb-2 sm:mb-3">
-              <TrendingUp className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-rose-500 shrink-0" />
-              <span className="text-[10px] sm:text-xs font-semibold text-rose-600 uppercase tracking-wider">Trending</span>
+      {trendingProducts.length > 0 && (
+        <section className="py-12 sm:py-16 md:py-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="mb-6 sm:mb-10">
+              <div className="inline-flex items-center gap-2 px-2.5 sm:px-3 py-1 bg-rose-50 dark:bg-rose-500/10 rounded-full mb-2 sm:mb-3">
+                <TrendingUp className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-rose-500 shrink-0" />
+                <span className="text-[10px] sm:text-xs font-semibold text-rose-600 dark:text-rose-400 uppercase tracking-wider">Trending</span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Most Popular</h2>
+              <p className="text-gray-500 dark:text-slate-400 mt-1 sm:mt-2 text-sm sm:text-base">Highest rated products this month</p>
             </div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">Most Popular</h2>
-            <p className="text-gray-500 mt-1 sm:mt-2 text-sm sm:text-base">Highest rated products this month</p>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
+              {trendingProducts.map((product, index) => (
+                <ProductCard key={product.id} product={product} index={index} />
+              ))}
+            </div>
           </div>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
-            {trendingProducts.map((product, index) => (
-              <ProductCard key={product.id} product={product} index={index} />
-            ))}
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* CTA Section */}
       <section className="py-12 sm:py-16 md:py-20">

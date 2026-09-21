@@ -352,22 +352,7 @@ function ProfileSection({ user, updateProfile, showToast }: any) {
         )}
       </div>
 
-      {/* Quick Stats */}
-      <div className="grid grid-cols-3 gap-3 sm:gap-4">
-        {[
-          { icon: Package, label: 'Orders', value: '12', color: 'from-blue-500 to-cyan-500' },
-          { icon: Heart, label: 'Wishlist', value: '8', color: 'from-rose-500 to-pink-500' },
-          { icon: MapPin, label: 'Addresses', value: '3', color: 'from-emerald-500 to-green-500' },
-        ].map((stat, i) => (
-          <div key={i} className="bg-white rounded-2xl shadow-sm shadow-gray-200/50 border border-gray-100 p-3 sm:p-4 text-center">
-            <div className={`inline-flex h-9 w-9 sm:h-10 sm:w-10 bg-gradient-to-br ${stat.color} rounded-xl items-center justify-center shadow-lg mb-2`}>
-              <stat.icon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
-            </div>
-            <p className="text-lg sm:text-2xl font-bold text-gray-900">{stat.value}</p>
-            <p className="text-[10px] sm:text-xs text-gray-500">{stat.label}</p>
-          </div>
-        ))}
-      </div>
+
     </div>
   );
 }
@@ -519,34 +504,14 @@ function SecuritySection({ showToast }: { showToast: (m: string, t?: 'success' |
       </div>
 
       {/* Active Sessions */}
-      <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm shadow-gray-200/50 border border-gray-100 p-4 sm:p-6">
-        <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-4">Active Sessions</h3>
-        <div className="space-y-3">
-          {[
-            { device: 'MacBook Pro', location: 'San Francisco, CA', current: true, time: 'Now' },
-            { device: 'iPhone 15', location: 'San Francisco, CA', current: false, time: '2 hours ago' },
-            { device: 'iPad Air', location: 'New York, NY', current: false, time: '3 days ago' },
-          ].map((session, i) => (
-            <div key={i} className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-              <div className="h-9 w-9 bg-white rounded-lg flex items-center justify-center shadow-sm shrink-0">
-                <Smartphone className="h-4 w-4 text-gray-600" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <p className="text-xs sm:text-sm font-medium text-gray-900">{session.device}</p>
-                  {session.current && (
-                    <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-[9px] sm:text-[10px] font-bold rounded">CURRENT</span>
-                  )}
-                </div>
-                <p className="text-[10px] sm:text-xs text-gray-500 truncate">{session.location} • {session.time}</p>
-              </div>
-              {!session.current && (
-                <button className="text-[10px] sm:text-xs text-red-500 hover:text-red-600 font-medium shrink-0">
-                  Revoke
-                </button>
-              )}
-            </div>
-          ))}
+      <div className="bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl shadow-sm shadow-gray-200/50 dark:shadow-black/20 border border-gray-100 dark:border-slate-700 p-4 sm:p-6">
+        <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-4">Active Sessions</h3>
+        <div className="flex flex-col items-center justify-center py-8 text-center">
+          <div className="h-12 w-12 bg-gray-100 dark:bg-slate-700 rounded-xl flex items-center justify-center mb-3">
+            <Smartphone className="h-6 w-6 text-gray-400 dark:text-slate-500" />
+          </div>
+          <p className="text-sm font-medium text-gray-900 dark:text-white">No active sessions</p>
+          <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">Sessions will appear here when you sign in on devices</p>
         </div>
       </div>
     </div>
@@ -555,10 +520,7 @@ function SecuritySection({ showToast }: { showToast: (m: string, t?: 'success' |
 
 // ============== ADDRESSES SECTION ==============
 function AddressesSection({ showToast }: { showToast: (m: string, t?: 'success' | 'error') => void }) {
-  const [addresses, setAddresses] = useState<Address[]>([
-    { id: '1', fullName: 'John Doe', street: '123 Market St', city: 'San Francisco', state: 'CA', zipCode: '94103', country: 'United States', phone: '+1 555-0100', isDefault: true, label: 'Home' },
-    { id: '2', fullName: 'John Doe', street: '456 Office Blvd, Suite 200', city: 'Palo Alto', state: 'CA', zipCode: '94301', country: 'United States', phone: '+1 555-0101', isDefault: false, label: 'Work' },
-  ]);
+  const [addresses, setAddresses] = useState<Address[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Address>({
@@ -739,63 +701,77 @@ function AddressesSection({ showToast }: { showToast: (m: string, t?: 'success' 
       </AnimatePresence>
 
       {/* Address List */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-        {addresses.map((addr) => (
-          <motion.div
-            key={addr.id}
-            layout
-            className="bg-white rounded-2xl shadow-sm shadow-gray-200/50 border border-gray-100 p-4 sm:p-5 relative group"
+      {addresses.length === 0 ? (
+        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm shadow-gray-200/50 dark:shadow-black/20 border border-gray-100 dark:border-slate-700 p-8 sm:p-12 text-center">
+          <div className="h-16 w-16 bg-gray-100 dark:bg-slate-700 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <MapPin className="h-8 w-8 text-gray-400 dark:text-slate-500" />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No addresses yet</h3>
+          <p className="text-sm text-gray-500 dark:text-slate-400 mb-6">Add a shipping address to speed up your checkout process</p>
+          <button
+            onClick={() => setShowForm(true)}
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-indigo-500/25 transition-all"
           >
-            {addr.isDefault && (
-              <span className="absolute top-3 right-3 sm:top-4 sm:right-4 px-2 py-0.5 bg-indigo-50 text-indigo-700 text-[10px] sm:text-xs font-semibold rounded-md">Default</span>
-            )}
-            <div className="flex items-start gap-3">
-              <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 ${
-                addr.label === 'Home' ? 'bg-blue-50 text-blue-600' :
-                addr.label === 'Work' ? 'bg-amber-50 text-amber-600' :
-                'bg-purple-50 text-purple-600'
-              }`}>
-                <MapPin className="h-5 w-5" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1 flex-wrap">
-                  <p className="text-sm font-bold text-gray-900">{addr.label}</p>
-                  {addr.phone && <span className="text-[10px] sm:text-xs text-gray-500">• {addr.phone}</span>}
+            <Plus className="h-4 w-4" />
+            Add Your First Address
+          </button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+          {addresses.map((addr) => (
+            <motion.div
+              key={addr.id}
+              layout
+              className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm shadow-gray-200/50 dark:shadow-black/20 border border-gray-100 dark:border-slate-700 p-4 sm:p-5 relative group"
+            >
+              {addr.isDefault && (
+                <span className="absolute top-3 right-3 sm:top-4 sm:right-4 px-2 py-0.5 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 text-[10px] sm:text-xs font-semibold rounded-md">Default</span>
+              )}
+              <div className="flex items-start gap-3">
+                <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 ${
+                  addr.label === 'Home' ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400' :
+                  addr.label === 'Work' ? 'bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400' :
+                  'bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400'
+                }`}>
+                  <MapPin className="h-5 w-5" />
                 </div>
-                <p className="text-xs sm:text-sm text-gray-700 font-medium">{addr.fullName}</p>
-                <p className="text-xs text-gray-500 mt-0.5 break-words">{addr.street}</p>
-                <p className="text-xs text-gray-500">{addr.city}, {addr.state} {addr.zipCode}</p>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1 flex-wrap">
+                    <p className="text-sm font-bold text-gray-900 dark:text-white">{addr.label}</p>
+                    {addr.phone && <span className="text-[10px] sm:text-xs text-gray-500 dark:text-slate-400">• {addr.phone}</span>}
+                  </div>
+                  <p className="text-xs sm:text-sm text-gray-700 dark:text-slate-200 font-medium">{addr.fullName}</p>
+                  <p className="text-xs text-gray-500 dark:text-slate-400 mt-0.5 break-words">{addr.street}</p>
+                  <p className="text-xs text-gray-500 dark:text-slate-400">{addr.city}, {addr.state} {addr.zipCode}</p>
+                </div>
               </div>
-            </div>
-            <div className="flex gap-2 mt-4 pt-3 border-t border-gray-100">
-              <button
-                onClick={() => handleEdit(addr)}
-                className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs sm:text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
-              >
-                <Edit2 className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-                Edit
-              </button>
-              <button
-                onClick={() => handleDelete(addr.id!)}
-                className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs sm:text-sm font-medium text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-              >
-                <Trash2 className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-                Delete
-              </button>
-            </div>
-          </motion.div>
-        ))}
-      </div>
+              <div className="flex gap-2 mt-4 pt-3 border-t border-gray-100 dark:border-slate-700">
+                <button
+                  onClick={() => handleEdit(addr)}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs sm:text-sm font-medium text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700/50 rounded-lg transition-colors"
+                >
+                  <Edit2 className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(addr.id!)}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs sm:text-sm font-medium text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-colors"
+                >
+                  <Trash2 className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                  Delete
+                </button>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
 
 // ============== PAYMENT SECTION ==============
 function PaymentSection({ showToast }: { showToast: (m: string, t?: 'success' | 'error') => void }) {
-  const [cards, setCards] = useState<PaymentMethod[]>([
-    { id: '1', type: 'visa', last4: '4242', expiry: '12/26', name: 'John Doe', isDefault: true },
-    { id: '2', type: 'mastercard', last4: '8888', expiry: '08/25', name: 'John Doe', isDefault: false },
-  ]);
+  const [cards, setCards] = useState<PaymentMethod[]>([]);
 
   const gradients: Record<string, string> = {
     visa: 'from-blue-600 to-indigo-700',
@@ -831,71 +807,90 @@ function PaymentSection({ showToast }: { showToast: (m: string, t?: 'success' | 
       </div>
 
       {/* Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {cards.map((card) => (
-          <motion.div
-            key={card.id}
-            layout
-            className={`relative aspect-[1.6/1] rounded-2xl sm:rounded-3xl p-4 sm:p-5 bg-gradient-to-br ${gradients[card.type]} text-white shadow-xl overflow-hidden`}
-          >
-            <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.1) 1px, transparent 0)', backgroundSize: '20px 20px' }} />
-            <div className="relative h-full flex flex-col justify-between">
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-[10px] sm:text-xs text-white/70 uppercase tracking-wider">{card.type}</p>
-                  {card.isDefault && (
-                    <span className="inline-block mt-1 px-1.5 py-0.5 bg-white/20 backdrop-blur-sm rounded text-[9px] sm:text-[10px] font-bold">DEFAULT</span>
-                  )}
-                </div>
-                <div className="text-right">
-                  <p className="text-lg sm:text-xl font-bold tracking-wider">•••• {card.last4}</p>
-                </div>
-              </div>
-              <div className="flex items-end justify-between">
-                <div>
-                  <p className="text-[10px] sm:text-xs text-white/70">Card Holder</p>
-                  <p className="text-xs sm:text-sm font-medium">{card.name}</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-[10px] sm:text-xs text-white/70">Expires</p>
-                  <p className="text-xs sm:text-sm font-medium">{card.expiry}</p>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-
-      {/* Card Actions */}
-      <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm shadow-gray-200/50 border border-gray-100 divide-y divide-gray-100">
-        {cards.map((card) => (
-          <div key={card.id} className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4">
-            <div className={`h-10 w-14 sm:h-12 sm:w-16 rounded-lg bg-gradient-to-br ${gradients[card.type]} flex items-center justify-center shrink-0`}>
-              <span className="text-white text-[9px] sm:text-[10px] font-bold uppercase">{card.type}</span>
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs sm:text-sm font-semibold text-gray-900">•••• •••• •••• {card.last4}</p>
-              <p className="text-[10px] sm:text-xs text-gray-500">Expires {card.expiry}</p>
-            </div>
-            <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-              {!card.isDefault && (
-                <button
-                  onClick={() => handleSetDefault(card.id)}
-                  className="px-2 sm:px-3 py-1.5 text-[10px] sm:text-xs font-medium text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
-                >
-                  Set Default
-                </button>
-              )}
-              <button
-                onClick={() => handleDelete(card.id)}
-                className="p-1.5 sm:p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-              >
-                <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-              </button>
-            </div>
+      {cards.length === 0 ? (
+        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm shadow-gray-200/50 dark:shadow-black/20 border border-gray-100 dark:border-slate-700 p-8 sm:p-12 text-center">
+          <div className="h-16 w-16 bg-gray-100 dark:bg-slate-700 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <CreditCard className="h-8 w-8 text-gray-400 dark:text-slate-500" />
           </div>
-        ))}
-      </div>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No payment methods</h3>
+          <p className="text-sm text-gray-500 dark:text-slate-400 mb-6">Add a card to make checkout faster and easier</p>
+          <button
+            onClick={() => showToast('Add card flow coming soon')}
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-indigo-500/25 transition-all"
+          >
+            <Plus className="h-4 w-4" />
+            Add Your First Card
+          </button>
+        </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {cards.map((card) => (
+              <motion.div
+                key={card.id}
+                layout
+                className={`relative aspect-[1.6/1] rounded-2xl sm:rounded-3xl p-4 sm:p-5 bg-gradient-to-br ${gradients[card.type]} text-white shadow-xl overflow-hidden`}
+              >
+                <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.1) 1px, transparent 0)', backgroundSize: '20px 20px' }} />
+                <div className="relative h-full flex flex-col justify-between">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="text-[10px] sm:text-xs text-white/70 uppercase tracking-wider">{card.type}</p>
+                      {card.isDefault && (
+                        <span className="inline-block mt-1 px-1.5 py-0.5 bg-white/20 backdrop-blur-sm rounded text-[9px] sm:text-[10px] font-bold">DEFAULT</span>
+                      )}
+                    </div>
+                    <div className="text-right">
+                      <p className="text-lg sm:text-xl font-bold tracking-wider">•••• {card.last4}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-end justify-between">
+                    <div>
+                      <p className="text-[10px] sm:text-xs text-white/70">Card Holder</p>
+                      <p className="text-xs sm:text-sm font-medium">{card.name}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[10px] sm:text-xs text-white/70">Expires</p>
+                      <p className="text-xs sm:text-sm font-medium">{card.expiry}</p>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Card Actions */}
+          <div className="bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl shadow-sm shadow-gray-200/50 dark:shadow-black/20 border border-gray-100 dark:border-slate-700 divide-y divide-gray-100 dark:divide-slate-700">
+            {cards.map((card) => (
+              <div key={card.id} className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4">
+                <div className={`h-10 w-14 sm:h-12 sm:w-16 rounded-lg bg-gradient-to-br ${gradients[card.type]} flex items-center justify-center shrink-0`}>
+                  <span className="text-white text-[9px] sm:text-[10px] font-bold uppercase">{card.type}</span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs sm:text-sm font-semibold text-gray-900 dark:text-white">•••• •••• •••• {card.last4}</p>
+                  <p className="text-[10px] sm:text-xs text-gray-500 dark:text-slate-400">Expires {card.expiry}</p>
+                </div>
+                <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+                  {!card.isDefault && (
+                    <button
+                      onClick={() => handleSetDefault(card.id)}
+                      className="px-2 sm:px-3 py-1.5 text-[10px] sm:text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 rounded-lg transition-colors"
+                    >
+                      Set Default
+                    </button>
+                  )}
+                  <button
+                    onClick={() => handleDelete(card.id)}
+                    className="p-1.5 sm:p-2 text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-colors"
+                  >
+                    <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
 
       <div className="flex items-start gap-3 p-3 sm:p-4 bg-amber-50 border border-amber-100 rounded-xl sm:rounded-2xl">
         <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-amber-600 shrink-0 mt-0.5" />
