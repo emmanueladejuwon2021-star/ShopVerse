@@ -9,6 +9,7 @@ interface AuthContextType {
   logout: () => void;
   addOrder: (order: Order) => void;
   isAuthenticated: boolean;
+  updateProfile: (updates: Partial<User>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -37,7 +38,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [orders]);
 
   const login = (email: string, _password: string): boolean => {
-    // Simulated login
     const mockUser: User = {
       id: '1',
       name: email.split('@')[0],
@@ -65,8 +65,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setOrders(prev => [order, ...prev]);
   };
 
+  const updateProfile = (updates: Partial<User>) => {
+    if (user) {
+      setUser({ ...user, ...updates });
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, orders, login, register, logout, addOrder, isAuthenticated: !!user }}>
+    <AuthContext.Provider value={{ user, orders, login, register, logout, addOrder, isAuthenticated: !!user, updateProfile }}>
       {children}
     </AuthContext.Provider>
   );

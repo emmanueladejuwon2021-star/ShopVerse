@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { ShoppingCart, Search, Menu, X, Package, Heart } from 'lucide-react';
+import { ShoppingCart, Search, Menu, X, Package, Heart, Settings } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -150,6 +150,13 @@ export default function Navbar() {
                           <Package className="h-4 w-4 mr-3 text-gray-400" />
                           My Orders
                         </Link>
+                        <Link
+                          to="/account"
+                          className="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                        >
+                          <Settings className="h-4 w-4 mr-3 text-gray-400" />
+                          Account Settings
+                        </Link>
                         <button
                           onClick={() => { logout(); setUserMenuOpen(false); }}
                           className="flex items-center w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"
@@ -219,6 +226,9 @@ export default function Navbar() {
                 </Link>
                 <Link to="/orders" className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-xl font-medium">
                   My Orders
+                </Link>
+                <Link to="/account" className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-xl font-medium">
+                  Account Settings
                 </Link>
                 <div className="pt-2 border-t border-gray-100">
                   {isAuthenticated ? (
