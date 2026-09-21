@@ -1,15 +1,23 @@
 @import "tailwindcss";
 
 @layer base {
+  html {
+    overflow-x: hidden;
+  }
   body {
     @apply antialiased text-gray-900;
     font-feature-settings: "cv11", "ss01";
     font-variation-settings: "opsz" 32;
+    overflow-x: hidden;
   }
 
   ::selection {
     background-color: #818cf8;
     color: white;
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
   }
 }
 
@@ -67,9 +75,11 @@
   .card-hover {
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
-  .card-hover:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 60px -12px rgba(0, 0, 0, 0.12);
+  @media (hover: hover) {
+    .card-hover:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 60px -12px rgba(0, 0, 0, 0.12);
+    }
   }
   .shimmer {
     background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
@@ -94,6 +104,19 @@
   .animate-pulse-soft {
     animation: pulse-soft 3s ease-in-out infinite;
   }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
 }
 
 /* Custom scrollbar */
@@ -115,12 +138,23 @@
   background: #94a3b8;
 }
 
-/* Smooth scroll */
 html {
   scroll-behavior: smooth;
 }
 
-/* Image loading placeholder */
 img {
   background-color: #f1f5f9;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Prevent layout shift from scrollbar */
+body {
+  width: 100%;
+  max-width: 100vw;
+}
+
+#root {
+  width: 100%;
+  overflow-x: hidden;
 }
