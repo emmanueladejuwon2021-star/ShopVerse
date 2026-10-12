@@ -36,7 +36,7 @@
         <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4l1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4m11.4-11.4l1.4-1.4"/></svg>
       </button>
 
-      <button data-cart-open aria-label="Open cart" class="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
+      <button data-cart-open-btn aria-label="Open cart" class="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
         <?php if ($count > 0): ?>
           <span class="absolute -top-1 -right-1 bg-indigo-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"><?= (int) $count ?></span>
