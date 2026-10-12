@@ -1,12 +1,14 @@
 <?php /* CartSidebar — port of src/components/CartSidebar.tsx */ 
       $items = cart_items();
       $subtotal = cart_total_price();
-      $open = !empty($cart_open_once); // one-shot flag from the front controller; never read the session here
+      // Server-rendered CLOSED, always. The drawer is opened client-side (JS)
+      // only via the navbar button or the one-shot data-cart-open="1" body
+      // flag — so a stale server flag can never cover the page on load.
 ?>
-<div id="cart-overlay" class="fixed inset-0 bg-black/40 z-40 <?= $open ? '' : 'hidden' ?>" data-cart-close></div>
+<div id="cart-overlay" class="fixed inset-0 bg-black/40 z-40 hidden" data-cart-close></div>
 
 <aside id="cart-sidebar"
-       class="fixed top-0 right-0 h-full w-full max-w-sm bg-white dark:bg-gray-900 shadow-2xl z-50 flex flex-col transition-transform duration-300 <?= $open ? '' : 'translate-x-full' ?>">
+       class="fixed top-0 right-0 h-full w-full max-w-sm bg-white dark:bg-gray-900 shadow-2xl z-50 flex flex-col transition-transform duration-300 translate-x-full">
   <div class="flex items-center justify-between px-4 py-4 border-b border-gray-200 dark:border-gray-800">
     <h2 class="text-lg font-bold">Your Cart (<?= count($items) ?>)</h2>
     <button data-cart-close aria-label="Close cart" class="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">✕</button>

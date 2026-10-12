@@ -15,7 +15,7 @@
   </script>
   <link rel="stylesheet" href="/assets/app.css">
 </head>
-<?php /* One-shot flag passed from the front controller; never read from the session. */ ?>
+
 <?php $_cartOpenFlag = !empty($cart_open_once); ?>
 <body data-cart-open="<?= $_cartOpenFlag ? 1 : 0 ?>" class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col transition-colors duration-300">
   <?php include __DIR__ . '/partials/navbar.php'; ?>
@@ -76,8 +76,12 @@
     document.querySelectorAll('[data-cart-close]').forEach(function (b) {
       b.addEventListener('click', function () { setCartOpen(false); });
     });
-    // Server told us to open the sidebar after an add-to-cart POST:
-    if (document.body.getAttribute('data-cart-open')) setCartOpen(true);
+    // Server told us to open the sidebar after an add-to-cart (one-shot, server-side only):
+    // remove the attribute immediately so a reload/restore can never re-open it.
+    if (document.body.getAttribute('data-cart-open') === '1') {
+      document.body.removeAttribute('data-cart-open');
+      setCartOpen(true);
+    }
   </script>
 </body>
 </html>
