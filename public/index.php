@@ -5,6 +5,24 @@
  */
 
 declare(strict_types=1);
+
+// Sessions: on serverless hosts (Vercel) the default save path may not be
+// writable, which makes session_start() emit a PHP warning — that warning is
+// what surfaces as Vercel's "An unexpected internal error occurred". Point
+// sessions at /tmp and fail silently instead of crashing.
+$sessionPath = sys_get_temp_dir() . '/shopverse-sessions';
+if (!is_dir($sessionPath)) @mkdir($sessionPath, 0700, true);
+if (is_dir($sessionPath) && is_writable($sessionPath)) {
+    session_save_path($sessionPath);
+}
+ini_set('session.use_strict_mode', '1');
+session_set_cookie_params([
+    'lifetime' => 60 * 60 * 24 * 7,
+    'path'     => '/',
+    'secure'   => !empty($_SERVER['HTTPS']) || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https',
+    'httponly' => true,
+    'samesite' => 'Lax',
+]);
 session_start();
 
 require __DIR__ . '/../includes/functions.php';
@@ -44,8 +62,11 @@ if (in_array($page, $protected, true) && !is_logged_in()) {
     exit;
 }
 
-// POST actions (server-side replacements for the React context mutations)
+// POST actions (server-side replacements for the React context mutations).
+// Unknown actions redirect to a safe same-site target instead of falling
+// through, so a POST can never render an unrelated page or leak form data.
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if ($page === null) $page = 'home'; // unknown route → send back somewhere valid
     handle_post_actions();
 }
 
