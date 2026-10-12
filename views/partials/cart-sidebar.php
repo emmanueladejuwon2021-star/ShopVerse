@@ -5,10 +5,22 @@
       // only via the navbar button or the one-shot data-cart-open="1" body
       // flag — so a stale server flag can never cover the page on load.
 ?>
-<div id="cart-overlay" class="fixed inset-0 bg-black/40 z-40 hidden" data-cart-close></div>
+<!-- Inline styles (not Tailwind classes) for the closed/open geometry: this
+     guarantees the drawer is off-screen even if app.css fails to load, is
+     stale on Vercel's CDN, or is missing a utility class. JS only toggles
+     [data-open]; CSS does the rest. -->
+<style>
+  #cart-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:40;opacity:0;visibility:hidden;transition:opacity .3s ease,visibility .3s}
+  #cart-overlay[data-open]{opacity:1;visibility:visible}
+  #cart-sidebar{position:fixed;top:0;right:0;height:100%;width:100%;max-width:24rem;background:#fff;z-index:50;display:flex;flex-direction:column;box-shadow:0 25px 50px -12px rgba(0,0,0,.25);transform:translateX(100%);visibility:hidden;transition:transform .3s ease,visibility .3s}
+  #cart-sidebar[data-open]{transform:translateX(0);visibility:visible}
+  @media (prefers-color-scheme:dark){#cart-sidebar{background:#111827}}
+  html.dark #cart-sidebar{background:#111827}
+</style>
+<div id="cart-overlay" data-cart-close></div>
 
 <aside id="cart-sidebar"
-       class="fixed top-0 right-0 h-full w-full max-w-sm bg-white dark:bg-gray-900 shadow-2xl z-50 flex flex-col transition-transform duration-300 translate-x-full">
+       class="bg-white dark:bg-gray-900">
   <div class="flex items-center justify-between px-4 py-4 border-b border-gray-200 dark:border-gray-800">
     <h2 class="text-lg font-bold">Your Cart (<?= count($items) ?>)</h2>
     <button data-cart-close aria-label="Close cart" class="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">✕</button>

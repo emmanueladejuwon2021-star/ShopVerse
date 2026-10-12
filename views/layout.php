@@ -16,7 +16,11 @@
   <link rel="stylesheet" href="/assets/app.css">
 </head>
 
-<?php $_cartOpenFlag = !empty($cart_open_once); ?>
+<?php
+// Belt-and-braces: even if some upstream bug ever passes a truthy flag, the
+// drawer may NEVER render open on the home page. Closed is the default.
+$_cartOpenFlag = !empty($cart_drawer_open) && $page !== 'home';
+?>
 <body data-cart-open="<?= $_cartOpenFlag ? 1 : 0 ?>" class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col transition-colors duration-300">
   <?php include __DIR__ . '/partials/navbar.php'; ?>
   <?php include __DIR__ . '/partials/cart-sidebar.php'; ?>
@@ -62,22 +66,34 @@
       menuBtn.addEventListener('click', function () { mobileMenu.classList.toggle('hidden'); });
     }
 
-    // Cart sidebar open/close (replaces isOpen state of CartContext)
+    // Cart sidebar open/close (replaces isOpen state of CartContext).
+    // Driven purely by the [data-open] attribute + inline CSS in the sidebar
+    // partial — no Tailwind class juggling, so a stale/missing app.css can
+    // never leave the drawer stuck over the page. Default state: CLOSED.
     function setCartOpen(open) {
       var el = document.getElementById('cart-sidebar');
       var overlay = document.getElementById('cart-overlay');
       if (!el) return;
-      el.classList.toggle('translate-x-full', !open);
-      if (overlay) overlay.classList.toggle('hidden', !open);
+      if (open) {
+        el.setAttribute('data-open', '');
+        if (overlay) overlay.setAttribute('data-open', '');
+      } else {
+        el.removeAttribute('data-open');
+        if (overlay) overlay.removeAttribute('data-open');
+      }
     }
-    document.querySelectorAll('[data-cart-open]').forEach(function (b) {
+    document.querySelectorAll('[data-cart-open-btn]').forEach(function (b) {
       b.addEventListener('click', function (ev) { ev.preventDefault(); setCartOpen(true); });
     });
     document.querySelectorAll('[data-cart-close]').forEach(function (b) {
       b.addEventListener('click', function () { setCartOpen(false); });
     });
-    // Server told us to open the sidebar after an add-to-cart (one-shot, server-side only):
-    // remove the attribute immediately so a reload/restore can never re-open it.
+    document.addEventListener('keydown', function (ev) {
+      if (ev.key === 'Escape') setCartOpen(false);
+    });
+    // Server told us to open the sidebar after an add-to-cart (one-shot):
+    // strict === '1' check, and the attribute is stripped immediately so a
+    // reload / back-forward restore can never re-open it.
     if (document.body.getAttribute('data-cart-open') === '1') {
       document.body.removeAttribute('data-cart-open');
       setCartOpen(true);
