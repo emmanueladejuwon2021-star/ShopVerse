@@ -16,7 +16,11 @@
   <link rel="stylesheet" href="/assets/app.css">
 </head>
 
-<?php $_cartOpenFlag = !empty($cart_open_once); ?>
+<?php
+// Belt-and-braces: even if some upstream bug ever passes a truthy flag, the
+// drawer may NEVER render open on the home page. Closed is the default.
+$_cartOpenFlag = !empty($cart_drawer_open) && $page !== 'home';
+?>
 <body data-cart-open="<?= $_cartOpenFlag ? 1 : 0 ?>" class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col transition-colors duration-300">
   <?php include __DIR__ . '/partials/navbar.php'; ?>
   <?php include __DIR__ . '/partials/cart-sidebar.php'; ?>

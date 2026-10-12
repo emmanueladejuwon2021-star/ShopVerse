@@ -94,14 +94,26 @@ if ($page === null) {
     exit;
 }
 
-// UI-only: one-shot flag that opens the cart drawer for THIS response only.
-// It lives in a short-lived cookie set by cart_add() and is consumed (deleted)
-// right here — never in $_SESSION, because PHP's shutdown session write-back
-// resurrected the old $_SESSION['cart_open'] key and left the drawer stuck
-// open over every page (including the home page).
+// UI-only: one-shot flag set by cart_add() via a short-lived cookie. It is
+// consumed (deleted) below on this request — never stored in $_SESSION,
+// because PHP's shutdown session write-back resurrected the old
+// $_SESSION['cart_open'] key and left the drawer stuck open over every page.
 $cartOpenOnce = (($_COOKIE['cart_open_once'] ?? '') === '1');
-unset($_SESSION['cart_open']); // purge any stale legacy key from old deploys
-if ($cartOpenOnce || isset($_COOKIE['cart_open_once'])) {
+
+// Cart drawer policy for THIS response — decided server-side, per request.
+//
+// The drawer can ONLY ever be rendered open when ALL of these hold:
+//   1. This was a GET (never on POST/redirect responses),
+//   2. The user just added an item ("Added to cart." flash, consumed below),
+//   3. The one-shot cookie set by cart_add() is present (double safety net).
+// Anything else — stale cookies, resurrected session keys from old deploys,
+// browser back/forward cache restores, direct visits to "/" — renders CLOSED.
+$_justAddedToCart = (($_SESSION['flash'] ?? null) === 'Added to cart.');
+$_drawerOpenAllowed = $cartOpenOnce && $_justAddedToCart && $page !== 'cart';
+
+// Purge legacy state from earlier buggy deploys so it can never resurface.
+unset($_SESSION['cart_open'], $_SESSION['cart_open_requested']);
+if (isset($_COOKIE['cart_open_once'])) {
     $isHttps = !empty($_SERVER['HTTPS']) || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https';
     setcookie('cart_open_once', '', [
         'path'     => '/',
@@ -112,4 +124,5 @@ if ($cartOpenOnce || isset($_COOKIE['cart_open_once'])) {
     ]);
     unset($_COOKIE['cart_open_once']);
 }
-render_page($page, $params + ['cart_open_once' => $cartOpenOnce]);
+
+render_page($page, $params + ['cart_drawer_open' => $_drawerOpenAllowed]);
