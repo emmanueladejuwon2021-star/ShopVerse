@@ -46,20 +46,47 @@ function db_backend(): string
 /** Whether the current backend supports durable writes on this host. */
 function db_writable(): bool
 {
-    return db_backend() !== 'json' || is_dir(STORAGE_DIR) && is_writable(STORAGE_DIR);
+    return db_backend() !== 'json' || is_writable(storage_dir());
 }
 
 /* ------------------------------------------------------------------ */
 /* Local SQLite (PDO) — dev fallback                                   */
 /* ------------------------------------------------------------------ */
 
+/**
+ * Resolve a writable directory for the local SQLite dev fallback.
+ * Vercel's deployed filesystem is read-only (and only /tmp is writable),
+ * so we probe candidates instead of assuming ../storage exists.
+ */
+function storage_dir(): string
+{
+    static $dir = null;
+    if ($dir !== null) return $dir;
+
+    $candidates = [
+        defined('STORAGE_DIR') ? STORAGE_DIR : null,
+        __DIR__ . '/../storage',
+        sys_get_temp_dir() . '/shopverse-storage',
+    ];
+    foreach ($candidates as $c) {
+        if (!$c) continue;
+        if (!is_dir($c)) @mkdir($c, 0775, true);
+        if (is_dir($c) && is_writable($c)) {
+            $dir = rtrim($c, '/');
+            return $dir;
+        }
+    }
+    // Last resort: return the repo path; writes will fail gracefully via guard_write().
+    $dir = __DIR__ . '/../storage';
+    return $dir;
+}
+
 function sqlite_pdo(): PDO
 {
     static $pdo = null;
     if ($pdo instanceof PDO) return $pdo;
 
-    $dir = __DIR__ . '/../storage';
-    if (!is_dir($dir)) @mkdir($dir, 0775, true);
+    $dir = storage_dir();
     $pdo = new PDO('sqlite:' . $dir . '/shopverse.db');
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $pdo->exec('PRAGMA journal_mode = WAL;');
@@ -122,7 +149,7 @@ function db_migrate(): void
 /** Read a JSON collection file as an assoc array keyed by id/email. */
 function json_read(string $file, string $keyField): array
 {
-    $path = STORAGE_DIR . '/' . $file;
+    $path = storage_dir() . '/' . $file;
     if (!is_file($path)) return [];
     $data = json_decode((string) @file_get_contents($path), true);
     if (!is_array($data)) return [];
@@ -137,9 +164,8 @@ function json_read(string $file, string $keyField): array
 
 function json_write(string $file, array $rows): bool
 {
-    if (!is_dir(STORAGE_DIR)) @mkdir(STORAGE_DIR, 0775, true);
     return @file_put_contents(
-        STORAGE_DIR . '/' . $file,
+        storage_dir() . '/' . $file,
         json_encode(array_values($rows), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n",
         LOCK_EX
     ) !== false;
