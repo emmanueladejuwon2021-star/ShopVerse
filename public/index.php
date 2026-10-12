@@ -62,8 +62,11 @@ if (in_array($page, $protected, true) && !is_logged_in()) {
     exit;
 }
 
-// POST actions (server-side replacements for the React context mutations)
+// POST actions (server-side replacements for the React context mutations).
+// Unknown actions redirect to a safe same-site target instead of falling
+// through, so a POST can never render an unrelated page or leak form data.
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if ($page === null) $page = 'home'; // unknown route → send back somewhere valid
     handle_post_actions();
 }
 

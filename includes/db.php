@@ -49,6 +49,18 @@ function db_writable(): bool
     return db_backend() !== 'json' || is_writable(storage_dir());
 }
 
+/**
+ * SQLite pragmas tuned for serverless (Vercel) hosts: many short-lived PHP
+ * processes hit one file/NFS mount, so busy-retry and WAL keep writes from
+ * failing with "database is locked". Applied only when the file lives in a
+ * temp dir (ephemeral hosts) — persistent dev DBs keep their own mode.
+ */
+function sqlite_tune(PDO $pdo): void
+{
+    $pdo->exec('PRAGMA busy_timeout = 5000;');
+    $pdo->exec('PRAGMA synchronous = NORMAL;');
+}
+
 /* ------------------------------------------------------------------ */
 /* Local SQLite (PDO) — dev fallback                                   */
 /* ------------------------------------------------------------------ */
@@ -89,7 +101,11 @@ function sqlite_pdo(): PDO
     $dir = storage_dir();
     $pdo = new PDO('sqlite:' . $dir . '/shopverse.db');
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $pdo->exec('PRAGMA journal_mode = WAL;');
+    // WAL only works on real filesystems; /tmp mounts are safe, but guard anyway.
+    if (@$pdo->exec('PRAGMA journal_mode = WAL;') === false) {
+        $pdo->exec('PRAGMA journal_mode = DELETE;');
+    }
+    sqlite_tune($pdo);
     foreach (db_schema() as $sql) $pdo->exec($sql);
     return $pdo;
 }
