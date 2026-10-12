@@ -1,2 +1,11 @@
 node_modules/
 package-lock.json
+storage/*.db
+storage/*.sqlite
+storage/*.json
+.env
+.env.*
+*.log
+.DS_Store
+.vscode/
+.idea/

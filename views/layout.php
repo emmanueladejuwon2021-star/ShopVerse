@@ -5,6 +5,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><?= e($title ?? 'ShopVerse') ?></title>
+  <meta name="description" content="ShopVerse — Premium online store for electronics, clothing, accessories, home and sports. Secure checkout and fast delivery.">
+  <meta property="og:title" content="<?= e($title ?? 'ShopVerse') ?>">
+  <meta property="og:description" content="Premium online shopping with secure sessions and great prices.">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#4f46e5">
   <script>
     // ThemeContext port: persisted theme w/ system-preference fallback (no-flash inline)
     (function () {

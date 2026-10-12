@@ -25,18 +25,19 @@ session_set_cookie_params([
 ]);
 session_start();
 
-// ---- Security response headers (audit fix) ----
+// ---- Security response headers ----
 header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: DENY');
 header('Referrer-Policy: strict-origin-when-cross-origin');
-header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; form-action 'self'; frame-ancestors 'none'; base-uri 'self'");
+header('Permissions-Policy: geolocation=(), microphone=(), camera=()');
+header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; form-action 'self'; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests");
 
 require __DIR__ . '/../includes/functions.php';
 require __DIR__ . '/../includes/data.php';
 require __DIR__ . '/../includes/auth.php';
 require __DIR__ . '/../includes/cart.php';
 
-// ---- CSRF protection (audit fix) ----
+// ---- CSRF protection ----
 if (!isset($_SESSION['csrf_token']) || !is_string($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
@@ -48,20 +49,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// ---- Route dispatch (mirrors the routes in src/App.tsx) ----
+// ---- Route dispatch ----
 $uri = rawurldecode(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/');
 $path = rtrim($uri, '/') ?: '/';
 
 $routes = [
     '/'            => 'home',
     '/products'    => 'products',
-    '/product'     => 'product_detail',   // /product/{id}
+    '/product'     => 'product_detail',
     '/cart'        => 'cart',
-    '/checkout'    => 'checkout',         // requires login
+    '/checkout'    => 'checkout',
     '/login'       => 'login',
     '/logout'      => 'logout',
-    '/orders'      => 'orders',           // requires login
-    '/account'     => 'account',          // requires login
+    '/orders'      => 'orders',
+    '/account'     => 'account',
 ];
 
 $page = $routes[$path] ?? null;
@@ -72,7 +73,7 @@ if ($page === null && preg_match('#^/product/([^/]+)$#', $path, $m)) {
     $params['id'] = $m[1];
 }
 
-// Auth guards (mirror the ProtectedRoute behaviour of Checkout/Orders/Account)
+// Auth guards
 $protected = ['checkout', 'orders', 'account'];
 if (in_array($page, $protected, true) && !is_logged_in()) {
     $_SESSION['flash_error'] = 'Please sign in to continue.';
@@ -80,11 +81,9 @@ if (in_array($page, $protected, true) && !is_logged_in()) {
     exit;
 }
 
-// POST actions (server-side replacements for the React context mutations).
-// Unknown actions redirect to a safe same-site target instead of falling
-// through, so a POST can never render an unrelated page or leak form data.
+// POST actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if ($page === null) $page = 'home'; // unknown route → send back somewhere valid
+    if ($page === null) $page = 'home';
     handle_post_actions();
 }
 
@@ -94,24 +93,11 @@ if ($page === null) {
     exit;
 }
 
-// UI-only: one-shot flag set by cart_add() via a short-lived cookie. It is
-// consumed (deleted) below on this request — never stored in $_SESSION,
-// because PHP's shutdown session write-back resurrected the old
-// $_SESSION['cart_open'] key and left the drawer stuck open over every page.
+// Cart drawer one-shot logic (unchanged)
 $cartOpenOnce = (($_COOKIE['cart_open_once'] ?? '') === '1');
-
-// Cart drawer policy for THIS response — decided server-side, per request.
-//
-// The drawer can ONLY ever be rendered open when ALL of these hold:
-//   1. This was a GET (never on POST/redirect responses),
-//   2. The user just added an item ("Added to cart." flash, consumed below),
-//   3. The one-shot cookie set by cart_add() is present (double safety net).
-// Anything else — stale cookies, resurrected session keys from old deploys,
-// browser back/forward cache restores, direct visits to "/" — renders CLOSED.
 $_justAddedToCart = (($_SESSION['flash'] ?? null) === 'Added to cart.');
 $_drawerOpenAllowed = $cartOpenOnce && $_justAddedToCart && $page !== 'cart';
 
-// Purge legacy state from earlier buggy deploys so it can never resurface.
 unset($_SESSION['cart_open'], $_SESSION['cart_open_requested']);
 if (isset($_COOKIE['cart_open_once'])) {
     $isHttps = !empty($_SERVER['HTTPS']) || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https';
