@@ -2,3 +2,127 @@
 @custom-variant dark (&:where(.dark, .dark *));
 @source "../views/**/*.php";
 @source "../public/index.php";
+
+/* ============================================================
+   Glassmorphism design system — site-wide.
+   Every surface uses CSS variables that flip correctly between
+   light and dark mode, so colors always correlate with theme.
+   ============================================================ */
+@layer base {
+  :root {
+    --glass-bg: rgba(255, 255, 255, 0.62);
+    --glass-strong-bg: rgba(255, 255, 255, 0.80);
+    --glass-border: rgba(255, 255, 255, 0.65);
+    --glass-line: rgba(15, 23, 42, 0.08);      /* dividers/borders on glass */
+    --glass-input-bg: rgba(255, 255, 255, 0.55);
+    --glass-chip-bg: rgba(15, 23, 42, 0.05);
+    --glass-chip-hover: rgba(15, 23, 42, 0.10);
+    --glass-text: #111827;
+    --glass-muted: #6b7280;
+    --glass-shadow: 0 8px 32px rgba(15, 23, 42, 0.10);
+    --page-tint-a: rgba(99, 102, 241, 0.10);
+    --page-tint-b: rgba(56, 189, 248, 0.08);
+  }
+  .dark {
+    --glass-bg: rgba(30, 41, 59, 0.55);        /* slate-800 @ 55% */
+    --glass-strong-bg: rgba(30, 41, 59, 0.78);
+    --glass-border: rgba(148, 163, 184, 0.18);
+    --glass-line: rgba(148, 163, 184, 0.16);
+    --glass-input-bg: rgba(15, 23, 42, 0.45);
+    --glass-chip-bg: rgba(148, 163, 184, 0.10);
+    --glass-chip-hover: rgba(148, 163, 184, 0.18);
+    --glass-text: #f1f5f9;
+    --glass-muted: #94a3b8;
+    --glass-shadow: 0 8px 32px rgba(2, 6, 23, 0.45);
+    --page-tint-a: rgba(99, 102, 241, 0.16);
+    --page-tint-b: rgba(56, 189, 248, 0.10);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    color: var(--glass-text);
+    background-color: #f8fafc;
+    background-image:
+      radial-gradient(60rem 40rem at 110% -10%, var(--page-tint-a), transparent 60%),
+      radial-gradient(50rem 35rem at -10% 20%, var(--page-tint-b), transparent 55%);
+    background-attachment: fixed;
+    transition: background-color .3s ease, color .3s ease;
+  }
+  .dark body { background-color: #0b1120; }
+
+  /* Graceful fallback when backdrop-filter is unsupported (older browsers):
+     raise opacity via the stronger variable so text stays readable. */
+  @supports not (backdrop-filter: blur(1px)) {
+    :root  { --glass-bg: rgba(255,255,255,.94); --glass-strong-bg: #fff; --glass-input-bg: #fff; }
+    .dark  { --glass-bg: rgba(30,41,59,.96);   --glass-strong-bg: #1e293b; --glass-input-bg: #0f172a; }
+  }
+}
+
+@layer components {
+  .glass-card {
+    background: var(--glass-bg);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    backdrop-filter: blur(16px) saturate(160%);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    color: var(--glass-text);
+  }
+  .glass-panel {
+    background: var(--glass-strong-bg);
+    -webkit-backdrop-filter: blur(22px) saturate(170%);
+    backdrop-filter: blur(22px) saturate(170%);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    color: var(--glass-text);
+  }
+  .glass-nav {
+    background: var(--glass-strong-bg);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid var(--glass-line);
+    color: var(--glass-text);
+  }
+  .glass-drawer {
+    background: var(--glass-strong-bg);
+    -webkit-backdrop-filter: blur(24px) saturate(170%);
+    backdrop-filter: blur(24px) saturate(170%);
+    color: var(--glass-text);
+  }
+  .glass-overlay {
+    background: rgba(2, 6, 23, 0.45);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+  }
+  .glass-input {
+    background: var(--glass-input-bg);
+    border: 1px solid var(--glass-line);
+    color: var(--glass-text);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+  }
+  .glass-input:focus {
+    outline: none;
+    border-color: rgba(99, 102, 241, 0.55);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.22);
+  }
+  .glass-input::placeholder { color: var(--glass-muted); }
+  .glass-chip {
+    background: var(--glass-chip-bg);
+    border: 1px solid var(--glass-line);
+    color: var(--glass-text);
+  }
+  .glass-chip:hover { background: var(--glass-chip-hover); }
+  .glass-divider { border-color: var(--glass-line); }
+  .text-glass-muted { color: var(--glass-muted); }
+  .btn-primary {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: #fff;
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.35);
+    transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+  }
+  .btn-primary:hover { filter: brightness(1.07); box-shadow: 0 8px 26px rgba(99, 102, 241, 0.45); }
+  .btn-primary:active { transform: translateY(1px); }
+  .glass-btn{background:var(--glass-chip-bg);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--glass-line);color:var(--glass-text)}
+  .glass-btn:hover{background:var(--glass-chip-hover)}
+}

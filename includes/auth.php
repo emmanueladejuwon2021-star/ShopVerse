@@ -30,6 +30,28 @@ function guard_write(callable $fn): array
     }
 }
 
+/**
+ * Audit pass 1: session cookie hardening. PHP's default session cookie name
+ * (PHPSESSID) fingerprints the stack and some hosts/CDNs treat it specially;
+ * we also pin SameSite/HttpOnly/Secure explicitly for every context.
+ */
+function configure_session_cookie(): void
+{
+    if (session_status() === PHP_SESSION_ACTIVE) return; // already started
+    session_name('sv_sid');
+    $secure = !empty($_SERVER['HTTPS']) || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https';
+    ini_set('session.cookie_httponly', '1');
+    ini_set('session.use_only_cookies', '1');
+    ini_set('session.cookie_samesite', 'Lax');
+    session_set_cookie_params([
+        'lifetime' => 60 * 60 * 24 * 7,
+        'path'     => '/',
+        'secure'   => $secure,
+        'httponly' => true,
+        'samesite' => 'Lax',
+    ]);
+}
+
 function is_logged_in(): bool
 {
     return !empty($_SESSION['user']['id']);
@@ -64,8 +86,14 @@ function register_user(string $name, string $email, string $password): array
         if (!$lookup['ok']) {
             return ['ok' => false, 'errors' => $lookup['errors']];
         }
+        // Audit pass 2 (user enumeration): never reveal that an email is
+        // already taken. If it is, we still run a bcrypt verify against the
+        // stored hash so timing is indistinguishable from a real insert,
+        // then pretend success — no session is created and no data written.
         if ($lookup['result'] !== null) {
-            $errors[] = 'An account with this email already exists.';
+            password_verify($password, (string) ($lookup['result']['passhash'] ?? ''));
+            session_regenerate_id(true);
+            return ['ok' => true, 'user' => null];
         }
     }
     if ($errors) {

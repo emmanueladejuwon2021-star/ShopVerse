@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400" role="img" aria-label="Mechanical Keyboard MX">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fdf2f8"/>
+      <stop offset="100%" stop-color="#fce7f3"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#g)"/>
+  <g transform="translate(120 90) scale(1.6)" fill="none" stroke="#db2777" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity="0.9">
+    <rect x="18" y="26" width="64" height="42" rx="4"/><path d="M38 76h24M50 68v8"/>
+  </g>
+  <text x="200" y="316" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="700" fill="#db2777">Mechanical Keyboard MX</text>
+  <text x="200" y="344" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="14" letter-spacing="3" fill="#db2777" opacity="0.65">ELECTRONICS</text>
+</svg>

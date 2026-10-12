@@ -104,6 +104,17 @@ function cart_tax(float $subtotal): float
  */
 function handle_post_actions(): void
 {
+    // Audit pass 2: global write throttle — max 30 POST actions per minute
+    // per session, shared across all actions (cart spam, order flooding…).
+    $gw = $_SESSION['write_throttle'] ?? ['count' => 0, 'first' => time()];
+    if (time() - (int) $gw['first'] > 60) $gw = ['count' => 0, 'first' => time()];
+    if ($gw['count'] >= 30) {
+        $_SESSION['flash_error'] = 'Too many requests. Please slow down and try again shortly.';
+        redirect(validate_redirect((string) ($_POST['redirect'] ?? '/')));
+    }
+    $gw['count']++;
+    $_SESSION['write_throttle'] = $gw;
+
     $action = $_POST['action'] ?? '';
     // Audit fix: never trust HTTP_REFERER as a redirect target; only same-site
     // paths supplied explicitly by our own forms are allowed.
@@ -111,7 +122,10 @@ function handle_post_actions(): void
 
     switch ($action) {
         case 'add_to_cart':
-            cart_add((string) ($_POST['product_id'] ?? ''), (int) ($_POST['quantity'] ?? 1));
+            // Audit pass 2: never trust the client's quantity — clamp to a
+            // sane per-item maximum so nobody can order 99999 units or bloat
+            // session storage with huge numbers.
+            cart_add((string) ($_POST['product_id'] ?? ''), min(99, max(1, (int) ($_POST['quantity'] ?? 1))));
             $_SESSION['flash'] = 'Added to cart.';
             // Post/Redirect/Get: the drawer-open flag is consumed by the GET
             // response for the redirect target (see public/index.php), which
@@ -123,7 +137,8 @@ function handle_post_actions(): void
             break;
 
         case 'update_quantity':
-            cart_update_qty((string) ($_POST['product_id'] ?? ''), (int) ($_POST['quantity'] ?? 0));
+            // Audit pass 2: same clamp; qty<=0 still removes the item.
+            cart_update_qty((string) ($_POST['product_id'] ?? ''), min(99, (int) ($_POST['quantity'] ?? 0)));
             break;
 
         case 'clear_cart':
@@ -137,6 +152,17 @@ function handle_post_actions(): void
         case 'newsletter':
             // Audit fix: subscribers are now persisted (previously the email was
             // validated and then thrown away).
+            // Audit pass 2: throttle subscription attempts. State lives in the
+            // session (server-side) because each serverless request is a fresh
+            // process — a function-local static would reset every invocation.
+            $nl = $_SESSION['nl_throttle'] ?? ['count' => 0, 'first' => time()];
+            if (time() - (int) $nl['first'] > 60) $nl = ['count' => 0, 'first' => time()];
+            if ($nl['count'] >= 5) {
+                $_SESSION['flash_error'] = 'Too many requests. Please try again in a minute.';
+                redirect($redirect);
+            }
+            $nl['count']++;
+            $_SESSION['nl_throttle'] = $nl;
             $email = filter_var($_POST['email'] ?? '', FILTER_VALIDATE_EMAIL);
             if ($email) {
                 try {
@@ -174,11 +200,20 @@ function handle_post_actions(): void
                 (string) ($_POST['password'] ?? '')
             );
             if ($res['ok']) {
-                $_SESSION['flash'] = 'Account created. Welcome to ShopVerse!';
+                // Audit pass 2: "user" is null for the silent-duplicate case
+                // (email already registered — we pretend success to prevent
+                // user enumeration but must NOT log anybody in or flash a name).
+                if (!empty($res['user'])) {
+                    $_SESSION['flash'] = 'Account created. Welcome to ShopVerse!';
+                } else {
+                    $_SESSION['flash'] = 'If that address is new, your account has been created. Sign in to continue.';
+                }
                 redirect($redirectTo);
             }
             // Audit fix (security): storage failures must not masquerade as
             // validation errors; show a safe retry message instead.
+            // Audit pass 2: registration errors are surfaced generically too —
+            // the "already exists" case never reaches here anymore.
             $errors = in_array('Storage is unavailable right now. Please try again later.', $res['errors'], true)
                 ? $res['errors']
                 : array_map(static fn($e) => strtr($e, ['already exists' => 'could not be used']), $res['errors']);
@@ -223,9 +258,29 @@ function place_order_from_post(): void
     }
 
     $subtotal = cart_total_price();
+    // Audit pass 3: server-side price integrity — recompute the total from
+    // the catalog prices, NOT from anything the client posted. The order's
+    // item snapshot is rebuilt from find_product() so a tampered cart
+    // session (or future client-supplied prices) can never alter money owed.
+    $freshItems = [];
+    foreach ($items as $item) {
+        $pid = (string) ($item['product']['id'] ?? '');
+        $product = find_product($pid);
+        if (!$product) continue; // product delisted since add-to-cart
+        $qty = min(99, max(1, (int) ($item['quantity'] ?? 1)));
+        $freshItems[] = ['product' => $product, 'quantity' => $qty];
+    }
+    if (!$freshItems) {
+        $_SESSION['flash_error'] = 'Your cart is empty.';
+        redirect('/cart');
+    }
+    $subtotal = array_sum(array_map(
+        fn($i) => $i['product']['price'] * $i['quantity'],
+        $freshItems
+    ));
     $total = $subtotal + cart_shipping($subtotal) + cart_tax($subtotal);
 
-    $order = save_order(array_values($items), $total, [
+    $order = save_order(array_values($freshItems), $total, [
         'fullName' => trim((string) $_POST['fullName']),
         'street' => trim((string) $_POST['street']),
         'city' => trim((string) $_POST['city']),

@@ -1,153 +1,213 @@
 [
-  {
-    "id": "1",
-    "name": "Wireless Headphones Pro",
-    "description": "Premium noise-cancelling wireless headphones with 40-hour battery life, spatial audio, and ultra-comfortable memory foam ear cushions.",
-    "price": 299.99,
-    "originalPrice": 399.99,
-    "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=500&fit=crop",
-    "category": "Electronics",
-    "rating": 4.8,
-    "reviews": 1240,
-    "inStock": true,
-    "features": ["Active Noise Cancellation", "40-hour battery", "Bluetooth 5.3", "Spatial Audio"]
-  },
-  {
-    "id": "2",
-    "name": "Smart Watch Series X",
-    "description": "Advanced fitness tracking smartwatch with GPS, heart-rate monitoring, sleep insights, and a vivid always-on AMOLED display.",
-    "price": 399.00,
-    "originalPrice": 499.00,
-    "image": "https://images.unsplash.com/photo-1523275335684-37898b6b3327?w=400&h=300&fit=crop",
-    "category": "Electronics",
-    "rating": 4.6,
-    "reviews": 892,
-    "inStock": true,
-    "features": ["GPS + Cellular", "Heart Rate Monitor", "Water Resistant 50m", "7-day Battery"]
-  },
-  {
-    "id": "3",
-    "name": "Running Shoes Elite",
-    "description": "Lightweight performance running shoes with responsive cushioning and breathable engineered knit upper for race day comfort.",
-    "price": 159.99,
-    "originalPrice": 189.99,
-    "image": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=300&fit=crop",
-    "category": "Sports",
-    "rating": 4.7,
-    "reviews": 2103,
-    "inStock": true,
-    "features": ["Responsive Foam Midsole", "Breathable Knit Upper", "Carbon Fiber Plate", "230g Lightweight"]
-  },
-  {
-    "id": "4",
-    "name": "Classic Denim Jacket",
-    "description": "Timeless denim jacket crafted from premium selvedge denim with a modern tailored fit and vintage wash finish.",
-    "price": 89.99,
-    "image": "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=400&h=500&fit=crop",
-    "category": "Clothing",
-    "rating": 4.5,
-    "reviews": 567,
-    "inStock": true,
-    "features": ["100% Selvedge Denim", "Tailored Fit", "Brass Hardware", "Machine Washable"]
-  },
-  {
-    "id": "5",
-    "name": "Leather Messenger Bag",
-    "description": "Handcrafted full-grain leather messenger bag with padded laptop compartment and solid brass hardware. Ages beautifully.",
-    "price": 219.99,
-    "originalPrice": 279.99,
-    "image": "https://images.unsplash.com/photo-1553062407-98578ae6212f?w=400&h=500&fit=crop",
-    "category": "Accessories",
-    "rating": 4.9,
-    "reviews": 342,
-    "inStock": true,
-    "features": ["Full-Grain Leather", "Fits 15\" Laptop", "Adjustable Strap", "Brass Buckles"]
-  },
-  {
-    "id": "6",
-    "name": "Minimalist Desk Lamp",
-    "description": "Architect-style LED desk lamp with stepless dimming, adjustable color temperature, and a weighted anti-tip base.",
-    "price": 64.99,
-    "image": "https://images.unsplash.com/photo-1507473885765-e5ed58dc2416?w=400&h=500&fit=crop",
-    "category": "Home",
-    "rating": 4.3,
-    "reviews": 198,
-    "inStock": true,
-    "features": ["Stepless Dimming", "3 Color Temperatures", "USB Charging Port", "Eye-Care Glow"]
-  },
-  {
-    "id": "7",
-    "name": "Yoga Mat Premium",
-    "description": "Extra-thick non-slip yoga mat made from eco-friendly TPE with alignment lines and a carry strap included.",
-    "price": 49.99,
-    "originalPrice": 69.99,
-    "image": "https://images.unsplash.com/photo-1592432678016-e910b452f9a2?w=400&h=500&fit=crop",
-    "category": "Sports",
-    "rating": 4.4,
-    "reviews": 780,
-    "inStock": true,
-    "features": ["6mm Cushioning", "Non-Slip Surface", "Eco-Friendly TPE", "Alignment Lines"]
-  },
-  {
-    "id": "8",
-    "name": "Polarized Aviator Sunglasses",
-    "description": "Iconic aviator sunglasses with polarized lenses, UV400 protection, and featherlight titanium frame.",
-    "price": 129.99,
-    "image": "https://images.unsplash.com/photo-1572635196237-14b3f2496322?w=400&h=500&fit=crop",
-    "category": "Accessories",
-    "rating": 4.6,
-    "reviews": 1120,
-    "inStock": false,
-    "features": ["Polarized Lenses", "UV400 Protection", "Titanium Frame", "Hard Case Included"]
-  },
-  {
-    "id": "9",
-    "name": "Ceramic Pour-Over Set",
-    "description": "Hand-glazed ceramic pour-over coffee set with reusable stainless filter and matching carafe. Brews 2 cups.",
-    "price": 54.99,
-    "image": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&h=500&fit=crop",
-    "category": "Home",
-    "rating": 4.7,
-    "reviews": 425,
-    "inStock": true,
-    "features": ["Hand-Glazed Ceramic", "Reusable Steel Filter", "Dishwasher Safe", "Brews 2 Cups"]
-  },
-  {
-    "id": "10",
-    "name": "Merino Wool Sweater",
-    "description": "Ultra-soft 100% merino wool crew-neck sweater. Temperature regulating, odor resistant, and machine washable.",
-    "price": 119.99,
-    "originalPrice": 149.99,
-    "image": "https://images.unsplash.com/photo-1620799140408-b5be12582072?w=400&h=500&fit=crop",
-    "category": "Clothing",
-    "rating": 4.5,
-    "reviews": 290,
-    "inStock": true,
-    "features": ["100% Merino Wool", "Crew Neck", "Machine Washable", "Odor Resistant"]
-  },
-  {
-    "id": "11",
-    "name": "Mechanical Keyboard MX",
-    "description": "Hot-swappable mechanical keyboard with gasket mount, PBT keycaps, RGB backlight, and tactile linear switches.",
-    "price": 149.99,
-    "image": "https://images.unsplash.com/photo-1541140532154-b024d705b90a?w=400&h=500&fit=crop",
-    "category": "Electronics",
-    "rating": 4.8,
-    "reviews": 1567,
-    "inStock": true,
-    "features": ["Hot-Swap Switches", "Gasket Mount", "PBT Keycaps", "Per-Key RGB"]
-  },
-  {
-    "id": "12",
-    "name": "Insulated Water Bottle",
-    "description": "Double-wall vacuum insulated bottle keeps drinks cold 24h or hot 12h. Leak-proof lid, BPA free, 750ml.",
-    "price": 34.99,
-    "originalPrice": 44.99,
-    "image": "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=400&h=500&fit=crop",
-    "category": "Sports",
-    "rating": 4.6,
-    "reviews": 2340,
-    "inStock": true,
-    "features": ["24h Cold / 12h Hot", "Leak-Proof Lid", "BPA Free", "750ml Capacity"]
-  }
+    {
+        "id": "1",
+        "name": "Wireless Headphones Pro",
+        "description": "Premium noise-cancelling wireless headphones with 40-hour battery life, spatial audio, and ultra-comfortable memory foam ear cushions.",
+        "price": 299.99,
+        "originalPrice": 399.99,
+        "image": "/assets/products/1.svg",
+        "category": "Electronics",
+        "rating": 4.8,
+        "reviews": 1240,
+        "inStock": true,
+        "features": [
+            "Active Noise Cancellation",
+            "40-hour battery",
+            "Bluetooth 5.3",
+            "Spatial Audio"
+        ]
+    },
+    {
+        "id": "2",
+        "name": "Smart Watch Series X",
+        "description": "Advanced fitness tracking smartwatch with GPS, heart-rate monitoring, sleep insights, and a vivid always-on AMOLED display.",
+        "price": 399,
+        "originalPrice": 499,
+        "image": "/assets/products/2.svg",
+        "category": "Electronics",
+        "rating": 4.6,
+        "reviews": 892,
+        "inStock": true,
+        "features": [
+            "GPS + Cellular",
+            "Heart Rate Monitor",
+            "Water Resistant 50m",
+            "7-day Battery"
+        ]
+    },
+    {
+        "id": "3",
+        "name": "Running Shoes Elite",
+        "description": "Lightweight performance running shoes with responsive cushioning and breathable engineered knit upper for race day comfort.",
+        "price": 159.99,
+        "originalPrice": 189.99,
+        "image": "/assets/products/3.svg",
+        "category": "Sports",
+        "rating": 4.7,
+        "reviews": 2103,
+        "inStock": true,
+        "features": [
+            "Responsive Foam Midsole",
+            "Breathable Knit Upper",
+            "Carbon Fiber Plate",
+            "230g Lightweight"
+        ]
+    },
+    {
+        "id": "4",
+        "name": "Classic Denim Jacket",
+        "description": "Timeless denim jacket crafted from premium selvedge denim with a modern tailored fit and vintage wash finish.",
+        "price": 89.99,
+        "image": "/assets/products/4.svg",
+        "category": "Clothing",
+        "rating": 4.5,
+        "reviews": 567,
+        "inStock": true,
+        "features": [
+            "100% Selvedge Denim",
+            "Tailored Fit",
+            "Brass Hardware",
+            "Machine Washable"
+        ]
+    },
+    {
+        "id": "5",
+        "name": "Leather Messenger Bag",
+        "description": "Handcrafted full-grain leather messenger bag with padded laptop compartment and solid brass hardware. Ages beautifully.",
+        "price": 219.99,
+        "originalPrice": 279.99,
+        "image": "/assets/products/5.svg",
+        "category": "Accessories",
+        "rating": 4.9,
+        "reviews": 342,
+        "inStock": true,
+        "features": [
+            "Full-Grain Leather",
+            "Fits 15\" Laptop",
+            "Adjustable Strap",
+            "Brass Buckles"
+        ]
+    },
+    {
+        "id": "6",
+        "name": "Minimalist Desk Lamp",
+        "description": "Architect-style LED desk lamp with stepless dimming, adjustable color temperature, and a weighted anti-tip base.",
+        "price": 64.99,
+        "image": "/assets/products/6.svg",
+        "category": "Home",
+        "rating": 4.3,
+        "reviews": 198,
+        "inStock": true,
+        "features": [
+            "Stepless Dimming",
+            "3 Color Temperatures",
+            "USB Charging Port",
+            "Eye-Care Glow"
+        ]
+    },
+    {
+        "id": "7",
+        "name": "Yoga Mat Premium",
+        "description": "Extra-thick non-slip yoga mat made from eco-friendly TPE with alignment lines and a carry strap included.",
+        "price": 49.99,
+        "originalPrice": 69.99,
+        "image": "/assets/products/7.svg",
+        "category": "Sports",
+        "rating": 4.4,
+        "reviews": 780,
+        "inStock": true,
+        "features": [
+            "6mm Cushioning",
+            "Non-Slip Surface",
+            "Eco-Friendly TPE",
+            "Alignment Lines"
+        ]
+    },
+    {
+        "id": "8",
+        "name": "Polarized Aviator Sunglasses",
+        "description": "Iconic aviator sunglasses with polarized lenses, UV400 protection, and featherlight titanium frame.",
+        "price": 129.99,
+        "image": "/assets/products/8.svg",
+        "category": "Accessories",
+        "rating": 4.6,
+        "reviews": 1120,
+        "inStock": false,
+        "features": [
+            "Polarized Lenses",
+            "UV400 Protection",
+            "Titanium Frame",
+            "Hard Case Included"
+        ]
+    },
+    {
+        "id": "9",
+        "name": "Ceramic Pour-Over Set",
+        "description": "Hand-glazed ceramic pour-over coffee set with reusable stainless filter and matching carafe. Brews 2 cups.",
+        "price": 54.99,
+        "image": "/assets/products/9.svg",
+        "category": "Home",
+        "rating": 4.7,
+        "reviews": 425,
+        "inStock": true,
+        "features": [
+            "Hand-Glazed Ceramic",
+            "Reusable Steel Filter",
+            "Dishwasher Safe",
+            "Brews 2 Cups"
+        ]
+    },
+    {
+        "id": "10",
+        "name": "Merino Wool Sweater",
+        "description": "Ultra-soft 100% merino wool crew-neck sweater. Temperature regulating, odor resistant, and machine washable.",
+        "price": 119.99,
+        "originalPrice": 149.99,
+        "image": "/assets/products/10.svg",
+        "category": "Clothing",
+        "rating": 4.5,
+        "reviews": 290,
+        "inStock": true,
+        "features": [
+            "100% Merino Wool",
+            "Crew Neck",
+            "Machine Washable",
+            "Odor Resistant"
+        ]
+    },
+    {
+        "id": "11",
+        "name": "Mechanical Keyboard MX",
+        "description": "Hot-swappable mechanical keyboard with gasket mount, PBT keycaps, RGB backlight, and tactile linear switches.",
+        "price": 149.99,
+        "image": "/assets/products/11.svg",
+        "category": "Electronics",
+        "rating": 4.8,
+        "reviews": 1567,
+        "inStock": true,
+        "features": [
+            "Hot-Swap Switches",
+            "Gasket Mount",
+            "PBT Keycaps",
+            "Per-Key RGB"
+        ]
+    },
+    {
+        "id": "12",
+        "name": "Insulated Water Bottle",
+        "description": "Double-wall vacuum insulated bottle keeps drinks cold 24h or hot 12h. Leak-proof lid, BPA free, 750ml.",
+        "price": 34.99,
+        "originalPrice": 44.99,
+        "image": "/assets/products/12.svg",
+        "category": "Sports",
+        "rating": 4.6,
+        "reviews": 2340,
+        "inStock": true,
+        "features": [
+            "24h Cold / 12h Hot",
+            "Leak-Proof Lid",
+            "BPA Free",
+            "750ml Capacity"
+        ]
+    }
 ]
