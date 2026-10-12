@@ -33,7 +33,7 @@
               <div class="<?= in_array($name, ['street', 'country'], true) ? 'sm:col-span-2' : '' ?>">
                 <label class="block text-sm font-medium mb-1"><?= $label ?></label>
                 <input name="<?= e($name) ?>" required value="<?= e((string) $default) ?>"
-                       class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                       class="w-full rounded-lg border border-[color:var(--glass-line)] glass-input px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
               </div>
             <?php endforeach; ?>
           </div>
@@ -49,18 +49,18 @@
                    cannot be captured by proxies/extensions; demo-only, not stored. -->
               <input name="cardNumber" inputmode="numeric" placeholder="1234 5678 9012 3456" maxlength="19" required
                      autocomplete="off" data-lpignore="true"
-                     class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-sm">
+                     class="w-full rounded-lg border border-[color:var(--glass-line)] glass-input px-3 py-2 text-sm">
             </div>
             <div>
               <label class="block text-sm font-medium mb-1">Expiry (MM/YY)</label>
-              <input name="expiry" placeholder="08/27" pattern="\d{2}/\d{2}" required autocomplete="off" class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-sm">
+              <input name="expiry" placeholder="08/27" pattern="\d{2}/\d{2}" required autocomplete="off" class="w-full rounded-lg border border-[color:var(--glass-line)] glass-input px-3 py-2 text-sm">
             </div>
             <div>
               <label class="block text-sm font-medium mb-1">CVC</label>
-              <input name="cvc" type="password" inputmode="numeric" placeholder="123" maxlength="4" required autocomplete="off" class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-sm">
+              <input name="cvc" type="password" inputmode="numeric" placeholder="123" maxlength="4" required autocomplete="off" class="w-full rounded-lg border border-[color:var(--glass-line)] glass-input px-3 py-2 text-sm">
             </div>
           </div>
-          <p class="text-xs text-gray-400 mt-3">Demo checkout — no real charge is made and card data is never stored.</p>
+          <p class="text-xs text-glass-muted mt-3">Demo checkout — no real charge is made and card data is never stored.</p>
         </section>
       </div>
 

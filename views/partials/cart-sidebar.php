@@ -63,7 +63,7 @@
   </div>
 
   <?php if ($items): ?>
-    <div class="border-t border-gray-200 dark:border-gray-800 px-4 py-4 space-y-3">
+    <div class="border-t border-[color:var(--glass-line)] dark:border-gray-800 px-4 py-4 space-y-3">
       <div class="flex justify-between font-semibold">
         <span>Subtotal</span><span><?= money($subtotal) ?></span>
       </div>

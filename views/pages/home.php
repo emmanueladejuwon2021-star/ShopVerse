@@ -34,7 +34,7 @@
       </h1>
       <p class="mt-3 text-indigo-100 max-w-md mx-auto md:mx-0">Curated premium goods at honest prices. Free shipping on orders over $50.</p>
       <div class="mt-6 flex flex-col sm:flex-row justify-center md:justify-start gap-3">
-        <a href="/products" class="btn-shine rounded-xl bg-white text-indigo-700 font-semibold px-6 py-3 text-center shadow-lg shadow-indigo-900/20 hover:bg-indigo-50">Shop Now</a>
+        <a href="/products" class="btn-shine rounded-xl bg-white text-indigo-700 font-semibold px-6 py-3 text-center shadow-lg shadow-indigo-900/20 hover:bg-indigo-100">Shop Now</a>
         <a href="/products?category=Electronics" class="rounded-xl border border-white/60 font-semibold px-6 py-3 text-center hover:bg-white/10 transition-colors">Browse Electronics</a>
       </div>
     </div>
@@ -71,15 +71,15 @@
   <div class="grid grid-cols-3 gap-3">
     <div class="rounded-xl glass-card p-3 shadow-sm text-center">
       <span class="trust-icon mx-auto">🚚</span><h3 class="font-bold text-xs sm:text-sm mt-2">Free Shipping</h3>
-      <p class="text-[11px] sm:text-xs text-glass-muted dark:text-gray-400 mt-0.5">Over $50</p>
+      <p class="text-[11px] sm:text-xs text-glass-muted mt-0.5">Over $50</p>
     </div>
     <div class="rounded-xl glass-card p-3 shadow-sm text-center">
       <span class="trust-icon mx-auto">↩️</span><h3 class="font-bold text-xs sm:text-sm mt-2">Easy Returns</h3>
-      <p class="text-[11px] sm:text-xs text-glass-muted dark:text-gray-400 mt-0.5">30-day policy</p>
+      <p class="text-[11px] sm:text-xs text-glass-muted mt-0.5">30-day policy</p>
     </div>
     <div class="rounded-xl glass-card p-3 shadow-sm text-center">
       <span class="trust-icon mx-auto">🔒</span><h3 class="font-bold text-xs sm:text-sm mt-2">Secure Checkout</h3>
-      <p class="text-[11px] sm:text-xs text-glass-muted dark:text-gray-400 mt-0.5">Data protected</p>
+      <p class="text-[11px] sm:text-xs text-glass-muted mt-0.5">Data protected</p>
     </div>
   </div>
 </section>

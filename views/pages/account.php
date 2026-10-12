@@ -80,7 +80,7 @@
   <div class="flex flex-wrap gap-2 mb-8 border-b glass-divider pb-2">
     <?php foreach ($tabs as $key => $label): ?>
       <a href="/account?tab=<?= $key ?>"
-         class="px-4 py-2 rounded-lg text-sm font-semibold <?= $tab === $key ? 'bg-indigo-600 text-white' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800' ?>">
+         class="px-4 py-2 rounded-lg text-sm font-semibold <?= $tab === $key ? 'btn-primary text-white' : 'text-glass-muted hover:bg-black/5 dark:hover:bg-white/10' ?>">
         <?= e($label) ?>
       </a>
     <?php endforeach; ?>
@@ -90,13 +90,13 @@
     <form method="post" action="/account?tab=profile" class="glass-card rounded-xl p-6 space-y-4 max-w-lg">
       <?= csrf_field() ?><input type="hidden" name="action" value="save_profile"><input type="hidden" name="tab" value="profile">
       <div><label class="block text-sm font-medium mb-1">Name</label>
-        <input value="<?= e($user['name']) ?>" disabled class="w-full rounded-lg border glass-divider bg-gray-100 dark:bg-gray-900 px-3 py-2 text-sm"></div>
+        <input value="<?= e($user['name']) ?>" disabled class="w-full rounded-lg border glass-divider glass-input px-3 py-2 text-sm"></div>
       <div><label class="block text-sm font-medium mb-1">Email</label>
-        <input value="<?= e($user['email']) ?>" disabled class="w-full rounded-lg border glass-divider bg-gray-100 dark:bg-gray-900 px-3 py-2 text-sm"></div>
+        <input value="<?= e($user['email']) ?>" disabled class="w-full rounded-lg border glass-divider glass-input px-3 py-2 text-sm"></div>
       <div><label class="block text-sm font-medium mb-1">Phone</label>
-        <input name="phone" value="<?= e($acct['phone']) ?>" class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-sm"></div>
+        <input name="phone" value="<?= e($acct['phone']) ?>" class="w-full rounded-lg border border-[color:var(--glass-line)] glass-input px-3 py-2 text-sm"></div>
       <div><label class="block text-sm font-medium mb-1">Bio</label>
-        <textarea name="bio" rows="3" class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-sm"><?= e($acct['bio']) ?></textarea></div>
+        <textarea name="bio" rows="3" class="w-full rounded-lg border border-[color:var(--glass-line)] glass-input px-3 py-2 text-sm"><?= e($acct['bio']) ?></textarea></div>
       <button class="btn-primary rounded-xl font-semibold px-5 py-2 text-sm">Save Changes</button>
     </form>
 
@@ -111,22 +111,22 @@
               <form method="post"><?= csrf_field() ?><input type="hidden" name="action" value="delete_address"><input type="hidden" name="address_id" value="<?= e($a['id']) ?>">
                 <button class="text-xs text-red-500 hover:underline">Delete</button></form>
             </div>
-            <p class="mt-1 text-gray-600 dark:text-gray-300"><?= e($a['fullName']) ?><br><?= e($a['street']) ?><br><?= e($a['city']) ?>, <?= e($a['state']) ?> <?= e($a['zipCode']) ?><br><?= e($a['country']) ?></p>
+            <p class="mt-1 text-glass-muted dark:text-gray-300"><?= e($a['fullName']) ?><br><?= e($a['street']) ?><br><?= e($a['city']) ?>, <?= e($a['state']) ?> <?= e($a['zipCode']) ?><br><?= e($a['country']) ?></p>
           </div>
         <?php endforeach; ?>
       </div>
       <form method="post" class="glass-card rounded-xl p-6 space-y-3 h-fit">
         <?= csrf_field() ?><input type="hidden" name="action" value="add_address">
         <h2 class="font-bold">Add Address</h2>
-        <input name="label" placeholder="Label (Home/Work)" required class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-sm">
-        <input name="street" placeholder="Street" required class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-sm">
+        <input name="label" placeholder="Label (Home/Work)" required class="w-full rounded-lg border border-[color:var(--glass-line)] glass-input px-3 py-2 text-sm">
+        <input name="street" placeholder="Street" required class="w-full rounded-lg border border-[color:var(--glass-line)] glass-input px-3 py-2 text-sm">
         <div class="grid grid-cols-2 gap-3">
-          <input name="city" placeholder="City" required class="rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-sm">
-          <input name="state" placeholder="State" required class="rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-sm">
+          <input name="city" placeholder="City" required class="rounded-lg border border-[color:var(--glass-line)] glass-input px-3 py-2 text-sm">
+          <input name="state" placeholder="State" required class="rounded-lg border border-[color:var(--glass-line)] glass-input px-3 py-2 text-sm">
         </div>
         <div class="grid grid-cols-2 gap-3">
-          <input name="zipCode" placeholder="ZIP" required class="rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-sm">
-          <input name="country" placeholder="Country" required class="rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-sm">
+          <input name="zipCode" placeholder="ZIP" required class="rounded-lg border border-[color:var(--glass-line)] glass-input px-3 py-2 text-sm">
+          <input name="country" placeholder="Country" required class="rounded-lg border border-[color:var(--glass-line)] glass-input px-3 py-2 text-sm">
         </div>
         <button class="btn-primary rounded-xl font-semibold px-5 py-2 text-sm w-full">Save Address</button>
       </form>
@@ -148,11 +148,11 @@
       <form method="post" class="glass-card rounded-xl p-6 space-y-3 h-fit">
         <?= csrf_field() ?><input type="hidden" name="action" value="add_card">
         <h2 class="font-bold">Add Card</h2>
-        <input name="cardNumber" placeholder="Card number" inputmode="numeric" maxlength="19" required class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-sm">
-        <input name="cardName" placeholder="Name on card" required class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-sm">
-        <input name="expiry" placeholder="MM/YY" pattern="\d{2}/\d{2}" required class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-sm">
+        <input name="cardNumber" placeholder="Card number" inputmode="numeric" maxlength="19" required class="w-full rounded-lg border border-[color:var(--glass-line)] glass-input px-3 py-2 text-sm">
+        <input name="cardName" placeholder="Name on card" required class="w-full rounded-lg border border-[color:var(--glass-line)] glass-input px-3 py-2 text-sm">
+        <input name="expiry" placeholder="MM/YY" pattern="\d{2}/\d{2}" required class="w-full rounded-lg border border-[color:var(--glass-line)] glass-input px-3 py-2 text-sm">
         <button class="btn-primary rounded-xl font-semibold px-5 py-2 text-sm w-full">Add Card</button>
-        <p class="text-xs text-gray-400">Only the last 4 digits are stored.</p>
+        <p class="text-xs text-glass-muted">Only the last 4 digits are stored.</p>
       </form>
     </div>
 
@@ -163,7 +163,7 @@
           'orderUpdates' => 'Order updates', 'promotions' => 'Promotions & offers', 'newsletter' => 'Newsletter',
           'securityAlerts' => 'Security alerts', 'productRecommendations' => 'Product recommendations', 'smsNotifications' => 'SMS notifications'];
       foreach ($labels as $key => $label): ?>
-        <label class="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-700 text-sm cursor-pointer">
+        <label class="flex items-center justify-between py-2 border-b border-[color:var(--glass-line)] dark:border-gray-700 text-sm cursor-pointer">
           <span><?= e($label) ?></span>
           <input type="checkbox" name="<?= e($key) ?>" <?= !empty($acct['notifications'][$key]) ? 'checked' : '' ?> class="w-4 h-4 accent-indigo-600">
         </label>

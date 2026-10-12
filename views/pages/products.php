@@ -14,26 +14,26 @@
   <!-- Filter bar -->
   <form method="get" action="/products" class="glass-card rounded-xl p-4 mb-8 grid sm:grid-cols-2 lg:grid-cols-5 gap-3">
     <input type="search" name="search" placeholder="Search…" value="<?= e($opts['search']) ?>"
-           class="rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-sm">
-    <select name="category" class="rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-sm">
+           class="rounded-lg border border-[color:var(--glass-line)] glass-input px-3 py-2 text-sm">
+    <select name="category" class="rounded-lg border border-[color:var(--glass-line)] glass-input px-3 py-2 text-sm">
       <?php foreach (get_categories() as $c): ?>
         <option <?= $opts['category'] === $c ? 'selected' : '' ?>><?= e($c) ?></option>
       <?php endforeach; ?>
     </select>
-    <select name="maxPrice" class="rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-sm">
+    <select name="maxPrice" class="rounded-lg border border-[color:var(--glass-line)] glass-input px-3 py-2 text-sm">
       <option value="">Max price</option>
       <?php foreach ([50, 100, 200, 500] as $mp): ?>
         <option value="<?= $mp ?>" <?= (string) $opts['maxPrice'] === (string) $mp ? 'selected' : '' ?>>Under $<?= $mp ?></option>
       <?php endforeach; ?>
     </select>
-    <select name="minRating" class="rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-sm">
+    <select name="minRating" class="rounded-lg border border-[color:var(--glass-line)] glass-input px-3 py-2 text-sm">
       <option value="">Rating</option>
       <?php foreach ([4.5, 4, 3] as $r): ?>
         <option value="<?= $r ?>" <?= (string) $opts['minRating'] === (string) $r ? 'selected' : '' ?>><?= $r ?>★ &amp; up</option>
       <?php endforeach; ?>
     </select>
     <div class="flex gap-2">
-      <select name="sort" class="flex-1 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-sm">
+      <select name="sort" class="flex-1 rounded-lg border border-[color:var(--glass-line)] glass-input px-3 py-2 text-sm">
         <?php foreach (['featured' => 'Featured', 'price-low' => 'Price: Low to High', 'price-high' => 'Price: High to Low', 'rating' => 'Top Rated', 'newest' => 'Newest'] as $v => $l): ?>
           <option value="<?= $v ?>" <?= $opts['sort'] === $v ? 'selected' : '' ?>><?= $l ?></option>
         <?php endforeach; ?>

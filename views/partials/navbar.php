@@ -15,12 +15,12 @@
     <div class="hidden md:flex items-center gap-6">
       <?php foreach ($nav as $href => $label): ?>
         <a href="<?= e($href) ?>"
-           class="text-sm font-medium hover:text-indigo-600 dark:hover:text-indigo-400 <?= $pathNow === $href ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-600 dark:text-gray-300' ?>">
+           class="text-sm font-medium hover:text-indigo-600 dark:hover:text-indigo-400 <?= $pathNow === $href ? 'text-indigo-600 dark:text-indigo-400' : 'text-glass-muted' ?>">
           <?= e($label) ?>
         </a>
       <?php endforeach; ?>
       <?php if ($user): ?>
-        <a href="/account" class="text-sm font-medium <?= $pathNow === '/account' ? 'text-indigo-600' : 'text-gray-600 dark:text-gray-300' ?> hover:text-indigo-600">Account</a>
+        <a href="/account" class="text-sm font-medium <?= $pathNow === '/account' ? 'text-indigo-600' : 'text-glass-muted' ?> hover:text-indigo-600">Account</a>
       <?php endif; ?>
     </div>
 
@@ -55,7 +55,7 @@
         <a href="/login" class="text-sm font-semibold text-indigo-600 dark:text-indigo-400 hover:underline">Sign in</a>
       <?php endif; ?>
 
-      <button id="mobile-menu-btn" aria-label="Menu" class="md:hidden p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
+      <button id="mobile-menu-btn" aria-label="Menu" class="md:hidden p-2 rounded hover:bg-black/5 dark:hover:bg-white/10">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
       </button>
     </div>

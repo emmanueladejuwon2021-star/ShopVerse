@@ -123,4 +123,6 @@
   }
   .btn-primary:hover { filter: brightness(1.07); box-shadow: 0 8px 26px rgba(99, 102, 241, 0.45); }
   .btn-primary:active { transform: translateY(1px); }
+  .glass-btn{background:var(--glass-chip-bg);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--glass-line);color:var(--glass-text)}
+  .glass-btn:hover{background:var(--glass-chip-hover)}
 }
