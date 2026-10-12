@@ -28,6 +28,12 @@ The SQLite schema auto-creates itself on first write (`storage/shopverse.db`).
 ## Deploy (Vercel or any PHP host)
 
 Vercel notes (fixed after the "unexpected internal error" deploy failure):
+- Serverless Functions must live in `/api`: `vercel.json` declares
+  `functions: { "api/index.php": ... }` and a catch-all route rewriting every
+  request to `/api/index.php`. That function is a thin wrapper that requires
+  `public/index.php` (the front controller), so routing logic stays in one file.
+  (The previous pattern `public/index.php` matched no function inside `api/`,
+  which is what aborted the build.)
 - `vercel.json` uses the community **`vercel-php@0.8.0`** runtime (the previously
   referenced `vercel/php@8.3` / `@vercel/php` do not exist on Vercel, which made
   every build fail). No legacy `builds` key is used.
