@@ -55,4 +55,6 @@ if ($page === null) {
     exit;
 }
 
+// UI-only: sidebar auto-open flag is consumed by the layout on this response.
+unset($_SESSION['cart_open']);
 render_page($page, $params);

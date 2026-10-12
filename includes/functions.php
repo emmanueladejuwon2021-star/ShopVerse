@@ -59,6 +59,28 @@ function flash(): ?string
     return $msg ?? $err;
 }
 
+/**
+ * Open-redirect protection — only same-site absolute paths are allowed
+ * as targets for user-controlled ?redirect= parameters.
+ */
+function validate_redirect(string $url): string
+{
+    if ($url === '' || !str_starts_with($url, '/') || str_starts_with($url, '//')) {
+        return '/';
+    }
+    return $url;
+}
+
+/** Build the /login URL preserving redirect target + tab mode. */
+function login_url(string $redirectTo = '/', string $mode = 'login'): string
+{
+    $q = ['mode' => $mode];
+    if ($redirectTo !== '/') {
+        $q['redirect'] = $redirectTo;
+    }
+    return '/login?' . http_build_query($q);
+}
+
 function stars_html(float $rating): string
 {
     $out = '';

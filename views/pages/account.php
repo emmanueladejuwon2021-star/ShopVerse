@@ -1,21 +1,34 @@
 <?php /* AccountSettings — port of src/pages/AccountSettings.tsx (Profile / Addresses / Payments / Notifications tabs).
-        Audit fix: the React version discarded address/card edits on tab switch; here they persist to storage. */
+        Audit fix: edits persist server-side (Turso/SQLite) instead of being discarded on navigation. */
       $user = current_user();
       $tab = in_array($_GET['tab'] ?? '', ['profile', 'addresses', 'payments', 'notifications'], true) ? $_GET['tab'] : 'profile';
 
-      $file = STORAGE_DIR . '/account_' . $user['id'] . '.json';
-      $acct = storage_read($file);
-      $acct += ['phone' => '', 'bio' => '', 'addresses' => [], 'cards' => [], 'notifications' => array_fill_keys(
-          ['orderUpdates', 'promotions', 'newsletter', 'securityAlerts', 'productRecommendations', 'smsNotifications'], true)];
+      $acct = guard_read(fn() => db_get_account((string) $user['id']))['result']
+              ?? ['phone' => '', 'bio' => '', 'addresses' => [], 'cards' => [],
+                  'notifications' => array_fill_keys(
+                      ['orderUpdates', 'promotions', 'newsletter', 'securityAlerts', 'productRecommendations', 'smsNotifications'], true)];
+
+      /** Persist + flash + redirect, with graceful storage-error handling. */
+      function account_commit(array $acct, string $message, string $tab): never
+      {
+          $res = guard_write(function () use ($acct) {
+              db_save_account((string) current_user()['id'], $acct);
+              return ['ok' => true];
+          });
+          if ($res['ok']) {
+              $_SESSION['flash'] = $message;
+          } else {
+              $_SESSION['flash_error'] = implode(' ', $res['errors']);
+          }
+          redirect('/account?tab=' . $tab);
+      }
 
       if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         switch ($_POST['action'] ?? '') {
           case 'save_profile':
             $acct['phone'] = trim((string) ($_POST['phone'] ?? ''));
             $acct['bio'] = trim((string) ($_POST['bio'] ?? ''));
-            storage_write($file, $acct);
-            $_SESSION['flash'] = 'Profile saved.';
-            redirect('/account?tab=' . e($_POST['tab'] ?? 'profile'));
+            account_commit($acct, 'Profile saved.', 'profile');
           case 'add_address':
             $acct['addresses'][] = [
                 'id' => bin2hex(random_bytes(4)),
@@ -27,14 +40,10 @@
                 'zipCode' => trim((string) ($_POST['zipCode'] ?? '')),
                 'country' => trim((string) ($_POST['country'] ?? '')),
             ];
-            storage_write($file, $acct);
-            $_SESSION['flash'] = 'Address saved.';
-            redirect('/account?tab=addresses');
+            account_commit($acct, 'Address saved.', 'addresses');
           case 'delete_address':
             $acct['addresses'] = array_values(array_filter($acct['addresses'], fn($a) => $a['id'] !== ($_POST['address_id'] ?? '')));
-            storage_write($file, $acct);
-            $_SESSION['flash'] = 'Address deleted.';
-            redirect('/account?tab=addresses');
+            account_commit($acct, 'Address deleted.', 'addresses');
           case 'add_card':
             $num = preg_replace('/\D/', '', (string) ($_POST['cardNumber'] ?? ''));
             $acct['cards'][] = [
@@ -43,21 +52,15 @@
                 'expiry' => trim((string) ($_POST['expiry'] ?? '')),
                 'name' => trim((string) ($_POST['cardName'] ?? '')),
             ];
-            storage_write($file, $acct);
-            $_SESSION['flash'] = 'Card added.';
-            redirect('/account?tab=payments');
+            account_commit($acct, 'Card added.', 'payments');
           case 'delete_card':
             $acct['cards'] = array_values(array_filter($acct['cards'], fn($c) => $c['id'] !== ($_POST['card_id'] ?? '')));
-            storage_write($file, $acct);
-            $_SESSION['flash'] = 'Card removed.';
-            redirect('/account?tab=payments');
+            account_commit($acct, 'Card removed.', 'payments');
           case 'save_notifications':
             foreach ($acct['notifications'] as $k => $v) {
                 $acct['notifications'][$k] = isset($_POST[$k]);
             }
-            storage_write($file, $acct);
-            $_SESSION['flash'] = 'Notification preferences saved.';
-            redirect('/account?tab=notifications');
+            account_commit($acct, 'Notification preferences saved.', 'notifications');
         }
       }
 
