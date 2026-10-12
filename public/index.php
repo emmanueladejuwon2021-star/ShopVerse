@@ -95,14 +95,21 @@ if ($page === null) {
 }
 
 // UI-only: one-shot flag that opens the cart drawer for THIS response only.
-// It is intentionally NOT stored in the session (PHP's shutdown session
-// write-back used to resurrect the old $_SESSION['cart_open'] key, leaving
-// the drawer stuck open on every page). The only way to get it set is by
-// POSTing with X-Cart-Open: 1 — emitted once by the silent post-back that
-// handle_post_actions() returns right after a successful add-to-cart.
-$cartOpenOnce = ($_SERVER['HTTP_X_CART_OPEN'] ?? '') === '1';
+// It lives in a short-lived cookie set by cart_add() and is consumed (deleted)
+// right here — never in $_SESSION, because PHP's shutdown session write-back
+// resurrected the old $_SESSION['cart_open'] key and left the drawer stuck
+// open over every page (including the home page).
+$cartOpenOnce = (($_COOKIE['cart_open_once'] ?? '') === '1');
 unset($_SESSION['cart_open']); // purge any stale legacy key from old deploys
-if ($cartOpenOnce) {
-    session_write_close(); // commit the purge before rendering
+if ($cartOpenOnce || isset($_COOKIE['cart_open_once'])) {
+    $isHttps = !empty($_SERVER['HTTPS']) || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https';
+    setcookie('cart_open_once', '', [
+        'path'     => '/',
+        'expires'  => time() - 3600,
+        'httponly' => true,
+        'samesite' => 'Lax',
+        'secure'   => $isHttps,
+    ]);
+    unset($_COOKIE['cart_open_once']);
 }
 render_page($page, $params + ['cart_open_once' => $cartOpenOnce]);
