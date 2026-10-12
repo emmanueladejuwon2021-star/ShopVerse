@@ -15,7 +15,7 @@
 
     <?php if ($mode === 'login'): ?>
       <form method="post" action="/login" class="mt-6 space-y-4">
-        <input type="hidden" name="action" value="login">
+        <?= csrf_field() ?><input type="hidden" name="action" value="login">
         <input type="hidden" name="redirect" value="<?= e($redirect) ?>">
         <div>
           <label class="block text-sm font-medium mb-1">Email</label>
@@ -31,7 +31,7 @@
       </form>
     <?php else: ?>
       <form method="post" action="/login" class="mt-6 space-y-4">
-        <input type="hidden" name="action" value="register">
+        <?= csrf_field() ?><input type="hidden" name="action" value="register">
         <input type="hidden" name="redirect" value="<?= e($redirect) ?>">
         <div>
           <label class="block text-sm font-medium mb-1">Full Name</label>

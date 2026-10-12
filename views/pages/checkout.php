@@ -13,7 +13,7 @@
     <p class="text-gray-500">Your cart is empty. <a class="text-indigo-600 hover:underline" href="/products">Go shopping →</a></p>
   <?php else: ?>
     <form method="post" action="/checkout" class="grid lg:grid-cols-3 gap-8">
-      <input type="hidden" name="action" value="place_order">
+      <?= csrf_field() ?><input type="hidden" name="action" value="place_order">
 
       <div class="lg:col-span-2 space-y-8">
         <!-- Shipping -->

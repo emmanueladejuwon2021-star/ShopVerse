@@ -24,7 +24,7 @@
           <p class="text-sm text-indigo-600 dark:text-indigo-400 font-semibold"><?= money($p['price']) ?></p>
           <div class="flex items-center gap-2 mt-1">
             <form method="post" class="inline">
-              <input type="hidden" name="action" value="update_quantity">
+              <?= csrf_field() ?><input type="hidden" name="action" value="update_quantity">
               <input type="hidden" name="product_id" value="<?= e($p['id']) ?>">
               <input type="hidden" name="quantity" value="<?= max(0, $item['quantity'] - 1) ?>">
               <input type="hidden" name="redirect" value="<?= e($_SERVER['REQUEST_URI'] ?? '/') ?>">
@@ -32,14 +32,14 @@
             </form>
             <span class="text-sm w-6 text-center"><?= (int) $item['quantity'] ?></span>
             <form method="post" class="inline">
-              <input type="hidden" name="action" value="update_quantity">
+              <?= csrf_field() ?><input type="hidden" name="action" value="update_quantity">
               <input type="hidden" name="product_id" value="<?= e($p['id']) ?>">
               <input type="hidden" name="quantity" value="<?= $item['quantity'] + 1 ?>">
               <input type="hidden" name="redirect" value="<?= e($_SERVER['REQUEST_URI'] ?? '/') ?>">
               <button class="w-6 h-6 rounded bg-gray-100 dark:bg-gray-800 text-sm">+</button>
             </form>
             <form method="post" class="ml-auto">
-              <input type="hidden" name="action" value="remove_from_cart">
+              <?= csrf_field() ?><input type="hidden" name="action" value="remove_from_cart">
               <input type="hidden" name="product_id" value="<?= e($p['id']) ?>">
               <input type="hidden" name="redirect" value="<?= e($_SERVER['REQUEST_URI'] ?? '/') ?>">
               <button class="text-xs text-red-500 hover:underline">Remove</button>

@@ -52,7 +52,7 @@
       </ul>
 
       <form method="post" class="mt-8 flex items-center gap-4">
-        <input type="hidden" name="action" value="add_to_cart">
+        <?= csrf_field() ?><input type="hidden" name="action" value="add_to_cart">
         <input type="hidden" name="product_id" value="<?= e($product['id']) ?>">
         <input type="hidden" name="redirect" value="/product/<?= e($product['id']) ?>">
         <input type="number" name="quantity" min="1" max="10" value="1"

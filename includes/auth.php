@@ -93,14 +93,47 @@ function register_user(string $name, string $email, string $password): array
     return ['ok' => true, 'user' => $user];
 }
 
+/**
+ * Brute-force throttle (audit fix): max 8 failed attempts per email+IP per
+ * 10 minutes. State lives in the session, which is server-side — good enough
+ * for this app's scale without needing an external rate limiter.
+ */
+function login_throttled(string $email): bool
+{
+    $key = 'login_fail_' . md5(strtolower($email) . '|' . ($_SERVER['REMOTE_ADDR'] ?? ''));
+    $now = time();
+    $rec = $_SESSION[$key] ?? ['count' => 0, 'first' => $now];
+    if ($now - (int) $rec['first'] > 600) {
+        $rec = ['count' => 0, 'first' => $now]; // window expired
+    }
+    $_SESSION[$key] = $rec;
+    return $rec['count'] >= 8;
+}
+
+function login_fail_record(string $email): void
+{
+    $key = 'login_fail_' . md5(strtolower($email) . '|' . ($_SERVER['REMOTE_ADDR'] ?? ''));
+    $now = time();
+    $rec = $_SESSION[$key] ?? ['count' => 0, 'first' => $now];
+    if ($now - (int) $rec['first'] > 600) {
+        $rec = ['count' => 0, 'first' => $now];
+    }
+    $rec['count']++;
+    $_SESSION[$key] = $rec;
+}
+
 function login_user(string $email, string $password): array
 {
+    if (login_throttled($email)) {
+        return ['ok' => false, 'errors' => ['Too many sign-in attempts. Please try again in a few minutes.']];
+    }
     $lookup = guard_read(fn() => db_find_user_by_email(strtolower(trim($email))));
     if (!$lookup['ok']) {
         return ['ok' => false, 'errors' => $lookup['errors']];
     }
     $u = $lookup['result'];
     if ($u && password_verify($password, (string) $u['passhash'])) {
+        unset($_SESSION['login_fail_' . md5(strtolower($email) . '|' . ($_SERVER['REMOTE_ADDR'] ?? ''))]);
         $user = [
             'id' => $u['id'],
             'name' => $u['name'],
@@ -111,6 +144,7 @@ function login_user(string $email, string $password): array
         $_SESSION['user'] = $user;
         return ['ok' => true, 'user' => $user];
     }
+    login_fail_record($email);
     return ['ok' => false, 'errors' => ['Invalid email or password.']];
 }
 
