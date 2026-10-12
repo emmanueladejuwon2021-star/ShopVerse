@@ -1,0 +1,94 @@
+<?php
+/**
+ * Product catalog + categories.
+ *
+ * NOTE: src/data/products.ts in the original React app exported an EMPTY
+ * array (flagged as CRITICAL in the audit), which made every storefront page
+ * render empty states. The PHP port restores a real catalog so the app works.
+ */
+
+declare(strict_types=1);
+
+function get_categories(): array
+{
+    return ['All', 'Electronics', 'Clothing', 'Accessories', 'Home', 'Sports'];
+}
+
+/** @return array<int, array<string,mixed>> */
+function all_products(): array
+{
+    static $cache = null;
+    if ($cache !== null) {
+        return $cache;
+    }
+    $cache = json_decode(
+        file_get_contents(__DIR__ . '/../data/products.json'),
+        true
+    );
+    return $cache;
+}
+
+function find_product(string $id): ?array
+{
+    foreach (all_products() as $p) {
+        if ((string) $p['id'] === $id) {
+            return $p;
+        }
+    }
+    return null;
+}
+
+function featured_products(int $limit = 4): array
+{
+    $items = all_products();
+    usort($items, fn($a, $b) => $b['rating'] <=> $a['rating']);
+    return array_slice($items, 0, $limit);
+}
+
+/**
+ * Filter/sort pipeline — mirrors the useMemo logic of src/pages/Products.tsx.
+ */
+function filter_products(array $opts): array
+{
+    $items = all_products();
+
+    if (!empty($opts['category']) && $opts['category'] !== 'All') {
+        $items = array_values(array_filter($items, fn($p) => $p['category'] === $opts['category']));
+    }
+
+    if (!empty($opts['search'])) {
+        $q = mb_strtolower($opts['search']);
+        $items = array_values(array_filter($items, function ($p) use ($q) {
+            return str_contains(mb_strtolower($p['name']), $q)
+                || str_contains(mb_strtolower($p['description']), $q);
+        }));
+    }
+
+    if (!empty($opts['maxPrice'])) {
+        $max = (float) $opts['maxPrice'];
+        $items = array_values(array_filter($items, fn($p) => $p['price'] <= $max));
+    }
+
+    if (!empty($opts['minRating'])) {
+        $min = (float) $opts['minRating'];
+        $items = array_values(array_filter($items, fn($p) => $p['rating'] >= $min));
+    }
+
+    switch ($opts['sort'] ?? 'featured') {
+        case 'price-low':
+            usort($items, fn($a, $b) => $a['price'] <=> $b['price']);
+            break;
+        case 'price-high':
+            usort($items, fn($a, $b) => $b['price'] <=> $a['price']);
+            break;
+        case 'rating':
+            usort($items, fn($a, $b) => $b['rating'] <=> $a['rating']);
+            break;
+        case 'newest':
+            // Audit fix: original used parseInt(id) which breaks on non-numeric ids.
+            usort($items, fn($a, $b) => $b['id'] <=> $a['id']);
+            break;
+    }
+
+    return $items;
+}
