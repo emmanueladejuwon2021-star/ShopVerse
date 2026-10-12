@@ -25,10 +25,28 @@ session_set_cookie_params([
 ]);
 session_start();
 
+// ---- Security response headers (audit fix) ----
+header('X-Content-Type-Options: nosniff');
+header('X-Frame-Options: DENY');
+header('Referrer-Policy: strict-origin-when-cross-origin');
+header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; form-action 'self'; frame-ancestors 'none'; base-uri 'self'");
+
 require __DIR__ . '/../includes/functions.php';
 require __DIR__ . '/../includes/data.php';
 require __DIR__ . '/../includes/auth.php';
 require __DIR__ . '/../includes/cart.php';
+
+// ---- CSRF protection (audit fix) ----
+if (!isset($_SESSION['csrf_token']) || !is_string($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $sent = $_POST['csrf'] ?? '';
+    if (!is_string($sent) || !hash_equals($_SESSION['csrf_token'], $sent)) {
+        http_response_code(400);
+        exit('Invalid or missing CSRF token. Please go back and try again.');
+    }
+}
 
 // ---- Route dispatch (mirrors the routes in src/App.tsx) ----
 $uri = rawurldecode(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/');

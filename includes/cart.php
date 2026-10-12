@@ -144,7 +144,9 @@ function handle_post_actions(): void
                 $_SESSION['flash'] = 'Welcome back, ' . $res['user']['name'] . '!';
                 redirect($redirectTo);
             }
-            $_SESSION['flash_error'] = implode(' ', $res['errors']);
+            // Audit fix (security): generic error only — never reveal whether the
+            // email exists. Login throttling lives in auth.php (per-email + per-IP).
+            $_SESSION['flash_error'] = 'Invalid email or password.';
             redirect(login_url($redirectTo));
             return;
 
@@ -159,7 +161,12 @@ function handle_post_actions(): void
                 $_SESSION['flash'] = 'Account created. Welcome to ShopVerse!';
                 redirect($redirectTo);
             }
-            $_SESSION['flash_error'] = implode(' ', $res['errors']);
+            // Audit fix (security): storage failures must not masquerade as
+            // validation errors; show a safe retry message instead.
+            $errors = in_array('Storage is unavailable right now. Please try again later.', $res['errors'], true)
+                ? $res['errors']
+                : array_map(static fn($e) => strtr($e, ['already exists' => 'could not be used']), $res['errors']);
+            $_SESSION['flash_error'] = implode(' ', $errors);
             redirect(login_url($redirectTo, 'register'));
             return;
 

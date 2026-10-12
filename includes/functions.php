@@ -10,6 +10,12 @@ function e(?string $s): string
     return htmlspecialchars((string) $s, ENT_QUOTES, 'UTF-8');
 }
 
+/** CSRF: hidden input to embed in every POST form. */
+function csrf_field(): string
+{
+    return '<input type="hidden" name="csrf" value="' . e($_SESSION['csrf_token'] ?? '') . '">';
+}
+
 function money(float|int|string $n): string
 {
     return '$' . number_format((float) $n, 2);
@@ -54,9 +60,15 @@ function render_page(string $page, array $params = []): void
 function flash(): ?string
 {
     $msg = $_SESSION['flash'] ?? null;
+    unset($_SESSION['flash']);
+    return $msg;
+}
+
+function flash_error(): ?string
+{
     $err = $_SESSION['flash_error'] ?? null;
-    unset($_SESSION['flash'], $_SESSION['flash_error']);
-    return $msg ?? $err;
+    unset($_SESSION['flash_error']);
+    return $err;
 }
 
 /**

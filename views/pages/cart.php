@@ -24,7 +24,7 @@
               <p class="text-indigo-600 dark:text-indigo-400 font-bold mt-1"><?= money($p['price']) ?></p>
               <div class="flex items-center gap-3 mt-3">
                 <form method="post" class="flex items-center gap-2">
-                  <input type="hidden" name="action" value="update_quantity">
+                  <?= csrf_field() ?><input type="hidden" name="action" value="update_quantity">
                   <input type="hidden" name="product_id" value="<?= e($p['id']) ?>">
                   <input type="hidden" name="redirect" value="/cart">
                   <input type="number" name="quantity" min="0" max="99" value="<?= (int) $item['quantity'] ?>"
@@ -32,7 +32,7 @@
                   <button class="text-xs rounded bg-gray-100 dark:bg-gray-700 px-2 py-1 hover:bg-gray-200">Update</button>
                 </form>
                 <form method="post">
-                  <input type="hidden" name="action" value="remove_from_cart">
+                  <?= csrf_field() ?><input type="hidden" name="action" value="remove_from_cart">
                   <input type="hidden" name="product_id" value="<?= e($p['id']) ?>">
                   <input type="hidden" name="redirect" value="/cart">
                   <button class="text-xs text-red-500 hover:underline">Remove</button>
@@ -44,7 +44,7 @@
         <?php endforeach; ?>
 
         <form method="post" class="pt-2">
-          <input type="hidden" name="action" value="clear_cart">
+          <?= csrf_field() ?><input type="hidden" name="action" value="clear_cart">
           <input type="hidden" name="redirect" value="/cart">
           <button class="text-sm text-gray-500 hover:text-red-500 underline">Clear entire cart</button>
         </form>

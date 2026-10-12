@@ -81,7 +81,7 @@
 
   <?php if ($tab === 'profile'): ?>
     <form method="post" action="/account?tab=profile" class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 space-y-4 max-w-lg">
-      <input type="hidden" name="action" value="save_profile"><input type="hidden" name="tab" value="profile">
+      <?= csrf_field() ?><input type="hidden" name="action" value="save_profile"><input type="hidden" name="tab" value="profile">
       <div><label class="block text-sm font-medium mb-1">Name</label>
         <input value="<?= e($user['name']) ?>" disabled class="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900 px-3 py-2 text-sm"></div>
       <div><label class="block text-sm font-medium mb-1">Email</label>
@@ -101,7 +101,7 @@
           <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 text-sm">
             <div class="flex justify-between items-start">
               <p class="font-semibold"><?= e($a['label']) ?></p>
-              <form method="post"><input type="hidden" name="action" value="delete_address"><input type="hidden" name="address_id" value="<?= e($a['id']) ?>">
+              <form method="post"><?= csrf_field() ?><input type="hidden" name="action" value="delete_address"><input type="hidden" name="address_id" value="<?= e($a['id']) ?>">
                 <button class="text-xs text-red-500 hover:underline">Delete</button></form>
             </div>
             <p class="mt-1 text-gray-600 dark:text-gray-300"><?= e($a['fullName']) ?><br><?= e($a['street']) ?><br><?= e($a['city']) ?>, <?= e($a['state']) ?> <?= e($a['zipCode']) ?><br><?= e($a['country']) ?></p>
@@ -109,7 +109,7 @@
         <?php endforeach; ?>
       </div>
       <form method="post" class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 space-y-3 h-fit">
-        <input type="hidden" name="action" value="add_address">
+        <?= csrf_field() ?><input type="hidden" name="action" value="add_address">
         <h2 class="font-bold">Add Address</h2>
         <input name="label" placeholder="Label (Home/Work)" required class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-sm">
         <input name="street" placeholder="Street" required class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-sm">
@@ -133,13 +133,13 @@
           <div class="bg-gradient-to-br from-indigo-600 to-purple-700 text-white rounded-xl p-4 flex items-center justify-between">
             <div><p class="text-xs opacity-80">•••• •••• •••• <?= e($c['last4']) ?></p>
               <p class="text-sm mt-1"><?= e($c['name']) ?> · <?= e($c['expiry']) ?></p></div>
-            <form method="post"><input type="hidden" name="action" value="delete_card"><input type="hidden" name="card_id" value="<?= e($c['id']) ?>">
+            <form method="post"><?= csrf_field() ?><input type="hidden" name="action" value="delete_card"><input type="hidden" name="card_id" value="<?= e($c['id']) ?>">
               <button class="text-xs bg-white/20 hover:bg-white/30 rounded px-2 py-1">Remove</button></form>
           </div>
         <?php endforeach; ?>
       </div>
       <form method="post" class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 space-y-3 h-fit">
-        <input type="hidden" name="action" value="add_card">
+        <?= csrf_field() ?><input type="hidden" name="action" value="add_card">
         <h2 class="font-bold">Add Card</h2>
         <input name="cardNumber" placeholder="Card number" inputmode="numeric" maxlength="19" required class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-sm">
         <input name="cardName" placeholder="Name on card" required class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-sm">
@@ -151,7 +151,7 @@
 
   <?php else: ?>
     <form method="post" class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 space-y-3 max-w-lg">
-      <input type="hidden" name="action" value="save_notifications">
+      <?= csrf_field() ?><input type="hidden" name="action" value="save_notifications">
       <?php $labels = [
           'orderUpdates' => 'Order updates', 'promotions' => 'Promotions & offers', 'newsletter' => 'Newsletter',
           'securityAlerts' => 'Security alerts', 'productRecommendations' => 'Product recommendations', 'smsNotifications' => 'SMS notifications'];

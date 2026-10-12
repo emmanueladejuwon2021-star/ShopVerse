@@ -47,7 +47,7 @@
         <div class="hidden md:flex items-center gap-2">
           <span class="text-sm font-medium"><?= e($user['name']) ?></span>
           <form method="post" action="/logout">
-            <input type="hidden" name="action" value="logout">
+            <?= csrf_field() ?><input type="hidden" name="action" value="logout">
             <button class="text-sm text-gray-500 hover:text-red-500">Sign out</button>
           </form>
         </div>
@@ -67,7 +67,7 @@
     <?php endforeach; ?>
     <?php if ($user): ?>
       <a href="/account" class="block py-1 text-sm font-medium">Account</a>
-      <form method="post" action="/logout"><input type="hidden" name="action" value="logout"><button class="block py-1 text-sm text-red-500">Sign out</button></form>
+      <form method="post" action="/logout"><?= csrf_field() ?><input type="hidden" name="action" value="logout"><button class="block py-1 text-sm text-red-500">Sign out</button></form>
     <?php else: ?>
       <a href="/login" class="block py-1 text-sm font-medium text-indigo-600">Sign in</a>
     <?php endif; ?>

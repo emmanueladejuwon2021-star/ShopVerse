@@ -30,7 +30,7 @@
         <?php endif; ?>
       </div>
       <form method="post" action="/products">
-        <input type="hidden" name="action" value="add_to_cart">
+        <?= csrf_field() ?><input type="hidden" name="action" value="add_to_cart">
         <input type="hidden" name="product_id" value="<?= e($p['id']) ?>">
         <input type="hidden" name="quantity" value="1">
         <input type="hidden" name="redirect" value="<?= e($_SERVER['REQUEST_URI'] ?? '/products') ?>">

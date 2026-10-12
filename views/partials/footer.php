@@ -24,7 +24,7 @@
     <div>
       <h4 class="font-semibold text-white mb-3">Newsletter</h4>
       <form method="post" action="/" class="flex gap-2">
-        <input type="hidden" name="action" value="newsletter">
+        <?= csrf_field() ?><input type="hidden" name="action" value="newsletter">
         <input type="email" required placeholder="Email" class="flex-1 rounded px-3 py-1.5 bg-gray-800 border border-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
         <button class="rounded bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 text-sm">Join</button>
       </form>

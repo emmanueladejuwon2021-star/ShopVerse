@@ -28,6 +28,13 @@
         </div>
       </div>
     <?php endif; ?>
+    <?php if ($emsg = flash_error()): ?>
+      <div class="max-w-7xl mx-auto px-4 pt-4">
+        <div class="rounded-lg px-4 py-3 text-sm font-medium bg-red-50 text-red-700 dark:bg-red-900/40 dark:text-red-200 border border-red-200 dark:border-red-700" role="alert">
+          <?= e($emsg) ?>
+        </div>
+      </div>
+    <?php endif; ?>
 
     <?php
     // server-side "route element" switch — mirrors <Routes> in App.tsx
