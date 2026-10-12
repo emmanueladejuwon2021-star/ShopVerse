@@ -7,12 +7,14 @@
     "api/index.php": {
       "runtime": "vercel-php@0.8.0",
       "memory": 1024,
-      "maxDuration": 30
+      "maxDuration": 30,
+      "includeFiles": "{includes,views,data}/**"
     }
   },
   "routes": [
     { "src": "/assets/(.*)", "dest": "/assets/$1" },
     { "handle": "filesystem" },
+    { "src": "/api/index\\.php", "dest": "/api/index.php", "methods": ["GET", "POST"] },
     { "src": "/(.*)", "dest": "/api/index.php" }
   ]
 }
