@@ -1,8 +1,7 @@
 <?php /* CartSidebar — port of src/components/CartSidebar.tsx */ 
       $items = cart_items();
       $subtotal = cart_total_price();
-      $open = !empty($_SESSION['cart_open']);
-      $_SESSION['cart_open'] = false; // consume once (UI state, not persisted data)
+      $open = !empty($_SESSION['cart_open']); // consumed by the body flag in layout.php
 ?>
 <div id="cart-overlay" class="fixed inset-0 bg-black/40 z-40 <?= $open ? '' : 'hidden' ?>" data-cart-close></div>
 

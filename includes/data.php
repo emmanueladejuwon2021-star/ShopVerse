@@ -57,10 +57,10 @@ function filter_products(array $opts): array
     }
 
     if (!empty($opts['search'])) {
-        $q = mb_strtolower($opts['search']);
+        $q = strtolower($opts['search']); // audit fix: mbstring not guaranteed on all hosts
         $items = array_values(array_filter($items, function ($p) use ($q) {
-            return str_contains(mb_strtolower($p['name']), $q)
-                || str_contains(mb_strtolower($p['description']), $q);
+            return str_contains(strtolower($p['name']), $q)
+                || str_contains(strtolower($p['description']), $q);
         }));
     }
 

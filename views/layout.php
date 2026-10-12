@@ -15,7 +15,8 @@
   </script>
   <link rel="stylesheet" href="/assets/app.css">
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col transition-colors duration-300">
+<?php $_cartOpenFlag = !empty($_SESSION["cart_open"]); ?>
+<body data-cart-open="<?= $_cartOpenFlag ? 1 : 0 ?>" class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col transition-colors duration-300">
   <?php include __DIR__ . '/partials/navbar.php'; ?>
   <?php include __DIR__ . '/partials/cart-sidebar.php'; ?>
 
@@ -68,7 +69,7 @@
       b.addEventListener('click', function () { setCartOpen(false); });
     });
     // Server told us to open the sidebar after an add-to-cart POST:
-    if (document.body.hasAttribute('data-cart-open')) setCartOpen(true);
+    if (document.body.getAttribute('data-cart-open')) setCartOpen(true);
   </script>
 </body>
 </html>

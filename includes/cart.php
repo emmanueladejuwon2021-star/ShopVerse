@@ -88,7 +88,9 @@ function cart_tax(float $subtotal): float
 function handle_post_actions(): void
 {
     $action = $_POST['action'] ?? '';
-    $redirect = $_POST['redirect'] ?? ($_SERVER['HTTP_REFERER'] ?? '/');
+    // Audit fix: never trust HTTP_REFERER as a redirect target; only same-site
+    // paths supplied explicitly by our own forms are allowed.
+    $redirect = validate_redirect((string) ($_POST['redirect'] ?? '/'));
 
     switch ($action) {
         case 'add_to_cart':
@@ -117,24 +119,37 @@ function handle_post_actions(): void
             return; // redirects internally
 
         case 'newsletter':
+            // Audit fix: subscribers are now persisted (previously the email was
+            // validated and then thrown away).
             $email = filter_var($_POST['email'] ?? '', FILTER_VALIDATE_EMAIL);
-            $_SESSION['flash'] = $email
-                ? 'Thanks for subscribing to the newsletter!'
-                : 'Please enter a valid email address.';
+            if ($email) {
+                try {
+                    db_subscribe((string) $email);
+                    $_SESSION['flash'] = 'Thanks for subscribing to the newsletter!';
+                } catch (Throwable) {
+                    $_SESSION['flash_error'] = 'Could not save your subscription right now. Please try again.';
+                }
+            } else {
+                $_SESSION['flash_error'] = 'Please enter a valid email address.';
+            }
             redirect($redirect);
             return;
 
         case 'login':
+            // Audit fix: preserve the intended redirect target and mode on failure
+            // (the old code dropped ?mode=register and re-posted users into a loop).
+            $redirectTo = validate_redirect((string) ($_POST['redirect'] ?? '/'));
             $res = login_user((string) ($_POST['email'] ?? ''), (string) ($_POST['password'] ?? ''));
             if ($res['ok']) {
                 $_SESSION['flash'] = 'Welcome back, ' . $res['user']['name'] . '!';
-                redirect($_POST['redirect'] ?: '/');
+                redirect($redirectTo);
             }
             $_SESSION['flash_error'] = implode(' ', $res['errors']);
-            redirect('/login' . (!empty($_POST['redirect']) ? '?redirect=' . urlencode((string) $_POST['redirect']) : ''));
+            redirect(login_url($redirectTo));
             return;
 
         case 'register':
+            $redirectTo = validate_redirect((string) ($_POST['redirect'] ?? '/'));
             $res = register_user(
                 (string) ($_POST['name'] ?? ''),
                 (string) ($_POST['email'] ?? ''),
@@ -142,10 +157,10 @@ function handle_post_actions(): void
             );
             if ($res['ok']) {
                 $_SESSION['flash'] = 'Account created. Welcome to ShopVerse!';
-                redirect($_POST['redirect'] ?: '/');
+                redirect($redirectTo);
             }
             $_SESSION['flash_error'] = implode(' ', $res['errors']);
-            redirect('/login?mode=register');
+            redirect(login_url($redirectTo, 'register'));
             return;
 
         case 'logout':
@@ -187,6 +202,12 @@ function place_order_from_post(): void
         'zipCode' => trim((string) $_POST['zipCode']),
         'country' => trim((string) $_POST['country']),
     ]);
+
+    if (!$order['ok']) {
+        $_SESSION['flash_error'] = implode(' ', $order['errors']);
+        redirect('/checkout');
+    }
+    $order = $order['order'];
 
     cart_clear();
     $_SESSION['last_order_id'] = $order['id'];

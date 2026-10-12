@@ -2,35 +2,32 @@
 /**
  * Auth — replaces src/context/AuthContext.tsx.
  *
- * Audit note: the React version accepted ANY credentials with no validation.
- * This PHP port does real server-side validation + password hashing and
- * stores orders per user (fixing the "orders not scoped per user" finding).
+ * Audit notes:
+ *  - The React version accepted ANY credentials; this does real validation +
+ *    password hashing (bcrypt via password_hash).
+ *  - Orders are scoped per user.
+ *  - Storage now goes through includes/db.php (Turso cloud in production,
+ *    local SQLite for development) instead of writable JSON files, which
+ *    cannot work on Vercel's read-only serverless filesystem.
  */
 
 declare(strict_types=1);
 
+require_once __DIR__ . '/db.php';
+
 if (!defined('STORAGE_DIR')) {
     define('STORAGE_DIR', __DIR__ . '/../storage');
 }
-if (!is_dir(STORAGE_DIR)) {
-    @mkdir(STORAGE_DIR, 0775, true);
-}
 
-const USERS_FILE = STORAGE_DIR . '/users.json';
-const ORDERS_FILE = STORAGE_DIR . '/orders.json';
-
-function storage_read(string $file): array
+/** Wrap a DB write so a broken/unwritable backend degrades gracefully. */
+function guard_write(callable $fn): array
 {
-    if (!is_file($file)) {
-        return [];
+    try {
+        return $fn();
+    } catch (Throwable $e) {
+        error_log('ShopVerse storage error: ' . $e->getMessage());
+        return ['ok' => false, 'errors' => ['Storage is unavailable right now. Please try again later.']];
     }
-    $data = json_decode((string) file_get_contents($file), true);
-    return is_array($data) ? $data : [];
-}
-
-function storage_write(string $file, array $data): void
-{
-    file_put_contents($file, json_encode($data, JSON_PRETTY_PRINT), LOCK_EX);
 }
 
 function is_logged_in(): bool
@@ -43,6 +40,17 @@ function current_user(): ?array
     return $_SESSION['user'] ?? null;
 }
 
+/** Wrap a DB read so a broken backend returns a safe default. */
+function guard_read(callable $fn): array
+{
+    try {
+        return ['ok' => true, 'result' => $fn()];
+    } catch (Throwable $e) {
+        error_log('ShopVerse storage error: ' . $e->getMessage());
+        return ['ok' => false, 'errors' => ['Storage is unavailable right now. Please try again later.']];
+    }
+}
+
 function register_user(string $name, string $email, string $password): array
 {
     $errors = [];
@@ -50,9 +58,13 @@ function register_user(string $name, string $email, string $password): array
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'A valid email is required.';
     if (strlen($password) < 6) $errors[] = 'Password must be at least 6 characters.';
 
-    $users = storage_read(USERS_FILE);
-    foreach ($users as $u) {
-        if (strcasecmp($u['email'], $email) === 0) {
+    $email = strtolower(trim($email));
+    if ($errors === []) {
+        $lookup = guard_read(fn() => db_find_user_by_email($email));
+        if (!$lookup['ok']) {
+            return ['ok' => false, 'errors' => $lookup['errors']];
+        }
+        if ($lookup['result'] !== null) {
             $errors[] = 'An account with this email already exists.';
         }
     }
@@ -63,27 +75,41 @@ function register_user(string $name, string $email, string $password): array
     $user = [
         'id' => bin2hex(random_bytes(8)),
         'name' => trim($name),
-        'email' => strtolower(trim($email)),
+        'email' => $email,
         'passhash' => password_hash($password, PASSWORD_DEFAULT),
         'joinedDate' => date('c'),
     ];
-    $users[] = $user;
-    storage_write(USERS_FILE, $users);
+    $insert = guard_write(function () use ($user) {
+        db_insert_user($user);
+        return ['ok' => true];
+    });
+    if (!$insert['ok']) {
+        return $insert;
+    }
 
     unset($user['passhash']);
+    session_regenerate_id(true); // audit fix: prevent session fixation on login
     $_SESSION['user'] = $user;
     return ['ok' => true, 'user' => $user];
 }
 
 function login_user(string $email, string $password): array
 {
-    $users = storage_read(USERS_FILE);
-    foreach ($users as $u) {
-        if (strcasecmp($u['email'], $email) === 0 && password_verify($password, $u['passhash'])) {
-            unset($u['passhash']);
-            $_SESSION['user'] = $u;
-            return ['ok' => true, 'user' => $u];
-        }
+    $lookup = guard_read(fn() => db_find_user_by_email(strtolower(trim($email))));
+    if (!$lookup['ok']) {
+        return ['ok' => false, 'errors' => $lookup['errors']];
+    }
+    $u = $lookup['result'];
+    if ($u && password_verify($password, (string) $u['passhash'])) {
+        $user = [
+            'id' => $u['id'],
+            'name' => $u['name'],
+            'email' => $u['email'],
+            'joinedDate' => $u['joined_at'] ?? date('c'),
+        ];
+        session_regenerate_id(true); // audit fix: prevent session fixation on login
+        $_SESSION['user'] = $user;
+        return ['ok' => true, 'user' => $user];
     }
     return ['ok' => false, 'errors' => ['Invalid email or password.']];
 }
@@ -91,6 +117,7 @@ function login_user(string $email, string $password): array
 function logout_user(): void
 {
     unset($_SESSION['user']);
+    session_regenerate_id(true);
 }
 
 /** @return array<int,array<string,mixed>> orders belonging to the logged-in user */
@@ -98,13 +125,13 @@ function user_orders(): array
 {
     $uid = current_user()['id'] ?? null;
     if (!$uid) return [];
-    $orders = storage_read(ORDERS_FILE);
-    return array_values(array_filter($orders, fn($o) => ($o['userId'] ?? null) === $uid));
+    $res = guard_read(fn() => db_user_orders((string) $uid));
+    return $res['ok'] ? $res['result'] : [];
 }
 
+/** @return array{ok:bool,...} ok=false carries a user-safe storage error. */
 function save_order(array $items, float $total, array $shippingAddress, string $status = 'pending'): array
 {
-    $orders = storage_read(ORDERS_FILE);
     $order = [
         'id' => 'SV-' . strtoupper(bin2hex(random_bytes(3))),
         'userId' => current_user()['id'] ?? null,
@@ -114,7 +141,9 @@ function save_order(array $items, float $total, array $shippingAddress, string $
         'date' => date('c'),
         'shippingAddress' => $shippingAddress,
     ];
-    $orders[] = $order;
-    storage_write(ORDERS_FILE, $orders);
-    return $order;
+    $res = guard_write(function () use ($order) {
+        db_insert_order($order);
+        return ['ok' => true, 'order' => $order];
+    });
+    return $res['ok'] ? $res : ['ok' => false, 'errors' => $res['errors']];
 }
