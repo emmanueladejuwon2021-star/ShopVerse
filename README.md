@@ -27,6 +27,17 @@ The SQLite schema auto-creates itself on first write (`storage/shopverse.db`).
 
 ## Deploy (Vercel or any PHP host)
 
+Vercel notes (fixed after the "unexpected internal error" deploy failure):
+- `vercel.json` uses the community **`vercel-php@0.8.0`** runtime (the previously
+  referenced `vercel/php@8.3` / `@vercel/php` do not exist on Vercel, which made
+  every build fail). No legacy `builds` key is used.
+- Sessions are stored in `/tmp` and the SQLite fallback auto-probes writable
+  directories — required because Vercel's deployed filesystem is read-only.
+- A committed dev `storage/shopverse.db` was removed from git; always set
+  `TURSO_DB_URL` + `TURSO_AUTH_TOKEN` in Project Settings → Environment Variables
+  for production persistence, then run `php scripts/init-db.php` once to create
+  the Turso schema.
+
 - Point the web root at `public/`.
 - Set environment variables for cloud storage:
   - `TURSO_DB_URL` (e.g. `libsql://your-db.turso.io`)
