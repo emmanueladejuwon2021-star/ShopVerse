@@ -15,7 +15,7 @@
   </script>
   <link rel="stylesheet" href="/assets/app.css">
 </head>
-<?php /* One-shot flag passed from the front controller; never read from the session. */ ?>
+
 <?php $_cartOpenFlag = !empty($cart_open_once); ?>
 <body data-cart-open="<?= $_cartOpenFlag ? 1 : 0 ?>" class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col transition-colors duration-300">
   <?php include __DIR__ . '/partials/navbar.php'; ?>

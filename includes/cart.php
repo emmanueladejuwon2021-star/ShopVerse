@@ -28,12 +28,20 @@ function cart_add(string $productId, int $qty = 1): void
         $cart[$productId] = ['product' => $product, 'quantity' => max(1, $qty)];
     }
     $_SESSION['cart'] = $cart;
-    // UI-only: drawer-open is a one-shot flag for the NEXT response. It lives
-    // in a cookie (not the session) so PHP's shutdown write-back can never
-    // resurrect it and leave the drawer stuck open on every page load.
+    // UI-only, one-shot drawer-open flag. It lives in a COOKIE that we also
+    // mirror into $_COOKIE immediately, because on serverless hosts (Vercel)
+    // the "add to cart" POST ends in redirect() → exit, and headers/cookies
+    // queued via setcookie() are discarded when the script exits before the
+    // response is flushed. The in-request copy guarantees the PRG redirect
+    // target renders with the drawer open exactly once; the real cookie is a
+    // belt-and-braces fallback for clients that don't follow instantly.
+    // NOTE: the array key must be 'expires' (timestamp) — 'maxage' is NOT a
+    // valid setcookie() option and threw an uncaught ValueError (HTTP 500) on
+    // every add-to-cart.
+    $_COOKIE['cart_open_once'] = '1';
     setcookie('cart_open_once', '1', [
         'path'     => '/',
-        'maxage'   => 30,
+        'expires'  => time() + 30,
         'httponly' => true,
         'samesite' => 'Lax',
         'secure'   => !empty($_SERVER['HTTPS']) || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https',
