@@ -12,7 +12,7 @@
   <h1 class="text-3xl font-bold mb-6">Shop</h1>
 
   <!-- Filter bar -->
-  <form method="get" action="/products" class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 mb-8 grid sm:grid-cols-2 lg:grid-cols-5 gap-3">
+  <form method="get" action="/products" class="glass-card rounded-xl p-4 mb-8 grid sm:grid-cols-2 lg:grid-cols-5 gap-3">
     <input type="search" name="search" placeholder="Search…" value="<?= e($opts['search']) ?>"
            class="rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-sm">
     <select name="category" class="rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-sm">
@@ -42,10 +42,10 @@
     </div>
   </form>
 
-  <p class="text-sm text-gray-500 mb-4"><?= count($items) ?> product<?= count($items) === 1 ? '' : 's' ?> found</p>
+  <p class="text-sm text-glass-muted mb-4"><?= count($items) ?> product<?= count($items) === 1 ? '' : 's' ?> found</p>
 
   <?php if (!$items): ?>
-    <div class="text-center py-20 text-gray-500">
+    <div class="text-center py-20 text-glass-muted">
       <p class="text-5xl mb-4">🔍</p>
       <p class="font-semibold">No products match your filters.</p>
       <a href="/products" class="text-indigo-600 hover:underline text-sm mt-2 inline-block">Clear filters</a>

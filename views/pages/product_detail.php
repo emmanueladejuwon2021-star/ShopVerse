@@ -11,7 +11,7 @@
       $qty = 1; // quantity selector handled by native number input in the form
 ?>
 <div class="max-w-7xl mx-auto px-4 py-10">
-  <nav class="text-sm text-gray-500 mb-6">
+  <nav class="text-sm text-glass-muted mb-6">
     <a href="/" class="hover:text-indigo-600">Home</a> /
     <a href="/products" class="hover:text-indigo-600">Shop</a> /
     <a href="/products?category=<?= urlencode($product['category']) ?>" class="hover:text-indigo-600"><?= e($product['category']) ?></a> /
@@ -28,7 +28,7 @@
 
       <div class="flex items-center gap-2 mt-3">
         <?= stars_html((float) $product['rating']) ?>
-        <span class="text-sm text-gray-500"><?= e((string) $product['rating']) ?> · <?= number_format((int) $product['reviews']) ?> reviews</span>
+        <span class="text-sm text-glass-muted"><?= e((string) $product['rating']) ?> · <?= number_format((int) $product['reviews']) ?> reviews</span>
       </div>
 
       <div class="flex items-baseline gap-3 mt-5">
@@ -56,7 +56,7 @@
         <input type="hidden" name="product_id" value="<?= e($product['id']) ?>">
         <input type="hidden" name="redirect" value="/product/<?= e($product['id']) ?>">
         <input type="number" name="quantity" min="1" max="10" value="1"
-               class="w-20 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-center">
+               class="w-20 rounded-lg border border-gray-300 dark:border-gray-700 glass-card px-3 py-2 text-center">
         <button <?= $product['inStock'] ? '' : 'disabled' ?>
                 class="flex-1 rounded-lg bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-300 text-white font-semibold py-3">
           Add to Cart

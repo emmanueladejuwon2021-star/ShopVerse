@@ -1,5 +1,5 @@
 <?php /* ProductCard — port of src/components/ProductCard.tsx */ ?>
-<div class="group bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-lg transition-shadow overflow-hidden flex flex-col">
+<div class="group glass-card rounded-xl hover:shadow-lg transition-shadow overflow-hidden flex flex-col">
   <a href="/product/<?= e($p['id']) ?>" class="relative block overflow-hidden">
     <img src="<?= e($p['image']) ?>" alt="<?= e($p['name']) ?>"
          class="w-full h-56 object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">

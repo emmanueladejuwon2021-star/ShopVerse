@@ -59,7 +59,7 @@
        class="cat-chip shrink-0 rounded-full bg-indigo-600 text-white px-5 py-2.5 text-sm font-semibold shadow-sm">All</a>
     <?php foreach ($cats as $cat): ?>
       <a href="/products?category=<?= urlencode($cat) ?>"
-         class="cat-chip shrink-0 rounded-full bg-white dark:bg-gray-800 shadow-sm hover:shadow-md active:bg-indigo-50 dark:active:bg-gray-700 px-5 py-2.5 text-sm font-semibold">
+         class="cat-chip shrink-0 rounded-full glass-card shadow-sm hover:shadow-md active:bg-indigo-50 dark:active:bg-gray-700 px-5 py-2.5 text-sm font-semibold">
         <?= e($cat) ?>
       </a>
     <?php endforeach; ?>
@@ -69,17 +69,17 @@
 <!-- 3 · Trust row — always 3-up, compact icons + short copy for small screens -->
 <section class="max-w-7xl mx-auto px-4 py-6">
   <div class="grid grid-cols-3 gap-3">
-    <div class="rounded-xl bg-white dark:bg-gray-800 p-3 shadow-sm text-center">
+    <div class="rounded-xl glass-card p-3 shadow-sm text-center">
       <span class="trust-icon mx-auto">🚚</span><h3 class="font-bold text-xs sm:text-sm mt-2">Free Shipping</h3>
-      <p class="text-[11px] sm:text-xs text-gray-500 dark:text-gray-400 mt-0.5">Over $50</p>
+      <p class="text-[11px] sm:text-xs text-glass-muted dark:text-gray-400 mt-0.5">Over $50</p>
     </div>
-    <div class="rounded-xl bg-white dark:bg-gray-800 p-3 shadow-sm text-center">
+    <div class="rounded-xl glass-card p-3 shadow-sm text-center">
       <span class="trust-icon mx-auto">↩️</span><h3 class="font-bold text-xs sm:text-sm mt-2">Easy Returns</h3>
-      <p class="text-[11px] sm:text-xs text-gray-500 dark:text-gray-400 mt-0.5">30-day policy</p>
+      <p class="text-[11px] sm:text-xs text-glass-muted dark:text-gray-400 mt-0.5">30-day policy</p>
     </div>
-    <div class="rounded-xl bg-white dark:bg-gray-800 p-3 shadow-sm text-center">
+    <div class="rounded-xl glass-card p-3 shadow-sm text-center">
       <span class="trust-icon mx-auto">🔒</span><h3 class="font-bold text-xs sm:text-sm mt-2">Secure Checkout</h3>
-      <p class="text-[11px] sm:text-xs text-gray-500 dark:text-gray-400 mt-0.5">Data protected</p>
+      <p class="text-[11px] sm:text-xs text-glass-muted dark:text-gray-400 mt-0.5">Data protected</p>
     </div>
   </div>
 </section>

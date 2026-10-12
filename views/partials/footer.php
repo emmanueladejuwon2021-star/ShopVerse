@@ -1,5 +1,5 @@
 <?php /* Footer — port of src/components/Footer.tsx */ ?>
-<footer class="bg-gray-900 text-gray-300 mt-12">
+<footer class="glass-panel !bg-slate-900/70 !text-slate-300 mt-12">
   <div class="max-w-7xl mx-auto px-4 py-10 grid grid-cols-2 md:grid-cols-4 gap-8 text-sm">
     <div>
       <h3 class="font-bold text-white mb-3">ShopVerse</h3>
