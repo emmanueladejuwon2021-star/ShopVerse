@@ -96,6 +96,9 @@ function handle_post_actions(): void
         case 'add_to_cart':
             cart_add((string) ($_POST['product_id'] ?? ''), (int) ($_POST['quantity'] ?? 1));
             $_SESSION['flash'] = 'Added to cart.';
+            // Post/Redirect/Get: the drawer-open flag is consumed by the GET
+            // response for the redirect target (see public/index.php), which
+            // keeps this PRG pattern intact.
             break;
 
         case 'remove_from_cart':
@@ -177,7 +180,29 @@ function handle_post_actions(): void
             return;
     }
 
-    $_SESSION['cart_open'] = false;
+    $_SESSION['cart_open'] = false; // legacy key — no longer read by any view; harmless
+
+    if ($action === 'add_to_cart') {
+        // Preserve the original "drawer opens after adding to cart" UX without
+        // breaking Post/Redirect/Get: re-post silently to the redirect target,
+        // carrying the one-shot flag through a header (never through the
+        // session, which used to persist and leave the drawer stuck open).
+        $postBack = <<<HTML
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>ShopVerse</title></head><body>
+<form id="f" method="post" action="{$redirect}">
+<input type="hidden" name="csrf" value="{$_SESSION['csrf_token']}">
+<input type="hidden" name="action" value="close_cart">
+</form>
+<script>document.getElementById('f').submit();</script>
+<noscript><a href="{$redirect}">Continue</a></noscript>
+</body></html>
+HTML;
+        header('X-Cart-Open: 1');
+        while (ob_get_level() > 0) { ob_end_clean(); }
+        echo $postBack;
+        exit;
+    }
+
     redirect($redirect);
 }
 

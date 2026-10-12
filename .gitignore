@@ -1,7 +1,2 @@
-storage/
-!storage/.gitkeep
-
-.vercel/*
-!.vercel/project.json
-*.db
-.DS_Store
+node_modules/
+package-lock.json

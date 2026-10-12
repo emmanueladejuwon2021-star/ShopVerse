@@ -94,6 +94,15 @@ if ($page === null) {
     exit;
 }
 
-// UI-only: sidebar auto-open flag is consumed by the layout on this response.
-unset($_SESSION['cart_open']);
-render_page($page, $params);
+// UI-only: one-shot flag that opens the cart drawer for THIS response only.
+// It is intentionally NOT stored in the session (PHP's shutdown session
+// write-back used to resurrect the old $_SESSION['cart_open'] key, leaving
+// the drawer stuck open on every page). The only way to get it set is by
+// POSTing with X-Cart-Open: 1 — emitted once by the silent post-back that
+// handle_post_actions() returns right after a successful add-to-cart.
+$cartOpenOnce = ($_SERVER['HTTP_X_CART_OPEN'] ?? '') === '1';
+unset($_SESSION['cart_open']); // purge any stale legacy key from old deploys
+if ($cartOpenOnce) {
+    session_write_close(); // commit the purge before rendering
+}
+render_page($page, $params + ['cart_open_once' => $cartOpenOnce]);
