@@ -111,7 +111,7 @@
               <form method="post"><?= csrf_field() ?><input type="hidden" name="action" value="delete_address"><input type="hidden" name="address_id" value="<?= e($a['id']) ?>">
                 <button class="text-xs text-red-500 hover:underline">Delete</button></form>
             </div>
-            <p class="mt-1 text-glass-muted dark:text-gray-300"><?= e($a['fullName']) ?><br><?= e($a['street']) ?><br><?= e($a['city']) ?>, <?= e($a['state']) ?> <?= e($a['zipCode']) ?><br><?= e($a['country']) ?></p>
+            <p class="mt-1 text-glass-muted"><?= e($a['fullName']) ?><br><?= e($a['street']) ?><br><?= e($a['city']) ?>, <?= e($a['state']) ?> <?= e($a['zipCode']) ?><br><?= e($a['country']) ?></p>
           </div>
         <?php endforeach; ?>
       </div>
@@ -163,7 +163,7 @@
           'orderUpdates' => 'Order updates', 'promotions' => 'Promotions & offers', 'newsletter' => 'Newsletter',
           'securityAlerts' => 'Security alerts', 'productRecommendations' => 'Product recommendations', 'smsNotifications' => 'SMS notifications'];
       foreach ($labels as $key => $label): ?>
-        <label class="flex items-center justify-between py-2 border-b border-[color:var(--glass-line)] dark:border-gray-700 text-sm cursor-pointer">
+        <label class="flex items-center justify-between py-2 border-b border-[color:var(--glass-line)] text-sm cursor-pointer">
           <span><?= e($label) ?></span>
           <input type="checkbox" name="<?= e($key) ?>" <?= !empty($acct['notifications'][$key]) ? 'checked' : '' ?> class="w-4 h-4 accent-indigo-600">
         </label>

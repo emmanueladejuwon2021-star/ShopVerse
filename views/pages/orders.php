@@ -30,7 +30,7 @@
             <span class="text-xs font-semibold px-3 py-1 rounded-full <?= $statusColors[$o['status']] ?? '' ?>"><?= ucfirst(e($o['status'])) ?></span>
           </div>
 
-          <ul class="mt-4 divide-y glass-divider dark:divide-gray-700 text-sm">
+          <ul class="mt-4 divide-y glass-divider text-sm">
             <?php foreach ($o['items'] as $item): $p = $item['product']; ?>
               <li class="flex items-center gap-3 py-2">
                 <img src="<?= e($p['image']) ?>" alt="" class="w-10 h-10 rounded object-cover">

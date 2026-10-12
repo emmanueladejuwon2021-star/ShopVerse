@@ -15,7 +15,7 @@
     <a href="/" class="hover:text-indigo-600">Home</a> /
     <a href="/products" class="hover:text-indigo-600">Shop</a> /
     <a href="/products?category=<?= urlencode($product['category']) ?>" class="hover:text-indigo-600"><?= e($product['category']) ?></a> /
-    <span class="text-[color:var(--glass-text)] dark:text-gray-200 font-medium"><?= e($product['name']) ?></span>
+    <span class="text-[color:var(--glass-text)] font-medium"><?= e($product['name']) ?></span>
   </nav>
 
   <div class="grid md:grid-cols-2 gap-10">
@@ -43,7 +43,7 @@
         <?= $product['inStock'] ? '● In stock' : '● Out of stock' ?>
       </p>
 
-      <p class="mt-5 text-glass-muted dark:text-gray-300 leading-relaxed"><?= e($product['description']) ?></p>
+      <p class="mt-5 text-glass-muted leading-relaxed"><?= e($product['description']) ?></p>
 
       <ul class="mt-5 space-y-1 text-sm">
         <?php foreach ($product['features'] as $f): ?>

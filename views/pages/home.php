@@ -59,7 +59,7 @@
        class="cat-chip shrink-0 rounded-full bg-indigo-600 text-white px-5 py-2.5 text-sm font-semibold shadow-sm">All</a>
     <?php foreach ($cats as $cat): ?>
       <a href="/products?category=<?= urlencode($cat) ?>"
-         class="cat-chip shrink-0 rounded-full glass-card shadow-sm hover:shadow-md active:bg-indigo-50 dark:active:bg-gray-700 px-5 py-2.5 text-sm font-semibold">
+         class="cat-chip shrink-0 rounded-full glass-card shadow-sm hover:shadow-md active:bg-indigo-100 dark:active:bg-white/15 px-5 py-2.5 text-sm font-semibold">
         <?= e($cat) ?>
       </a>
     <?php endforeach; ?>
