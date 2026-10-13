@@ -43,6 +43,16 @@ Vercel notes (fixed after the "unexpected internal error" deploy failure):
   `TURSO_DB_URL` + `TURSO_AUTH_TOKEN` in Project Settings → Environment Variables
   for production persistence, then run `php scripts/init-db.php` once to create
   the Turso schema.
+- **Deployment "Blocked" fix (PR #11):** the repo shipped a stale `.vercel/`
+  directory containing a `project.json` that hard-linked builds to a placeholder
+  project (`prj_shopverse_fast` / `team_placeholder`). Vercel refuses ("Blocked")
+  any build whose committed link doesn't match the deploying project — this was
+  the sole cause of both preview deployments failing, not the PHP code itself.
+  The stale `.vercel/` folder has been deleted and `vercel.json` simplified to:
+  `outputDirectory: public`, `handle: filesystem` first (so `/assets/*` static
+  files are served directly), and one catch-all rewrite to `/api/index.php`.
+  If a project still shows *Blocked*, re-link it once: `vercel link` (or delete
+  the Git-connection integration and reconnect the correct project).
 
 - Point the web root at `public/`.
 - Set environment variables for cloud storage:
