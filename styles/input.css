@@ -1,0 +1,4 @@
+@import "tailwindcss" source(none);
+@custom-variant dark (&:where(.dark, .dark *));
+@source "../views/**/*.php";
+@source "../public/index.php";
