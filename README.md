@@ -43,6 +43,16 @@ Vercel notes (fixed after the "unexpected internal error" deploy failure):
   `TURSO_DB_URL` + `TURSO_AUTH_TOKEN` in Project Settings → Environment Variables
   for production persistence, then run `php scripts/init-db.php` once to create
   the Turso schema.
+- **Deployment "Blocked" fix (PR #11):** the repo shipped a stale `.vercel/`
+  directory containing a `project.json` that hard-linked builds to a placeholder
+  project (`prj_shopverse_fast` / `team_placeholder`). Vercel refuses ("Blocked")
+  any build whose committed link doesn't match the deploying project — this was
+  the sole cause of both preview deployments failing, not the PHP code itself.
+  The stale `.vercel/` folder has been deleted and `vercel.json` simplified to:
+  `outputDirectory: public`, `handle: filesystem` first (so `/assets/*` static
+  files are served directly), and one catch-all rewrite to `/api/index.php`.
+  If a project still shows *Blocked*, re-link it once: `vercel link` (or delete
+  the Git-connection integration and reconnect the correct project).
 
 - Point the web root at `public/`.
 - Set environment variables for cloud storage:
@@ -77,3 +87,17 @@ data/            # products.json (static catalog)
 storage/         # runtime data (gitignored): shopverse.db / *.json fallback
 scripts/         # init-db.php (Turso bootstrap)
 ```
+
+### Paystack environment variables (Project Settings → Environment Variables)
+
+| Variable | Required | Notes |
+|---|---|---|
+| `PAYSTACK_SECRET_KEY` | yes | `sk_test_…` or `sk_live_…`. Checkout gracefully falls back to Cash-on-Delivery until set. |
+| `PAYSTACK_PUBLIC_KEY` | optional | reserved for future inline JS (Paystack Popout) use; the hosted flow only needs the secret key. |
+| `PAYSTACK_WEBHOOK_SECRET` | recommended | HMAC-SHA512 verification of `POST /payments/webhook`; defaults to the secret key if unset. |
+| `PAYSTACK_CURRENCY` | optional | default `NGN`. If you change it, update the `$100` coupon threshold in `includes/cart.php`. |
+| `APP_BASE_URL` | on Vercel | canonical base URL used to build the Paystack `callback_url` (e.g. `https://your-app.vercel.app`). Falls back to request headers when unset. |
+
+After deploying with a live key, register the webhook URL
+`https://<your-domain>/payments/webhook` in the Paystack dashboard and set its
+signing secret to the same value as `PAYSTACK_WEBHOOK_SECRET`.

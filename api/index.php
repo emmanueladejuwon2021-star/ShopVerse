@@ -2,8 +2,8 @@
 /**
  * ShopVerse — Vercel Serverless Function entry point.
  *
- * Vercel only discovers PHP Serverless Functions inside the /api directory,
- * so this thin wrapper forwards every request to the app's front controller
+ * Vercel only discovers PHP serverless functions inside /api, so this thin
+ * wrapper forwards every routed request to the app's front controller
  * (public/index.php). All routing logic stays in one place.
  */
 

@@ -158,13 +158,39 @@ if (!$order): ?>
     </div>
 
     <div class="bg-white dark:bg-gray-800 rounded-3xl p-6 border border-gray-100 dark:border-gray-700/60 shadow-sm">
+      <?php
+        $payMethod = (string) ($shippingAddr['paymentMethod'] ?? $order['paymentMethod'] ?? '');
+        $payStatus = (string) ($shippingAddr['paymentStatus'] ?? '');
+        $isPaid    = $payStatus === 'paid';
+        $isCod     = $payStatus === 'pay_on_delivery' || stripos($payMethod, 'Cash') !== false;
+      ?>
       <h3 class="font-bold text-sm uppercase tracking-wider text-gray-400 mb-3">Payment &amp; Security</h3>
       <p class="font-semibold text-gray-900 dark:text-white text-sm">
-        <?= e($order['paymentMethod'] ?? 'Credit / Debit Card') ?>
+        <?= e($payMethod ?: 'Prepaid') ?>
       </p>
-      <p class="text-xs text-gray-500 mt-1">Transaction encrypted via 256-bit TLS protocol.</p>
-      <div class="mt-4 inline-flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-50 dark:bg-emerald-950/60 px-3 py-1.5 rounded-xl">
-        <span>🛡️</span> Purchase Protected by ShopVerse Guarantee
+      <?php if ($isPaid): ?>
+        <p class="text-xs text-gray-500 mt-1">
+          Paid via Paystack<?= !empty($shippingAddr['paystackCardBrand']) ? ' · ' . e((string) $shippingAddr['paystackCardBrand']) : '' ?><?= !empty($shippingAddr['paystackCardLast4']) ? ' •••• ' . e((string) $shippingAddr['paystackCardLast4']) : '' ?><?= !empty($shippingAddr['paystackChannel']) ? ' · ' . e(ucfirst((string) $shippingAddr['paystackChannel'])) : '' ?><?= !empty($shippingAddr['paystackCurrency']) ? ' · ' . e((string) $shippingAddr['paystackCurrency']) : '' ?>
+        </p>
+        <?php if (!empty($shippingAddr['paystackReceipt'])): ?>
+          <p class="text-xs text-gray-500 mt-0.5 font-mono">Receipt: <?= e((string) $shippingAddr['paystackReceipt']) ?></p>
+        <?php endif; ?>
+      <?php elseif ($isCod): ?>
+        <p class="text-xs text-gray-500 mt-1">Settled at the door on delivery — no online charge made yet.</p>
+      <?php else: ?>
+        <p class="text-xs text-gray-500 mt-1">Transaction encrypted via 256-bit TLS protocol.</p>
+      <?php endif; ?>
+      <div class="mt-3 flex flex-wrap gap-2">
+        <span class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl
+          <?= $isPaid ? 'text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60'
+                      : ($isCod ? 'text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/60'
+                                : 'text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700/60') ?>">
+          <span><?= $isPaid ? '✓' : ($isCod ? '📦' : '⏳') ?></span>
+          <?= $isPaid ? 'Payment Verified' : ($isCod ? 'Pay on Delivery' : 'Payment Pending') ?>
+        </span>
+        <span class="inline-flex items-center gap-1.5 text-xs text-indigo-600 dark:text-indigo-400 font-semibold bg-indigo-50 dark:bg-indigo-950/60 px-3 py-1.5 rounded-xl">
+          <span>🛡️</span> Purchase Protected by ShopVerse Guarantee
+        </span>
       </div>
     </div>
   </div>
@@ -179,3 +205,4 @@ if (!$order): ?>
     </a>
   </div>
 </div>
+<?php endif; ?>

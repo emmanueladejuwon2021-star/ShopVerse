@@ -592,44 +592,59 @@ function place_order_from_post(): void
         }
     }
 
-    $subtotal = cart_total_price();
-    $discount = cart_discount($subtotal);
-    $subAfterDiscount = max(0.0, $subtotal - $discount);
+    // Server-authoritative totals — the client never decides what it pays.
     $shippingMethod = trim((string) ($_POST['shippingMethod'] ?? 'standard'));
-    $shipping = cart_shipping($subtotal, $shippingMethod);
-    $tax = cart_tax($subAfterDiscount);
-    $total = round($subAfterDiscount + $shipping + $tax, 2);
+    $totals = paystack_cart_totals($shippingMethod);
+    $subtotal = $totals['subtotal'];
 
     $coupon = get_active_coupon();
-    $paymentMethod = trim((string) ($_POST['paymentMethod'] ?? 'Credit / Debit Card'));
+    $paymentMethod = trim((string) ($_POST['paymentMethod'] ?? 'paystack'));
     $orderNotes = trim((string) ($_POST['orderNotes'] ?? ''));
+    $email = trim((string) ($_POST['billingEmail'] ?? (current_user()['email'] ?? '')));
 
-    $order = save_order(array_values($items), $total, [
+    $meta = [
         'fullName' => trim((string) $_POST['fullName']),
         'street' => trim((string) $_POST['street']),
         'city' => trim((string) $_POST['city']),
         'state' => trim((string) $_POST['state']),
         'zipCode' => trim((string) $_POST['zipCode']),
         'country' => trim((string) $_POST['country']),
-        'paymentMethod' => $paymentMethod,
+        'email' => $email,
         'shippingMethod' => $shippingMethod,
         'orderNotes' => $orderNotes,
-        'subtotal' => $subtotal,
-        'discount' => $discount,
         'couponCode' => $coupon['code'] ?? null,
-        'shipping' => $shipping,
-        'tax' => $tax,
-    ]);
+    ];
 
-    if (!$order['ok']) {
-        $_SESSION['flash_error'] = implode(' ', $order['errors']);
+    if ($paymentMethod === 'cod') {
+        // Cash on Delivery: order is placed immediately, payment settles at
+        // the door. No gateway involved, nothing to verify.
+        $order = save_order(array_values($items), $totals['total'], array_merge($meta, [
+            'paymentMethod' => 'Cash on Delivery',
+            'paymentStatus' => 'pay_on_delivery',
+            'subtotal' => $totals['subtotal'],
+            'discount' => $totals['discount'],
+            'shipping' => $totals['shipping'],
+            'tax' => $totals['tax'],
+        ]), 'processing');
+        if (!$order['ok']) {
+            $_SESSION['flash_error'] = implode(' ', $order['errors']);
+            redirect('/checkout');
+        }
+        cart_clear();
+        $_SESSION['last_order'] = $order['order'];
+        redirect('/order-success?id=' . urlencode((string) $order['order']['id']));
+        return;
+    }
+
+    // Default + explicit 'paystack': hand off to Paystack's hosted checkout.
+    // A PENDING order is created server-side; it only becomes paid after we
+    // verify the transaction with Paystack's API (callback or webhook).
+    $res = paystack_create_transaction(array_values($items), $totals, $meta);
+    if (!$res['ok']) {
+        $_SESSION['flash_error'] = implode(' ', $res['errors']);
         redirect('/checkout');
     }
-    $orderData = $order['order'];
-
-    cart_clear();
-    $_SESSION['last_order'] = $orderData;
-    redirect('/order-success?id=' . urlencode((string) $orderData['id']));
+    redirect($res['redirect']);
 }
 
 function redirect(string $url): never

@@ -29,11 +29,14 @@ $orders = array_reverse(user_orders());
     <div class="space-y-6">
       <?php foreach ($orders as $o):
         $status = strtolower($o['status'] ?? 'processing');
+        $payStatus = (string) ($o['shippingAddress']['paymentStatus'] ?? '');
         $statusColors = [
             'pending' => 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300',
             'processing' => 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300',
             'shipped' => 'bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300',
             'delivered' => 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300',
+            'payment_failed' => 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300',
+            'refunded' => 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200',
         ];
         $colorClass = $statusColors[$status] ?? 'bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300';
       ?>
@@ -49,8 +52,15 @@ $orders = array_reverse(user_orders());
             </div>
 
             <div class="flex items-center gap-3">
+              <?php if ($payStatus === 'paid'): ?>
+                <span class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300" title="Verified server-side with Paystack">✓ Paid</span>
+              <?php elseif ($payStatus === 'pay_on_delivery'): ?>
+                <span class="text-xs font-bold px-3 py-1 rounded-full bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200">📦 COD</span>
+              <?php elseif ($status === 'payment_failed'): ?>
+                <a href="/checkout" class="text-xs font-bold px-3 py-1 rounded-full bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300 hover:opacity-80 transition-opacity" title="Payment failed or was abandoned — retry securely">Retry Payment →</a>
+              <?php endif; ?>
               <span class="text-xs font-bold px-3 py-1 rounded-full <?= $colorClass ?>">
-                <?= ucfirst(e($status)) ?>
+                <?= e(ucfirst(str_replace('_', ' ', $status))) ?>
               </span>
               <a href="/order-success?id=<?= urlencode((string) $o['id']) ?>"
                  class="rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-xs font-semibold px-3 py-1.5 transition-colors">
