@@ -34,9 +34,8 @@
       <ul class="space-y-2 text-xs">
         <li><a class="hover:text-white transition-colors" href="/products">All Products</a></li>
         <li><a class="hover:text-white transition-colors" href="/products?category=Electronics">Electronics</a></li>
-        <li><a class="hover:text-white transition-colors" href="/products?category=Clothing">Apparel &amp; Denim</a></li>
         <li><a class="hover:text-white transition-colors" href="/products?category=Accessories">Accessories</a></li>
-        <li><a class="hover:text-white transition-colors" href="/products?category=Home">Home &amp; Living</a></li>
+        <li><a class="hover:text-white transition-colors" href="/products?category=Home">Home &amp; Office</a></li>
         <li><a class="hover:text-white transition-colors" href="/products?category=Sports">Sports &amp; Fitness</a></li>
       </ul>
     </div>
@@ -45,8 +44,8 @@
     <div class="space-y-3">
       <h4 class="font-bold text-xs uppercase tracking-wider text-white">Customer Hub</h4>
       <ul class="space-y-2 text-xs">
-        <li><a class="hover:text-white transition-colors" href="/login">Sign In / Register</a></li>
-        <li><a class="hover:text-white transition-colors" href="/orders">Order History &amp; Tracking</a></li>
+        <li><a class="hover:text-white transition-colors" href="/track">Live Shipment Tracking</a></li>
+        <li><a class="hover:text-white transition-colors" href="/orders">Order History &amp; Receipts</a></li>
         <li><a class="hover:text-white transition-colors" href="/wishlist">Saved Wishlist</a></li>
         <li><a class="hover:text-white transition-colors" href="/cart">Shopping Bag</a></li>
         <li><a class="hover:text-white transition-colors" href="/account">Account Settings</a></li>

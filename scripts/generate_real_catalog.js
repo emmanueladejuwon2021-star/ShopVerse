@@ -1,0 +1,922 @@
+const fs = require('fs');
+const path = require('path');
+
+const realProducts = [
+  {
+    id: "1",
+    sku: "AAPL-MBP16-M3M",
+    name: "Apple MacBook Pro 16\" (M3 Max)",
+    brand: "Apple",
+    badge: "Staff Pick",
+    description: "The most powerful MacBook Pro ever. Built for extreme workflows with the M3 Max chip featuring a 16-core CPU, 40-core GPU, up to 128GB unified memory, and an astonishing 16.2-inch Liquid Retina XDR display with 1,600 nits peak brightness.",
+    price: 3499.00,
+    originalPrice: 3699.00,
+    image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=900&auto=format&fit=crop&q=85",
+    images: [
+      "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=900&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=900&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=900&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?w=900&auto=format&fit=crop&q=85"
+    ],
+    category: "Electronics",
+    rating: 4.9,
+    reviews: 842,
+    inStock: true,
+    stock_count: 9,
+    variants: {
+      colors: [
+        { name: "Space Black", hex: "#1d1d1f", image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=900&auto=format&fit=crop&q=85" },
+        { name: "Silver", hex: "#e3e4e5", image: "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=900&auto=format&fit=crop&q=85" }
+      ],
+      options: [
+        { name: "36GB / 1TB SSD", priceDiff: 0 },
+        { name: "48GB / 1TB SSD", priceDiff: 300 },
+        { name: "64GB / 2TB SSD", priceDiff: 800 }
+      ]
+    },
+    features: [
+      "Apple M3 Max Chip (16-Core CPU, 40-Core GPU)",
+      "16.2\" Liquid Retina XDR with ProMotion 120Hz",
+      "Up to 22 Hours Battery Life with MagSafe 3 Fast Charging",
+      "Three Thunderbolt 4 Ports, HDMI 2.1, and SDXC Card Slot"
+    ],
+    specs: {
+      "Processor": "Apple M3 Max (16-core CPU, 40-core GPU, 16-core Neural Engine)",
+      "Display": "16.2\" Liquid Retina XDR (3456x2234), 1,000 nits sustained, 1,600 nits peak",
+      "Memory": "36GB Unified Memory (Configurable up to 128GB)",
+      "Storage": "1TB High-Speed PCIe 4.0 NVMe SSD",
+      "Battery Life": "Up to 22 hours Apple TV playback / 15 hours wireless web",
+      "Weight": "4.8 lbs (2.16 kg)"
+    },
+    bundle_ids: ["6", "11"],
+    reviews_list: [
+      {
+        author: "Marcus Vance",
+        date: "3 days ago",
+        rating: 5,
+        title: "Unmatched performance for 8K video & LLM inferencing",
+        comment: "Renders 8K ProRes footage in DaVinci Resolve without even spinning the fans. The Space Black finish resists fingerprints far better than previous generations, and the Liquid Retina XDR screen is color-accurate right out of the box.",
+        verified: true
+      },
+      {
+        author: "Dr. Sarah Lin",
+        date: "2 weeks ago",
+        rating: 5,
+        title: "Best developer workstation on the market",
+        comment: "Local Docker containers, multiple IDEs, and heavy compilation tasks run simultaneously with zero thermal throttling. Battery life easily lasts an entire 10-hour workday untethered.",
+        verified: true
+      }
+    ]
+  },
+  {
+    id: "2",
+    sku: "SNY-WH1000XM5-BLK",
+    name: "Sony WH-1000XM5 Noise-Canceling Headphones",
+    brand: "Sony",
+    badge: "Bestseller",
+    description: "Industry-leading active noise cancellation powered by two proprietary processors and 8 microphones. Features newly developed 30mm precision drivers, crystal-clear hands-free calling with AI beamforming microphones, and all-day luxury comfort.",
+    price: 398.00,
+    originalPrice: 449.99,
+    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=900&auto=format&fit=crop&q=85",
+    images: [
+      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=900&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1484704849700-f032a568e944?w=900&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=900&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1583394838336-acd977736f90?w=900&auto=format&fit=crop&q=85"
+    ],
+    category: "Electronics",
+    rating: 4.8,
+    reviews: 1650,
+    inStock: true,
+    stock_count: 24,
+    variants: {
+      colors: [
+        { name: "Black", hex: "#111111", image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=900&auto=format&fit=crop&q=85" },
+        { name: "Silver", hex: "#d8d7d3", image: "https://images.unsplash.com/photo-1484704849700-f032a568e944?w=900&auto=format&fit=crop&q=85" },
+        { name: "Midnight Blue", hex: "#1c2638", image: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=900&auto=format&fit=crop&q=85" }
+      ],
+      options: [
+        { name: "Standard Pack", priceDiff: 0 },
+        { name: "With Hard Travel Case", priceDiff: 25 }
+      ]
+    },
+    features: [
+      "Dual Processor V1 & HD Noise Cancelling Processor QN1",
+      "30-Hour Battery Life with 3-Min Quick Charge for 3 Hours",
+      "Multipoint Connection: Pair with 2 Devices Simultaneously",
+      "Speak-to-Chat & Ultra-Comfortable Soft-Fit Synthetic Leather"
+    ],
+    specs: {
+      "Noise Cancellation": "Dual Processors with 8 Microphones & Auto NC Optimizer",
+      "Driver Unit": "30mm Carbon Fiber Composite Dome",
+      "Frequency Response": "4Hz - 40,000Hz (LDAC / Hi-Res Wireless)",
+      "Battery Life": "30 hours (NC On) / 40 hours (NC Off)",
+      "Bluetooth": "Version 5.2 (LDAC, AAC, SBC)",
+      "Weight": "250g (8.82 oz)"
+    },
+    bundle_ids: ["11", "6"],
+    reviews_list: [
+      {
+        author: "Julian Chen",
+        date: "5 days ago",
+        rating: 5,
+        title: "The gold standard for travel & office noise",
+        comment: "Flew transatlantic from JFK to Heathrow and these canceled out every bit of cabin rumble. Voice calls in open-plan offices are crystal clear because the beamforming mics filter out background speech.",
+        verified: true
+      },
+      {
+        author: "Rachel Adams",
+        date: "1 month ago",
+        rating: 5,
+        title: "Incredible soundstage with LDAC",
+        comment: "Pairing these with Tidal Hi-Fi via LDAC brings out subtle acoustic nuances you just don't hear on standard earbuds. Incredibly lightweight headband.",
+        verified: true
+      }
+    ]
+  },
+  {
+    id: "3",
+    sku: "AAPL-IP15PM-256",
+    name: "Apple iPhone 15 Pro Max",
+    brand: "Apple",
+    badge: "Bestseller",
+    description: "Forged in aerospace-grade titanium with the ground-breaking A17 Pro chip, customizable Action button, and the longest optical zoom ever in an iPhone with a 5x telephoto camera.",
+    price: 1199.00,
+    originalPrice: 1299.00,
+    image: "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=900&auto=format&fit=crop&q=85",
+    images: [
+      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=900&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=900&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=900&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=900&auto=format&fit=crop&q=85"
+    ],
+    category: "Electronics",
+    rating: 4.9,
+    reviews: 1280,
+    inStock: true,
+    stock_count: 14,
+    variants: {
+      colors: [
+        { name: "Natural Titanium", hex: "#8a8884", image: "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=900&auto=format&fit=crop&q=85" },
+        { name: "Black Titanium", hex: "#2c2b29", image: "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=900&auto=format&fit=crop&q=85" },
+        { name: "Blue Titanium", hex: "#2e3540", image: "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=900&auto=format&fit=crop&q=85" },
+        { name: "White Titanium", hex: "#e2e3e5", image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=900&auto=format&fit=crop&q=85" }
+      ],
+      options: [
+        { name: "256GB", priceDiff: 0 },
+        { name: "512GB", priceDiff: 200 },
+        { name: "1TB", priceDiff: 400 }
+      ]
+    },
+    features: [
+      "Grade 5 Titanium Design with Ceramic Shield Front",
+      "A17 Pro Chip with 6-Core GPU & Hardware Ray Tracing",
+      "Pro Camera System with 48MP Main & 5x Optical Telephoto",
+      "USB-C Connector with USB 3 Speeds (Up to 10Gbps)"
+    ],
+    specs: {
+      "Display": "6.7\" Super Retina XDR OLED (2796x1290 at 460 ppi, 120Hz ProMotion)",
+      "Chip": "A17 Pro with 6-core CPU, 6-core GPU, 16-core Neural Engine",
+      "Camera": "48MP Main + 12MP Ultra Wide + 12MP 5x Telephoto (120mm focal length)",
+      "Battery": "Up to 29 hours video playback",
+      "Water Resistance": "IP68 (6 meters up to 30 mins)",
+      "Weight": "221 grams"
+    },
+    bundle_ids: ["11", "9"],
+    reviews_list: [
+      {
+        author: "Devon Reed",
+        date: "4 days ago",
+        rating: 5,
+        title: "The 5x tetraprism camera is extraordinary",
+        comment: "Switching from the 13 Pro, the titanium makes this phone noticeably lighter in hand. The 5x optical telephoto lens captures incredible sports and landscape shots. USB-C with USB 3 speeds makes dumping ProRes directly to external SSDs seamless.",
+        verified: true
+      }
+    ]
+  },
+  {
+    id: "4",
+    sku: "SMS-S24U-512",
+    name: "Samsung Galaxy S24 Ultra",
+    brand: "Samsung",
+    badge: "Trending",
+    description: "Welcome to the era of mobile AI. Meet Galaxy S24 Ultra with Galaxy AI, titanium shielding, 200MP camera resolution with Nightography zoom, and the legendary built-in S Pen.",
+    price: 1299.99,
+    originalPrice: 1419.99,
+    image: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=900&auto=format&fit=crop&q=85",
+    images: [
+      "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=900&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=900&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=900&auto=format&fit=crop&q=85"
+    ],
+    category: "Electronics",
+    rating: 4.8,
+    reviews: 730,
+    inStock: true,
+    stock_count: 18,
+    variants: {
+      colors: [
+        { name: "Titanium Gray", hex: "#6f7072", image: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=900&auto=format&fit=crop&q=85" },
+        { name: "Titanium Black", hex: "#222223", image: "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=900&auto=format&fit=crop&q=85" },
+        { name: "Titanium Violet", hex: "#584d63", image: "https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=900&auto=format&fit=crop&q=85" }
+      ],
+      options: [
+        { name: "256GB / 12GB RAM", priceDiff: 0 },
+        { name: "512GB / 12GB RAM", priceDiff: 120 },
+        { name: "1TB / 12GB RAM", priceDiff: 320 }
+      ]
+    },
+    features: [
+      "Galaxy AI: Circle to Search, Live Call Translate, Note Assist",
+      "Corning Gorilla Armor Display with Anti-Reflective Coating",
+      "200MP Main Camera with 50MP 5x Optical Quality Zoom",
+      "Embedded S Pen Stylus with Precision Air Actions"
+    ],
+    specs: {
+      "Display": "6.8\" Dynamic AMOLED 2X, QHD+, 120Hz (2600 nits peak brightness)",
+      "Processor": "Qualcomm Snapdragon 8 Gen 3 for Galaxy",
+      "Battery": "5,000 mAh with 45W Super Fast Charging",
+      "Camera": "200MP Wide + 50MP Telephoto (5x) + 10MP Telephoto (3x) + 12MP Ultra-Wide",
+      "Durability": "IP68 Water/Dust Resistance, Titanium Frame",
+      "Weight": "232g"
+    },
+    bundle_ids: ["11", "6"],
+    reviews_list: [
+      {
+        author: "Kareem Al-Mansoor",
+        date: "1 week ago",
+        rating: 5,
+        title: "The flat anti-glare screen is revolutionary",
+        comment: "Gorilla Armor's reflection reduction is night-and-day in direct sunlight. Galaxy AI live translation helped me throughout my business trip in Tokyo without needing any third-party app.",
+        verified: true
+      }
+    ]
+  },
+  {
+    id: "5",
+    sku: "BSE-QCULTRA-WHT",
+    name: "Bose QuietComfort Ultra Headphones",
+    brand: "Bose",
+    badge: "Trending",
+    description: "World-class active noise cancellation that is quieter than ever before. Breakthrough spatialized Bose Immersive Audio brings your soundstage forward for realistic acoustic depth, paired with CustomTune personalized audio.",
+    price: 429.00,
+    originalPrice: 479.00,
+    image: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=900&auto=format&fit=crop&q=85",
+    images: [
+      "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=900&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1583394838336-acd977736f90?w=900&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=900&auto=format&fit=crop&q=85"
+    ],
+    category: "Electronics",
+    rating: 4.8,
+    reviews: 610,
+    inStock: true,
+    stock_count: 15,
+    variants: {
+      colors: [
+        { name: "White Smoke", hex: "#ebebe7", image: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=900&auto=format&fit=crop&q=85" },
+        { name: "Black", hex: "#1a1a1a", image: "https://images.unsplash.com/photo-1583394838336-acd977736f90?w=900&auto=format&fit=crop&q=85" },
+        { name: "Sandstone", hex: "#c6b7a2", image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=900&auto=format&fit=crop&q=85" }
+      ],
+      options: [
+        { name: "Standard", priceDiff: 0 }
+      ]
+    },
+    features: [
+      "Bose Immersive Audio Spatialized Sound Engine",
+      "CustomTune Technology Analyzes Your Ear Canal Shape",
+      "Quiet Mode, Aware Mode, and Immersion Mode",
+      "Up to 24-Hour Battery Life (18 Hours with Immersive Audio)"
+    ],
+    specs: {
+      "Acoustic Design": "TriPort acoustic headphone structure with CustomTune",
+      "Battery Life": "24 hours (Standard ANC) / 18 hours (Immersive Audio)",
+      "Charging": "USB-C, 15-minute quick charge provides up to 2.5 hours",
+      "Microphones": "Built-in microphone array for voice pickup and noise detection",
+      "Bluetooth": "Version 5.3 with Snapdragon Sound (aptX Adaptive)",
+      "Weight": "252g"
+    },
+    bundle_ids: ["11", "1"],
+    reviews_list: [
+      {
+        author: "Claire Sterling",
+        date: "2 weeks ago",
+        rating: 5,
+        title: "Most comfortable over-ear headphones I've ever worn",
+        comment: "The ear cushions exert practically zero clamping force on glasses. The spatial audio mode makes acoustic concerts sound like you're standing in front of the band.",
+        verified: true
+      }
+    ]
+  },
+  {
+    id: "6",
+    sku: "LOGI-MXM3S-GR",
+    name: "Logitech MX Master 3S Wireless Performance Mouse",
+    brand: "Logitech",
+    badge: "Staff Pick",
+    description: "An iconic performance mouse remastered for speed and precision. Equipped with Quiet Click switches, an 8,000 DPI Darkfield sensor that tracks on glass, and the ultra-fast MagSpeed electromagnetic scroll wheel.",
+    price: 99.99,
+    originalPrice: 119.99,
+    image: "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=900&auto=format&fit=crop&q=85",
+    images: [
+      "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=900&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=900&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=900&auto=format&fit=crop&q=85"
+    ],
+    category: "Accessories",
+    rating: 4.9,
+    reviews: 2410,
+    inStock: true,
+    stock_count: 32,
+    variants: {
+      colors: [
+        { name: "Graphite", hex: "#2d2f34", image: "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=900&auto=format&fit=crop&q=85" },
+        { name: "Pale Gray", hex: "#e5e6e8", image: "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=900&auto=format&fit=crop&q=85" }
+      ],
+      options: [
+        { name: "Standard Edition", priceDiff: 0 }
+      ]
+    },
+    features: [
+      "Any-Surface 8,000 DPI Sensor (Tracks on Glass)",
+      "MagSpeed Electromagnetic Scrolling (1,000 Lines/Sec)",
+      "90% Quieter Click Switches than MX Master 3",
+      "Cross-Computer Flow Control Across Mac and Windows"
+    ],
+    specs: {
+      "Sensor": "Darkfield High Precision (200 - 8000 DPI)",
+      "Buttons": "7 buttons (Left/Right-click, Back/Forward, App-Switch, Wheel mode-shift, Middle click)",
+      "Battery": "Rechargeable Li-Po (500 mAh) — up to 70 days per full charge",
+      "Wireless": "Logi Bolt USB Receiver + Bluetooth Low Energy",
+      "Weight": "141g"
+    },
+    bundle_ids: ["7", "1"],
+    reviews_list: [
+      {
+        author: "Nathan Drake",
+        date: "3 weeks ago",
+        rating: 5,
+        title: "Essential tool for any designer or programmer",
+        comment: "The thumb wheel for horizontal timeline scrubbing in Premiere Pro is unmatched. It feels great in the palm, and the silent clicks make it courteous in quiet libraries.",
+        verified: true
+      }
+    ]
+  },
+  {
+    id: "7",
+    sku: "KEY-Q1PRO-KPB",
+    name: "Keychron Q1 Pro Wireless Custom Mechanical Keyboard",
+    brand: "Keychron",
+    badge: "New Arrival",
+    description: "A groundbreaking full metal QMK/VIA wireless mechanical keyboard. Built with a CNC machined 6063 aluminum body, double-gasket acoustic mount design, screw-in stabilizers, and hot-swappable Keychron K Pro switches.",
+    price: 199.00,
+    originalPrice: 219.00,
+    image: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=900&auto=format&fit=crop&q=85",
+    images: [
+      "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=900&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1595225476474-87563907a212?w=900&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?w=900&auto=format&fit=crop&q=85"
+    ],
+    category: "Accessories",
+    rating: 4.9,
+    reviews: 580,
+    inStock: true,
+    stock_count: 11,
+    variants: {
+      colors: [
+        { name: "Carbon Black", hex: "#202124", image: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=900&auto=format&fit=crop&q=85" },
+        { name: "Silver Grey", hex: "#8c9096", image: "https://images.unsplash.com/photo-1595225476474-87563907a212?w=900&auto=format&fit=crop&q=85" },
+        { name: "Shell White", hex: "#f0f2f5", image: "https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?w=900&auto=format&fit=crop&q=85" }
+      ],
+      options: [
+        { name: "Red Linear Switch", priceDiff: 0 },
+        { name: "Brown Tactile Switch", priceDiff: 0 },
+        { name: "Banana Tactile Switch", priceDiff: 10 }
+      ]
+    },
+    features: [
+      "Full CNC 6063 Aluminum Body with Anodized Finish",
+      "Double-Gasket Mount Design for Deep, Satisfying Acoustics",
+      "Broadcom Bluetooth 5.1 Wireless + Type-C Wired Mode",
+      "Fully Programmable Keys and Knob via QMK and VIA Web App"
+    ],
+    specs: {
+      "Layout": "75% Exploded Layout (81 Keys + Programmable Rotary Knob)",
+      "Plate": "Polycarbonate (PC) Flexible Plate",
+      "Keycaps": "KSA Profile Double-Shot PBT Keycaps",
+      "Connectivity": "Bluetooth 5.1 (Up to 3 Devices) / USB Type-C (1000Hz Polling Rate)",
+      "Battery": "4000mAh Rechargeable (Up to 300 Hours with Backlight Off)",
+      "Weight": "1724g (3.8 lbs solid metal)"
+    },
+    bundle_ids: ["6", "1"],
+    reviews_list: [
+      {
+        author: "Alex Morozov",
+        date: "1 week ago",
+        rating: 5,
+        title: "Pure typing perfection right out of the box",
+        comment: "The double-gasket flex and sound profile are incredible without needing tape mods or lubing. Weighs nearly 4 pounds so it stays anchored firmly to my desk.",
+        verified: true
+      }
+    ]
+  },
+  {
+    id: "8",
+    sku: "SNY-PS5PRO-2TB",
+    name: "Sony PlayStation 5 Pro Console (2TB)",
+    brand: "Sony",
+    badge: "Bestseller",
+    description: "Witness play unleashed. The PlayStation 5 Pro console features an upgraded GPU, advanced ray tracing fidelity, and PlayStation Spectral Super Resolution (PSSR) AI upscaling for silky 4K 60fps and 120fps gaming.",
+    price: 699.99,
+    originalPrice: 699.99,
+    image: "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=900&auto=format&fit=crop&q=85",
+    images: [
+      "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=900&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=900&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1622297845775-5ff3fef71d13?w=900&auto=format&fit=crop&q=85"
+    ],
+    category: "Electronics",
+    rating: 4.9,
+    reviews: 920,
+    inStock: true,
+    stock_count: 7,
+    variants: {
+      colors: [
+        { name: "Classic White & Black", hex: "#f0f2f5", image: "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=900&auto=format&fit=crop&q=85" }
+      ],
+      options: [
+        { name: "2TB Digital Console", priceDiff: 0 },
+        { name: "With Extra DualSense Controller", priceDiff: 70 }
+      ]
+    },
+    features: [
+      "PlayStation Spectral Super Resolution (PSSR AI Upscaling)",
+      "Upgraded GPU with 67% More Compute Units for 45% Faster Rendering",
+      "Advanced Hardware Ray Tracing Lighting & Reflections",
+      "Built-in 2TB Ultra-High Speed NVMe SSD Storage"
+    ],
+    specs: {
+      "Storage": "2TB NVMe SSD (Internal, expandable via M.2 NVMe slot)",
+      "Video Output": "Supports 4K 120Hz TVs, 8K TVs, VRR (Variable Refresh Rate)",
+      "Audio": "Tempest 3D AudioTech Hardware Processing",
+      "Networking": "Wi-Fi 7 (IEEE 802.11be), Gigabit Ethernet, Bluetooth 5.1",
+      "Included Accessories": "DualSense Wireless Controller, 2TB SSD, Astro's Playroom"
+    },
+    bundle_ids: ["2", "11"],
+    reviews_list: [
+      {
+        author: "Liam O'Connor",
+        date: "2 weeks ago",
+        rating: 5,
+        title: "Graphics fidelity and framerates are staggering",
+        comment: "Playing Spider-Man 2 and Final Fantasy VII Rebirth with full ray tracing at locked 60fps is a dream come true. PSSR cleans up edges sharper than native 4K.",
+        verified: true
+      }
+    ]
+  },
+  {
+    id: "9",
+    sku: "AAPL-AWU2-49",
+    name: "Apple Watch Ultra 2 (49mm Titanium)",
+    brand: "Apple",
+    badge: "Staff Pick",
+    description: "The most rugged and capable Apple Watch. Engineered for endurance athletes, outdoor adventurers, and water sports enthusiasts with a 49mm titanium case, precision dual-frequency GPS, and up to 72 hours of battery life.",
+    price: 799.00,
+    originalPrice: 849.00,
+    image: "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=900&auto=format&fit=crop&q=85",
+    images: [
+      "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=900&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=900&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=900&auto=format&fit=crop&q=85"
+    ],
+    category: "Sports",
+    rating: 4.9,
+    reviews: 1140,
+    inStock: true,
+    stock_count: 12,
+    variants: {
+      colors: [
+        { name: "Natural Titanium", hex: "#8a8884", image: "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=900&auto=format&fit=crop&q=85" },
+        { name: "Black Titanium", hex: "#222223", image: "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=900&auto=format&fit=crop&q=85" }
+      ],
+      options: [
+        { name: "Trail Loop (M/L)", priceDiff: 0 },
+        { name: "Alpine Loop (Medium)", priceDiff: 0 },
+        { name: "Ocean Band (One Size)", priceDiff: 0 }
+      ]
+    },
+    features: [
+      "49mm Aerospace-Grade Titanium Case with Sapphire Front Crystal",
+      "Brightest Apple Display Ever: Up to 3,000 Nits for Glare Resistance",
+      "S9 SiP Chip with Double Tap Hands-Free Gesture",
+      "Water Resistant 100m, Tested to MIL-STD 810H with Depth Gauge"
+    ],
+    specs: {
+      "Case Size": "49mm x 44mm x 14.4mm (Aerospace Titanium)",
+      "Battery Life": "36 hours normal use / Up to 72 hours in Low Power Mode",
+      "GPS": "Precision Dual-Frequency GPS (L1 and L5)",
+      "Sensors": "Depth Gauge, Water Temp Sensor, ECG, Blood Oxygen, Skin Temp",
+      "Siren": "86-decibel Emergency Sound Siren audible up to 600 feet",
+      "Weight": "61.4g (Titanium Case)"
+    },
+    bundle_ids: ["3", "11"],
+    reviews_list: [
+      {
+        author: "Captain Brandon Shaw",
+        date: "5 days ago",
+        rating: 5,
+        title: "Indestructible dive watch and marathon tracker",
+        comment: "Used it for open-water scuba diving down to 30 meters and mountain trail ultramarathons. The dual-frequency GPS tracked accurately through dense forest canopy where other smartwatches drifted.",
+        verified: true
+      }
+    ]
+  },
+  {
+    id: "10",
+    sku: "DJI-MINI4P-FMC",
+    name: "DJI Mini 4 Pro Drone (Fly More Combo)",
+    brand: "DJI",
+    badge: "Trending",
+    description: "Our most advanced sub-249g lightweight camera drone. Integrates omnidirectional obstacle sensing, 4K/60fps HDR True Vertical shooting, ActiveTrack 360°, and 20km FHD video transmission.",
+    price: 1099.00,
+    originalPrice: 1159.00,
+    image: "https://images.unsplash.com/photo-1527977966376-1c8408f9f108?w=900&auto=format&fit=crop&q=85",
+    images: [
+      "https://images.unsplash.com/photo-1527977966376-1c8408f9f108?w=900&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1508614589041-895b88991e3e?w=900&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1521405924368-64c5b84bec60?w=900&auto=format&fit=crop&q=85"
+    ],
+    category: "Electronics",
+    rating: 4.9,
+    reviews: 490,
+    inStock: true,
+    stock_count: 8,
+    variants: {
+      colors: [
+        { name: "Matte Gray", hex: "#b5b7b9", image: "https://images.unsplash.com/photo-1527977966376-1c8408f9f108?w=900&auto=format&fit=crop&q=85" }
+      ],
+      options: [
+        { name: "Fly More Combo (DJI RC 2)", priceDiff: 0 },
+        { name: "Combo + 256GB Extreme Pro Card", priceDiff: 45 }
+      ]
+    },
+    features: [
+      "Sub-249g Ultra-Lightweight (No FAA Registration Required in Many Regions)",
+      "Omnidirectional Active Obstacle Avoidance with APAS 5.0",
+      "4K/60fps HDR Video & 4K/100fps Slow Motion in D-Log M",
+      "True Vertical Shooting for Instant Social Media Publishing"
+    ],
+    specs: {
+      "Weight": "< 249 g",
+      "Sensor": "1/1.3-inch CMOS Sensor, Dual Native ISO Fusion, f/1.7 Aperture",
+      "Video Transmission": "DJI O4 (Up to 20 km range, 1080p/60fps live feed)",
+      "Max Flight Time": "34 mins per Intelligent Flight Battery (3 batteries included)",
+      "Wind Resistance": "10.7 m/s (Scale 5 wind resistance)"
+    },
+    bundle_ids: ["11", "1"],
+    reviews_list: [
+      {
+        author: "Marco Rossi",
+        date: "1 week ago",
+        rating: 5,
+        title: "Remarkable image quality from a palm-sized drone",
+        comment: "D-Log M color grading yields commercial quality aerial shots. The ActiveTrack 360 smoothly followed my gravel cycling through tree cover without losing target.",
+        verified: true
+      }
+    ]
+  },
+  {
+    id: "11",
+    sku: "ANK-PRIME-250W",
+    name: "Anker Prime 27,650mAh Power Bank (250W)",
+    brand: "Anker",
+    badge: "New Arrival",
+    description: "The ultimate power powerhouse. Delivers an incredible 250W multi-device fast charge capability, capable of fast-charging two laptops simultaneously, with a smart digital color display and airline-compliant 99.54Wh capacity.",
+    price: 179.99,
+    originalPrice: 199.99,
+    image: "https://images.unsplash.com/photo-1609592807664-88481ff24580?w=900&auto=format&fit=crop&q=85",
+    images: [
+      "https://images.unsplash.com/photo-1609592807664-88481ff24580?w=900&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=900&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=900&auto=format&fit=crop&q=85"
+    ],
+    category: "Accessories",
+    rating: 4.8,
+    reviews: 640,
+    inStock: true,
+    stock_count: 22,
+    variants: {
+      colors: [
+        { name: "Space Gray / Black", hex: "#1a1a1a", image: "https://images.unsplash.com/photo-1609592807664-88481ff24580?w=900&auto=format&fit=crop&q=85" }
+      ],
+      options: [
+        { name: "Standard Pack", priceDiff: 0 },
+        { name: "With 140W Braided Cable", priceDiff: 20 }
+      ]
+    },
+    features: [
+      "250W Maximum Combined Fast-Charge Output across 3 Ports",
+      "Charges MacBook Pro 16\" to 50% in Just 28 Minutes via 140W PD 3.1",
+      "Intuitive Smart Digital Display Monitors Power, Battery Health, & Temp",
+      "TSA Approved Airline-Friendly 99.54Wh Capacity"
+    ],
+    specs: {
+      "Capacity": "27,650mAh (99.54Wh)",
+      "Ports": "2x USB-C (PD 3.1, up to 140W each) + 1x USB-A (65W)",
+      "Recharge Time": "Fully recharged in 37 minutes with dual 170W inputs",
+      "Safety": "ActiveShield 2.0 temperature monitoring 3 million times per day",
+      "Dimensions": "6.36 x 2.24 x 1.96 inches (665g)"
+    },
+    bundle_ids: ["1", "3"],
+    reviews_list: [
+      {
+        author: "Evan Brody",
+        date: "2 weeks ago",
+        rating: 5,
+        title: "The only battery pack you need for remote work",
+        comment: "Charged my MacBook Pro 16\" and iPhone 15 Pro Max at full speed on a cross-country flight. The color OLED display gives exact wattage readouts for every plugged-in device.",
+        verified: true
+      }
+    ]
+  },
+  {
+    id: "12",
+    sku: "DYS-HP10-WHT",
+    name: "Dyson Purifier Hot+Cool Gen1 Air Purifier",
+    brand: "Dyson",
+    badge: "Staff Pick",
+    description: "Automatically senses, captures, and traps pollutants. 3-in-1 multifunctional device that purifies all year round, heats your entire room in winter with thermostatic control, and cools you with powerful high-velocity airflow in summer.",
+    price: 599.99,
+    originalPrice: 649.99,
+    image: "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=900&auto=format&fit=crop&q=85",
+    images: [
+      "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=900&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=900&auto=format&fit=crop&q=85"
+    ],
+    category: "Home",
+    rating: 4.8,
+    reviews: 510,
+    inStock: true,
+    stock_count: 10,
+    variants: {
+      colors: [
+        { name: "White / Silver", hex: "#e5e5e5", image: "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=900&auto=format&fit=crop&q=85" }
+      ],
+      options: [
+        { name: "Single Unit", priceDiff: 0 },
+        { name: "With Spare HEPA Filter", priceDiff: 75 }
+      ]
+    },
+    features: [
+      "Fully Sealed HEPA H13 Filtration Traps 99.97% of Particles as Small as 0.3 Microns",
+      "3-in-1 Triple Action: Intelligent Purification, Fast Heating, and Powerful Cooling",
+      "Air Multiplier Technology Circulates Purified Air Across the Entire Room",
+      "Curved Magnetic Remote Control Stores Neatly on Top of the Machine"
+    ],
+    specs: {
+      "Filtration": "360-degree Glass HEPA + Activated Carbon Filter",
+      "Oscillation": "Adjustable oscillation up to 350 degrees",
+      "Noise Level": "Quiet Night Mode with dimmed display (under 42 dB)",
+      "Coverage": "Rooms up to 290 sq. ft (27 sq. meters)",
+      "Weight": "11.6 lbs (5.29 kg)"
+    },
+    bundle_ids: ["14", "15"],
+    reviews_list: [
+      {
+        author: "Sophie Dupont",
+        date: "3 weeks ago",
+        rating: 5,
+        title: "Allergy symptoms vanished within 48 hours",
+        comment: "Between wildfire smoke and springtime pollen, this machine saved my sleep. Heating is fast and quiet without the burning-dust smell of cheap space heaters.",
+        verified: true
+      }
+    ]
+  },
+  {
+    id: "13",
+    sku: "FUJI-X100VI-SLV",
+    name: "Fujifilm X100VI Premium Digital Camera",
+    brand: "Fujifilm",
+    badge: "Trending",
+    description: "The peak of tactile digital photography. Armed with a 40.2MP X-Trans CMOS 5 HR sensor, 5-axis In-Body Image Stabilization (IBIS), legendary Advanced Hybrid Viewfinder, and 20 Film Simulation modes including REALA ACE.",
+    price: 1599.99,
+    originalPrice: 1599.99,
+    image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=900&auto=format&fit=crop&q=85",
+    images: [
+      "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=900&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=900&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=900&auto=format&fit=crop&q=85"
+    ],
+    category: "Electronics",
+    rating: 4.9,
+    reviews: 380,
+    inStock: true,
+    stock_count: 5,
+    variants: {
+      colors: [
+        { name: "Silver", hex: "#d1d5db", image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=900&auto=format&fit=crop&q=85" },
+        { name: "All-Black", hex: "#111827", image: "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=900&auto=format&fit=crop&q=85" }
+      ],
+      options: [
+        { name: "Standard Body", priceDiff: 0 },
+        { name: "With Weather Sealing Kit", priceDiff: 99 }
+      ]
+    },
+    features: [
+      "40.2MP X-Trans CMOS 5 HR Sensor with X-Processor 5 Engine",
+      "Up to 6.0-Stop In-Body Image Stabilization (IBIS)",
+      "Fixed 23mm F2.0 Precision Pancake Lens (35mm Full-Frame Equivalent)",
+      "20 Iconic Film Simulation Modes Including REALA ACE and Classic Chrome"
+    ],
+    specs: {
+      "Sensor": "40.2 megapixel X-Trans CMOS 5 HR sensor",
+      "Lens": "Fujinon 23mm F2.0 (8 elements in 6 groups, 2 aspherical)",
+      "Video": "6.2K/30p, 4K/60p, 1080/240p 4:2:2 10-bit internal recording",
+      "Viewfinder": "Hybrid OVF with electronic rangefinder + 3.69M-dot OLED EVF",
+      "Weight": "521g (including battery and SD card)"
+    },
+    bundle_ids: ["11", "6"],
+    reviews_list: [
+      {
+        author: "Kenji Sato",
+        date: "1 week ago",
+        rating: 5,
+        title: "The greatest everyday carry street camera ever built",
+        comment: "IBIS is a game-changer for night street photography. You can shoot handheld at 1/4 second with crisp sharpness. Film simulations make JPEGs straight out of camera ready for print.",
+        verified: true
+      }
+    ]
+  },
+  {
+    id: "14",
+    sku: "SNS-ERA300-BLK",
+    name: "Sonos Era 300 Smart Spatial Audio Speaker",
+    brand: "Sonos",
+    badge: "Staff Pick",
+    description: "Featuring six optimally placed acoustic drivers all around the front, sides, and top to support Dolby Atmos Music, the breakthrough acoustic design of Era 300 projects sound from wall to wall and floor to ceiling.",
+    price: 449.00,
+    originalPrice: 499.00,
+    image: "https://images.unsplash.com/photo-1545454675-3531b543be5d?w=900&auto=format&fit=crop&q=85",
+    images: [
+      "https://images.unsplash.com/photo-1545454675-3531b543be5d?w=900&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=900&auto=format&fit=crop&q=85"
+    ],
+    category: "Home",
+    rating: 4.8,
+    reviews: 420,
+    inStock: true,
+    stock_count: 16,
+    variants: {
+      colors: [
+        { name: "Matte Black", hex: "#121212", image: "https://images.unsplash.com/photo-1545454675-3531b543be5d?w=900&auto=format&fit=crop&q=85" },
+        { name: "Matte White", hex: "#f4f4f4", image: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=900&auto=format&fit=crop&q=85" }
+      ],
+      options: [
+        { name: "Single Speaker", priceDiff: 0 },
+        { name: "Stereo Pair (2 Speakers)", priceDiff: 400 }
+      ]
+    },
+    features: [
+      "Six Class-D Amplifiers Powering Four Tweeters and Two Woofers",
+      "Dolby Atmos Spatial Audio for Three-Dimensional Acoustic Immersion",
+      "Trueplay Tuning Optimizes EQ for Your Room's Unique Acoustics",
+      "Wi-Fi 6, Bluetooth 5.0, Apple AirPlay 2, and USB-C Line-In"
+    ],
+    specs: {
+      "Amplification": "Six precision Class-D digital amplifiers",
+      "Acoustics": "4 tweeters (1 forward, 2 side, 1 upward) + 2 woofers (side-firing)",
+      "Voice Control": "Far-field microphone array with Sonos Voice Control & Alexa",
+      "Dimensions": "6.30 x 10.24 x 7.28 inches (160 x 260 x 185 mm)",
+      "Weight": "9.85 lbs (4.47 kg)"
+    },
+    bundle_ids: ["12", "15"],
+    reviews_list: [
+      {
+        author: "Jonathan Wright",
+        date: "2 weeks ago",
+        rating: 5,
+        title: "Spatial Audio fills the room like a concert hall",
+        comment: "Listening to Abbey Road in Dolby Atmos via Apple Music sounds magical. The upward-firing driver bounces vocals off the ceiling with authentic height separation.",
+        verified: true
+      }
+    ]
+  },
+  {
+    id: "15",
+    sku: "HM-AERON-SIZEB",
+    name: "Herman Miller Aeron Ergonomic Chair",
+    brand: "Herman Miller",
+    badge: "Bestseller",
+    description: "The benchmark for ergonomic seating. Designed with 8Z Pellicle elastomeric suspension mesh across eight tension zones, PostureFit SL sacral and lumbar spine support, and smooth Harmonic 2 tilt.",
+    price: 1395.00,
+    originalPrice: 1620.00,
+    image: "https://images.unsplash.com/photo-1580481077195-c94132847c0b?w=900&auto=format&fit=crop&q=85",
+    images: [
+      "https://images.unsplash.com/photo-1580481077195-c94132847c0b?w=900&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1592078615290-033ee584e267?w=900&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1505797149-43b0069ec26b?w=900&auto=format&fit=crop&q=85"
+    ],
+    category: "Home",
+    rating: 4.9,
+    reviews: 1890,
+    inStock: true,
+    stock_count: 8,
+    variants: {
+      colors: [
+        { name: "Graphite", hex: "#3b3d40", image: "https://images.unsplash.com/photo-1580481077195-c94132847c0b?w=900&auto=format&fit=crop&q=85" },
+        { name: "Mineral", hex: "#cbd5e1", image: "https://images.unsplash.com/photo-1592078615290-033ee584e267?w=900&auto=format&fit=crop&q=85" }
+      ],
+      options: [
+        { name: "Size B (Medium - Standard)", priceDiff: 0 },
+        { name: "Size C (Large / Tall)", priceDiff: 50 },
+        { name: "Size A (Small)", priceDiff: 0 }
+      ]
+    },
+    features: [
+      "8Z Pellicle Breathable Mesh Eliminates Pressure Points and Heat Buildup",
+      "PostureFit SL Adjustable Dual-Pads Stabilize Sacrum and Lumbar",
+      "Harmonic 2 Tilt Mechanism with Forward Tilt and Tilt Limiter",
+      "Fully Adjustable Arms (Height, Depth, and Angle Pivot) with Leather Armpads"
+    ],
+    specs: {
+      "Frame Material": "Die-cast aluminum chassis and reinforced recycled resin",
+      "Suspension": "8Z Pellicle elastomeric polyester/nylon weave",
+      "Adjustments": "Pneumatic height, tilt limiter, forward tilt, PostureFit SL, 3D arms",
+      "Warranty": "12-Year, 3-Shift Herman Miller Manufacturer Warranty",
+      "Maximum Weight Capacity": "350 lbs (159 kg)"
+    },
+    bundle_ids: ["6", "7"],
+    reviews_list: [
+      {
+        author: "Christopher Bailey",
+        date: "3 weeks ago",
+        rating: 5,
+        title: "Cured my lower back fatigue after 12-hour coding days",
+        comment: "Worth every single penny. The PostureFit SL forces you into proper spinal alignment effortlessly, and the mesh stays cool during long summer sessions.",
+        verified: true
+      }
+    ]
+  },
+  {
+    id: "16",
+    sku: "AMZN-KNDL-COLOR",
+    name: "Amazon Kindle Colorsoft Signature Edition (32GB)",
+    brand: "Amazon",
+    badge: "New Arrival",
+    description: "The first Kindle in color. Experience your book covers, graphic novels, travel guides, and highlighted passages in soft, paper-like color on the custom 7-inch Colorsoft Paperwhite display, featuring wireless charging and up to 8 weeks of battery.",
+    price: 279.99,
+    originalPrice: 299.99,
+    image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=900&auto=format&fit=crop&q=85",
+    images: [
+      "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=900&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=900&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=900&auto=format&fit=crop&q=85"
+    ],
+    category: "Electronics",
+    rating: 4.8,
+    reviews: 510,
+    inStock: true,
+    stock_count: 19,
+    variants: {
+      colors: [
+        { name: "Metallic Black", hex: "#1f2421", image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=900&auto=format&fit=crop&q=85" }
+      ],
+      options: [
+        { name: "32GB Signature Edition", priceDiff: 0 },
+        { name: "With Premium Leather Cover", priceDiff: 40 }
+      ]
+    },
+    features: [
+      "Custom 7\" Colorsoft Paperwhite Glare-Free Color Display",
+      "Up to 8 Weeks of Battery Life on a Single USB-C Charge",
+      "Wireless Qi Charging + Auto-Adjusting Front Light",
+      "IPX8 Waterproof: Read Worry-Free in the Bath or by the Pool"
+    ],
+    specs: {
+      "Screen": "7\" Colorsoft display technology, 300 ppi (b&w) / 150 ppi (color)",
+      "Storage": "32GB (Holds thousands of books and audiobooks)",
+      "Lighting": "Auto-adjusting front light with 16 LEDs & adjustable warm light",
+      "Connectivity": "Wi-Fi 2.4GHz & 5.0GHz, Bluetooth audio for Audible",
+      "Weight": "219g (7.7 oz)"
+    },
+    bundle_ids: ["2", "11"],
+    reviews_list: [
+      {
+        author: "Miriam Vance",
+        date: "4 days ago",
+        rating: 5,
+        title: "Reading comic books and highlighted text in color is joy",
+        comment: "Zero eye strain compared to an iPad, and colors have a pleasant vintage print look. The wireless charging dock on my nightstand keeps it topped up effortlessly.",
+        verified: true
+      }
+    ]
+  }
+];
+
+fs.writeFileSync(
+  path.join(__dirname, '..', 'data', 'products.json'),
+  JSON.stringify(realProducts, null, 2),
+  'utf8'
+);
+
+console.log(`Successfully generated ${realProducts.length} authentic, real-world flagship products!`);

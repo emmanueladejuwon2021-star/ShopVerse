@@ -5,6 +5,7 @@
  */
 $opts = [
     'category'    => $_GET['category'] ?? 'All',
+    'brand'       => $_GET['brand'] ?? 'All',
     'search'      => $_GET['search'] ?? '',
     'maxPrice'    => $_GET['maxPrice'] ?? '',
     'minRating'   => $_GET['minRating'] ?? '',
@@ -14,15 +15,18 @@ $opts = [
 ];
 $items = filter_products($opts);
 $categories = get_categories();
-$hasActiveFilters = $opts['category'] !== 'All' || $opts['search'] !== '' || $opts['maxPrice'] !== '' || $opts['minRating'] !== '' || $opts['inStockOnly'] || $opts['onSaleOnly'];
+$brands = get_brands();
+$hasActiveFilters = $opts['category'] !== 'All' || $opts['brand'] !== 'All' || $opts['search'] !== '' || $opts['maxPrice'] !== '' || $opts['minRating'] !== '' || $opts['inStockOnly'] || $opts['onSaleOnly'];
 ?>
 <div class="max-w-7xl mx-auto px-4 py-8 lg:py-12">
   <!-- Header & Title -->
   <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
     <div>
-      <span class="text-xs uppercase tracking-widest font-bold text-indigo-600 dark:text-indigo-400">Curated Catalog</span>
+      <span class="text-xs uppercase tracking-widest font-bold text-indigo-600 dark:text-indigo-400">Flagship Collection</span>
       <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight mt-1">
-        <?php if ($opts['category'] !== 'All'): ?>
+        <?php if ($opts['brand'] !== 'All'): ?>
+          <?= e($opts['brand']) ?> Catalog
+        <?php elseif ($opts['category'] !== 'All'): ?>
           <?= e($opts['category']) ?>
         <?php elseif (!empty($opts['search'])): ?>
           Search Results for "<?= e($opts['search']) ?>"
@@ -31,7 +35,7 @@ $hasActiveFilters = $opts['category'] !== 'All' || $opts['search'] !== '' || $op
         <?php endif; ?>
       </h1>
       <p class="text-sm text-gray-500 mt-1">
-        Showing <?= count($items) ?> premium product<?= count($items) === 1 ? '' : 's' ?>
+        Showing <?= count($items) ?> flagship product<?= count($items) === 1 ? '' : 's' ?>
       </p>
     </div>
 
@@ -51,7 +55,7 @@ $hasActiveFilters = $opts['category'] !== 'All' || $opts['search'] !== '' || $op
 
   <!-- Filter & Sort Toolbar -->
   <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 border border-gray-100 dark:border-gray-700/60 shadow-sm mb-8 space-y-4">
-    <form method="get" action="/products" class="grid sm:grid-cols-2 lg:grid-cols-5 gap-3">
+    <form method="get" action="/products" class="grid sm:grid-cols-2 lg:grid-cols-6 gap-3">
       <!-- Search Input -->
       <div class="relative">
         <input type="search" name="search" placeholder="Search keywords…" value="<?= e($opts['search']) ?>"
@@ -66,11 +70,19 @@ $hasActiveFilters = $opts['category'] !== 'All' || $opts['search'] !== '' || $op
         <?php endforeach; ?>
       </select>
 
+      <!-- Brand Select -->
+      <select name="brand" class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+        <option value="All">All Brands</option>
+        <?php foreach ($brands as $b): ?>
+          <option value="<?= e($b) ?>" <?= $opts['brand'] === $b ? 'selected' : '' ?>><?= e($b) ?></option>
+        <?php endforeach; ?>
+      </select>
+
       <!-- Max Price Select -->
       <select name="maxPrice" class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
         <option value="">Any Price</option>
-        <?php foreach ([50, 100, 200, 300, 600] as $mp): ?>
-          <option value="<?= $mp ?>" <?= (string) $opts['maxPrice'] === (string) $mp ? 'selected' : '' ?>>Under $<?= $mp ?></option>
+        <?php foreach ([150, 300, 500, 1000, 2000, 4000] as $mp): ?>
+          <option value="<?= $mp ?>" <?= (string) $opts['maxPrice'] === (string) $mp ? 'selected' : '' ?>>Under $<?= number_format($mp) ?></option>
         <?php endforeach; ?>
       </select>
 

@@ -127,25 +127,42 @@ $categories = array_slice(get_categories(), 1);
     </a>
   </div>
 
-  <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
     <?php
     $catIcons = [
-        'Electronics' => '🎧',
-        'Clothing' => '🧥',
-        'Accessories' => '🕶️',
-        'Home' => '🪴',
-        'Sports' => '⚡',
+        'Electronics' => '💻',
+        'Accessories' => '⌨️',
+        'Home' => '🛋️',
+        'Sports' => '⌚',
     ];
     foreach ($categories as $cat): ?>
       <a href="/products?category=<?= urlencode($cat) ?>"
          class="group p-6 rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700/60 shadow-sm hover:shadow-xl hover:border-indigo-500/40 transition-all text-center flex flex-col items-center gap-3 hover:-translate-y-1">
-        <span class="text-3xl group-hover:scale-115 transition-transform"><?= $catIcons[$cat] ?? '📦' ?></span>
+        <span class="text-4xl group-hover:scale-110 transition-transform"><?= $catIcons[$cat] ?? '📦' ?></span>
         <div>
           <h3 class="font-bold text-sm text-gray-900 dark:text-white"><?= e($cat) ?></h3>
           <span class="text-xs text-gray-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">Explore Category →</span>
         </div>
       </a>
     <?php endforeach; ?>
+  </div>
+</section>
+
+<!-- Official Brand Partners Showcase -->
+<section class="max-w-7xl mx-auto px-4 py-4">
+  <div class="p-8 rounded-3xl bg-white dark:bg-gray-800/80 border border-gray-100 dark:border-gray-700/60 shadow-xs">
+    <div class="text-center mb-6">
+      <span class="text-xs uppercase font-bold tracking-widest text-gray-400">Authorized Retailer &amp; Official Stockist</span>
+      <h3 class="text-lg font-extrabold text-gray-900 dark:text-white mt-1">Shop World-Leading Flagship Brands</h3>
+    </div>
+    <div class="flex flex-wrap items-center justify-center gap-4 sm:gap-8">
+      <?php foreach (get_brands() as $brandName): ?>
+        <a href="/products?brand=<?= urlencode($brandName) ?>"
+           class="px-4 py-2 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-200/80 dark:border-gray-700/80 font-bold text-xs sm:text-sm text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:border-indigo-500/50 transition-all shadow-2xs hover:scale-105">
+          <?= e($brandName) ?>
+        </a>
+      <?php endforeach; ?>
+    </div>
   </div>
 </section>
 

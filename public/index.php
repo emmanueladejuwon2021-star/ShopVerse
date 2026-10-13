@@ -52,12 +52,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $uri = rawurldecode(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/');
 $path = rtrim($uri, '/') ?: '/';
 
+// ---- API Endpoints ----
+if ($path === '/api/search') {
+    header('Content-Type: application/json');
+    $q = trim((string) ($_GET['q'] ?? ''));
+    if ($q === '') {
+        echo json_encode([]);
+        exit;
+    }
+    $results = array_slice(filter_products(['search' => $q]), 0, 6);
+    $out = array_map(function ($p) {
+        return [
+            'id' => $p['id'],
+            'name' => $p['name'],
+            'brand' => $p['brand'] ?? '',
+            'price' => money($p['price']),
+            'raw_price' => $p['price'],
+            'image' => $p['image'],
+            'category' => $p['category'],
+            'url' => '/product/' . $p['id'],
+            'badge' => $p['badge'] ?? null,
+        ];
+    }, $results);
+    echo json_encode($out);
+    exit;
+}
+
 $routes = [
     '/'             => 'home',
     '/products'     => 'products',
     '/product'      => 'product_detail',   // /product/{id}
     '/cart'         => 'cart',
     '/wishlist'     => 'wishlist',
+    '/track'        => 'track',
     '/checkout'     => 'checkout',         // requires login
     '/order-success'=> 'order_success',    // requires login
     '/login'        => 'login',

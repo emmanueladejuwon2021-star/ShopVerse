@@ -18,7 +18,7 @@ $discountPercent = !empty($p['originalPrice']) ? (int) round((1 - $p['price'] / 
       
       <!-- Secondary Hover Image (if available) -->
       <?php if ($secondaryImage): ?>
-        <img src="<?= e($secondaryImage)" alt="<?= e($p['name']) ?>"
+        <img src="<?= e($secondaryImage) ?>" alt="<?= e($p['name']) ?>"
              onerror="this.onerror=null;this.src='/assets/products/placeholder.svg'"
              class="absolute inset-0 w-full h-full object-cover object-center opacity-0 group-hover:opacity-100 transition-opacity duration-500" loading="lazy">
       <?php endif; ?>

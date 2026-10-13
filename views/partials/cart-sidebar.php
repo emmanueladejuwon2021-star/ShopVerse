@@ -62,6 +62,13 @@ $freeShippingThreshold = 50.0;
           <a href="/product/<?= e($p['id']) ?>" class="text-xs font-bold truncate block text-gray-900 dark:text-white hover:text-indigo-600 transition-colors">
             <?= e($p['name']) ?>
           </a>
+          <?php if (!empty($item['selectedColor']) || !empty($item['selectedOption'])): ?>
+            <div class="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">
+              <?= !empty($item['selectedColor']) ? e($item['selectedColor']) : '' ?>
+              <?= (!empty($item['selectedColor']) && !empty($item['selectedOption'])) ? ' · ' : '' ?>
+              <?= !empty($item['selectedOption']) ? e($item['selectedOption']) : '' ?>
+            </div>
+          <?php endif; ?>
           <p class="text-xs font-extrabold text-indigo-600 dark:text-indigo-400 mt-1"><?= money($p['price']) ?></p>
 
           <div class="flex items-center gap-3 mt-2">
@@ -70,7 +77,7 @@ $freeShippingThreshold = 50.0;
               <form method="post" class="inline">
                 <?= csrf_field() ?>
                 <input type="hidden" name="action" value="update_quantity">
-                <input type="hidden" name="product_id" value="<?= e($p['id']) ?>">
+                <input type="hidden" name="product_id" value="<?= e($item['key'] ?? $p['id']) ?>">
                 <input type="hidden" name="quantity" value="<?= max(0, $item['quantity'] - 1) ?>">
                 <input type="hidden" name="redirect" value="<?= e($_SERVER['REQUEST_URI'] ?? '/') ?>">
                 <button class="w-6 h-6 rounded hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center font-bold text-xs text-gray-500">−</button>
@@ -81,7 +88,7 @@ $freeShippingThreshold = 50.0;
               <form method="post" class="inline">
                 <?= csrf_field() ?>
                 <input type="hidden" name="action" value="update_quantity">
-                <input type="hidden" name="product_id" value="<?= e($p['id']) ?>">
+                <input type="hidden" name="product_id" value="<?= e($item['key'] ?? $p['id']) ?>">
                 <input type="hidden" name="quantity" value="<?= $item['quantity'] + 1 ?>">
                 <input type="hidden" name="redirect" value="<?= e($_SERVER['REQUEST_URI'] ?? '/') ?>">
                 <button class="w-6 h-6 rounded hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center font-bold text-xs text-gray-500">+</button>
@@ -92,7 +99,7 @@ $freeShippingThreshold = 50.0;
             <form method="post" class="inline ml-auto">
               <?= csrf_field() ?>
               <input type="hidden" name="action" value="remove_from_cart">
-              <input type="hidden" name="product_id" value="<?= e($p['id']) ?>">
+              <input type="hidden" name="product_id" value="<?= e($item['key'] ?? $p['id']) ?>">
               <input type="hidden" name="redirect" value="<?= e($_SERVER['REQUEST_URI'] ?? '/') ?>">
               <button class="text-[11px] font-medium text-gray-400 hover:text-rose-500 transition-colors">Remove</button>
             </form>

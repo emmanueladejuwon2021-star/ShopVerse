@@ -78,6 +78,13 @@ $progressPercent = min(100, (int) round(($subtotal / $freeShippingThreshold) * 1
                 <a href="/product/<?= e($p['id']) ?>" class="font-bold text-base text-gray-900 dark:text-white truncate block hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
                   <?= e($p['name']) ?>
                 </a>
+                <?php if (!empty($item['selectedColor']) || !empty($item['selectedOption'])): ?>
+                  <div class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                    <?= !empty($item['selectedColor']) ? 'Finish: ' . e($item['selectedColor']) : '' ?>
+                    <?= (!empty($item['selectedColor']) && !empty($item['selectedOption'])) ? ' · ' : '' ?>
+                    <?= !empty($item['selectedOption']) ? e($item['selectedOption']) : '' ?>
+                  </div>
+                <?php endif; ?>
                 <p class="text-sm font-extrabold text-indigo-600 dark:text-indigo-400 mt-1"><?= money($p['price']) ?></p>
 
                 <div class="flex flex-wrap items-center gap-4 mt-3">
@@ -86,7 +93,7 @@ $progressPercent = min(100, (int) round(($subtotal / $freeShippingThreshold) * 1
                     <form method="post" class="inline">
                       <?= csrf_field() ?>
                       <input type="hidden" name="action" value="update_quantity">
-                      <input type="hidden" name="product_id" value="<?= e($p['id']) ?>">
+                      <input type="hidden" name="product_id" value="<?= e($item['key'] ?? $p['id']) ?>">
                       <input type="hidden" name="quantity" value="<?= max(0, $item['quantity'] - 1) ?>">
                       <input type="hidden" name="redirect" value="/cart">
                       <button class="w-7 h-7 rounded-lg hover:bg-white dark:hover:bg-gray-800 flex items-center justify-center font-bold text-gray-600 dark:text-gray-300 text-xs">−</button>
@@ -97,7 +104,7 @@ $progressPercent = min(100, (int) round(($subtotal / $freeShippingThreshold) * 1
                     <form method="post" class="inline">
                       <?= csrf_field() ?>
                       <input type="hidden" name="action" value="update_quantity">
-                      <input type="hidden" name="product_id" value="<?= e($p['id']) ?>">
+                      <input type="hidden" name="product_id" value="<?= e($item['key'] ?? $p['id']) ?>">
                       <input type="hidden" name="quantity" value="<?= $item['quantity'] + 1 ?>">
                       <input type="hidden" name="redirect" value="/cart">
                       <button class="w-7 h-7 rounded-lg hover:bg-white dark:hover:bg-gray-800 flex items-center justify-center font-bold text-gray-600 dark:text-gray-300 text-xs">+</button>
@@ -108,7 +115,7 @@ $progressPercent = min(100, (int) round(($subtotal / $freeShippingThreshold) * 1
                   <form method="post" class="inline">
                     <?= csrf_field() ?>
                     <input type="hidden" name="action" value="remove_from_cart">
-                    <input type="hidden" name="product_id" value="<?= e($p['id']) ?>">
+                    <input type="hidden" name="product_id" value="<?= e($item['key'] ?? $p['id']) ?>">
                     <input type="hidden" name="redirect" value="/cart">
                     <button class="text-xs font-medium text-gray-400 hover:text-rose-500 transition-colors">
                       Remove

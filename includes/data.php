@@ -11,7 +11,19 @@ declare(strict_types=1);
 
 function get_categories(): array
 {
-    return ['All', 'Electronics', 'Clothing', 'Accessories', 'Home', 'Sports'];
+    return ['All', 'Electronics', 'Accessories', 'Home', 'Sports'];
+}
+
+function get_brands(): array
+{
+    $brands = [];
+    foreach (all_products() as $p) {
+        if (!empty($p['brand']) && !in_array($p['brand'], $brands, true)) {
+            $brands[] = $p['brand'];
+        }
+    }
+    sort($brands);
+    return $brands;
 }
 
 /** @return array<int, array<string,mixed>> */
@@ -56,11 +68,17 @@ function filter_products(array $opts): array
         $items = array_values(array_filter($items, fn($p) => $p['category'] === $opts['category']));
     }
 
+    if (!empty($opts['brand']) && $opts['brand'] !== 'All') {
+        $items = array_values(array_filter($items, fn($p) => ($p['brand'] ?? '') === $opts['brand']));
+    }
+
     if (!empty($opts['search'])) {
         $q = strtolower($opts['search']); // audit fix: mbstring not guaranteed on all hosts
         $items = array_values(array_filter($items, function ($p) use ($q) {
             return str_contains(strtolower($p['name']), $q)
-                || str_contains(strtolower($p['description']), $q);
+                || str_contains(strtolower($p['description']), $q)
+                || str_contains(strtolower($p['brand'] ?? ''), $q)
+                || str_contains(strtolower($p['sku'] ?? ''), $q);
         }));
     }
 

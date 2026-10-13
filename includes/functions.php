@@ -16,9 +16,33 @@ function csrf_field(): string
     return '<input type="hidden" name="csrf" value="' . e($_SESSION['csrf_token'] ?? '') . '">';
 }
 
+function supported_currencies(): array
+{
+    return [
+        'USD' => ['symbol' => '$', 'rate' => 1.0, 'name' => 'USD ($)'],
+        'EUR' => ['symbol' => '€', 'rate' => 0.92, 'name' => 'EUR (€)'],
+        'GBP' => ['symbol' => '£', 'rate' => 0.79, 'name' => 'GBP (£)'],
+        'NGN' => ['symbol' => '₦', 'rate' => 1550.0, 'name' => 'NGN (₦)'],
+        'CAD' => ['symbol' => 'CA$', 'rate' => 1.36, 'name' => 'CAD ($)'],
+        'AUD' => ['symbol' => 'AU$', 'rate' => 1.52, 'name' => 'AUD ($)'],
+    ];
+}
+
+function active_currency(): string
+{
+    $curr = $_SESSION['currency'] ?? 'USD';
+    return array_key_exists($curr, supported_currencies()) ? $curr : 'USD';
+}
+
 function money(float|int|string $n): string
 {
-    return '$' . number_format((float) $n, 2);
+    $c = active_currency();
+    $currInfo = supported_currencies()[$c];
+    $converted = ((float) $n) * $currInfo['rate'];
+    if ($c === 'NGN') {
+        return '₦' . number_format($converted, 0);
+    }
+    return $currInfo['symbol'] . number_format($converted, 2);
 }
 
 /** URL builder that preserves current query params (used by Products filters). */
@@ -47,6 +71,7 @@ function render_page(string $page, array $params = []): void
         'wishlist' => 'Saved Items — ShopVerse',
         'checkout' => 'Checkout — ShopVerse',
         'order_success' => 'Order Confirmed — ShopVerse',
+        'track' => 'Order Tracking & Shipment Status — ShopVerse',
         'login' => 'Sign In — ShopVerse',
         'orders' => 'My Orders — ShopVerse',
         'account' => 'Account Settings — ShopVerse',

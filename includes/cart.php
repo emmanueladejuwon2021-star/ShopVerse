@@ -11,16 +11,43 @@ function cart_items(): array
     return $_SESSION['cart'] ?? [];
 }
 
-function cart_add(string $productId, int $qty = 1): void
+function cart_add(string $productId, int $qty = 1, ?string $color = null, ?string $option = null, float $priceDiff = 0.0, ?string $customImage = null): void
 {
     $product = find_product($productId);
     if (!$product) return;
 
+    $adjustedProduct = $product;
+    if ($priceDiff > 0) {
+        $adjustedProduct['price'] += $priceDiff;
+        if (!empty($adjustedProduct['originalPrice'])) {
+            $adjustedProduct['originalPrice'] += $priceDiff;
+        }
+    }
+    if ($customImage) {
+        $adjustedProduct['image'] = $customImage;
+    }
+    if ($color) {
+        $adjustedProduct['selectedColor'] = $color;
+    }
+    if ($option) {
+        $adjustedProduct['selectedOption'] = $option;
+    }
+
+    $cartKey = $productId;
+    if ($color) $cartKey .= '-' . preg_replace('/[^a-zA-Z0-9]/', '', $color);
+    if ($option) $cartKey .= '-' . preg_replace('/[^a-zA-Z0-9]/', '', $option);
+
     $cart = cart_items();
-    if (isset($cart[$productId])) {
-        $cart[$productId]['quantity'] += max(1, $qty);
+    if (isset($cart[$cartKey])) {
+        $cart[$cartKey]['quantity'] += max(1, $qty);
     } else {
-        $cart[$productId] = ['product' => $product, 'quantity' => max(1, $qty)];
+        $cart[$cartKey] = [
+            'key' => $cartKey,
+            'product' => $adjustedProduct,
+            'quantity' => max(1, $qty),
+            'selectedColor' => $color,
+            'selectedOption' => $option,
+        ];
     }
     $_SESSION['cart'] = $cart;
     $_SESSION['cart_open'] = true;
@@ -134,18 +161,73 @@ function cart_discount(float $subtotal): float
     return 0.0;
 }
 
-function cart_shipping(float $subtotal): float
+function get_shipping_methods(): array
+{
+    return [
+        'standard' => [
+            'id' => 'standard',
+            'name' => 'Standard Ground Delivery',
+            'eta' => '3–5 Business Days',
+            'cost' => 4.99,
+            'freeThreshold' => 100.0,
+        ],
+        'express' => [
+            'id' => 'express',
+            'name' => 'Express Air (2-Day Priority)',
+            'eta' => '2 Business Days',
+            'cost' => 12.99,
+            'freeThreshold' => null,
+        ],
+        'overnight' => [
+            'id' => 'overnight',
+            'name' => 'Priority Overnight Delivery',
+            'eta' => 'Next Business Day by 10:30 AM',
+            'cost' => 24.99,
+            'freeThreshold' => null,
+        ],
+    ];
+}
+
+function cart_shipping(float $subtotal, string $method = 'standard'): float
 {
     $coupon = get_active_coupon();
     if ($coupon && $coupon['type'] === 'free_shipping') {
         return 0.0;
     }
-    return $subtotal >= 50.0 ? 0.0 : 4.99;
+    $methods = get_shipping_methods();
+    $chosen = $methods[$method] ?? $methods['standard'];
+    if ($chosen['freeThreshold'] !== null && $subtotal >= $chosen['freeThreshold']) {
+        return 0.0;
+    }
+    return $chosen['cost'];
 }
 
 function cart_tax(float $subtotalAfterDiscount): float
 {
     return round(max(0.0, $subtotalAfterDiscount) * 0.08, 2);
+}
+
+// ----------------------------------------------------
+// PRODUCT REVIEWS ENGINE
+// ----------------------------------------------------
+
+function get_product_reviews(string $productId): array
+{
+    $product = find_product($productId);
+    $baseReviews = $product['reviews_list'] ?? [];
+    $custom = $_SESSION['custom_reviews'][$productId] ?? [];
+    return array_merge($custom, $baseReviews);
+}
+
+function add_product_review(string $productId, array $review): void
+{
+    if (!isset($_SESSION['custom_reviews'])) {
+        $_SESSION['custom_reviews'] = [];
+    }
+    if (!isset($_SESSION['custom_reviews'][$productId])) {
+        $_SESSION['custom_reviews'][$productId] = [];
+    }
+    array_unshift($_SESSION['custom_reviews'][$productId], $review);
 }
 
 // ----------------------------------------------------
@@ -192,6 +274,12 @@ function wishlist_items(): array
 // POST ACTION ROUTER
 // ----------------------------------------------------
 
+function is_ajax_request(): bool
+{
+    return (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
+        || (isset($_SERVER['HTTP_ACCEPT']) && str_contains($_SERVER['HTTP_ACCEPT'], 'application/json'));
+}
+
 function handle_post_actions(): void
 {
     $action = $_POST['action'] ?? '';
@@ -199,9 +287,67 @@ function handle_post_actions(): void
 
     switch ($action) {
         case 'add_to_cart':
-            cart_add((string) ($_POST['product_id'] ?? ''), (int) ($_POST['quantity'] ?? 1));
+            $pid = (string) ($_POST['product_id'] ?? '');
+            $qty = (int) ($_POST['quantity'] ?? 1);
+            $color = !empty($_POST['variant_color']) ? trim((string) $_POST['variant_color']) : null;
+            $option = !empty($_POST['variant_option']) ? trim((string) $_POST['variant_option']) : null;
+            $priceDiff = (float) ($_POST['price_diff'] ?? 0.0);
+            $customImage = !empty($_POST['custom_image']) ? trim((string) $_POST['custom_image']) : null;
+            cart_add($pid, $qty, $color, $option, $priceDiff, $customImage);
+
+            if (is_ajax_request()) {
+                header('Content-Type: application/json');
+                echo json_encode([
+                    'ok' => true,
+                    'message' => 'Added to your cart 🎉',
+                    'cartCount' => cart_total_items(),
+                    'cartSubtotal' => money(cart_total_price()),
+                    'wishlistCount' => count(wishlist_ids()),
+                ]);
+                exit;
+            }
             $_SESSION['flash'] = 'Added to your cart 🎉';
             break;
+
+        case 'add_bundle':
+            $mainId = (string) ($_POST['main_product_id'] ?? '');
+            $bundleIds = $_POST['bundle_product_ids'] ?? [];
+            if ($mainId) cart_add($mainId, 1);
+            if (is_array($bundleIds)) {
+                foreach ($bundleIds as $bId) {
+                    cart_add((string) $bId, 1);
+                }
+            }
+            $_SESSION['flash'] = 'Bundle successfully added to your cart with special savings! 🎉';
+            break;
+
+        case 'set_currency':
+            $curr = strtoupper(trim((string) ($_POST['currency'] ?? 'USD')));
+            if (array_key_exists($curr, supported_currencies())) {
+                $_SESSION['currency'] = $curr;
+            }
+            redirect($redirect);
+            return;
+
+        case 'add_review':
+            $pid = (string) ($_POST['product_id'] ?? '');
+            $author = trim((string) ($_POST['author'] ?? ''));
+            $rating = max(1, min(5, (int) ($_POST['rating'] ?? 5)));
+            $title = trim((string) ($_POST['title'] ?? ''));
+            $comment = trim((string) ($_POST['comment'] ?? ''));
+            if ($pid && $title && $comment) {
+                add_product_review($pid, [
+                    'author' => $author ?: 'Verified Customer',
+                    'date' => 'Just now',
+                    'rating' => $rating,
+                    'title' => $title,
+                    'comment' => $comment,
+                    'verified' => true,
+                ]);
+                $_SESSION['flash'] = 'Thank you! Your verified review has been published.';
+            }
+            redirect('/product/' . urlencode($pid) . '#reviews');
+            return;
 
         case 'remove_from_cart':
             cart_remove((string) ($_POST['product_id'] ?? ''));
@@ -224,6 +370,17 @@ function handle_post_actions(): void
         case 'toggle_wishlist':
             $pid = (string) ($_POST['product_id'] ?? '');
             $added = wishlist_toggle($pid);
+            if (is_ajax_request()) {
+                header('Content-Type: application/json');
+                echo json_encode([
+                    'ok' => true,
+                    'added' => $added,
+                    'message' => $added ? 'Saved to your wishlist ❤️' : 'Removed from wishlist.',
+                    'wishlistCount' => count(wishlist_ids()),
+                    'cartCount' => cart_total_items(),
+                ]);
+                exit;
+            }
             $_SESSION['flash'] = $added ? 'Saved to your wishlist ❤️' : 'Removed from wishlist.';
             break;
 
@@ -320,7 +477,8 @@ function place_order_from_post(): void
     $subtotal = cart_total_price();
     $discount = cart_discount($subtotal);
     $subAfterDiscount = max(0.0, $subtotal - $discount);
-    $shipping = cart_shipping($subtotal);
+    $shippingMethod = trim((string) ($_POST['shippingMethod'] ?? 'standard'));
+    $shipping = cart_shipping($subtotal, $shippingMethod);
     $tax = cart_tax($subAfterDiscount);
     $total = round($subAfterDiscount + $shipping + $tax, 2);
 
@@ -336,6 +494,7 @@ function place_order_from_post(): void
         'zipCode' => trim((string) $_POST['zipCode']),
         'country' => trim((string) $_POST['country']),
         'paymentMethod' => $paymentMethod,
+        'shippingMethod' => $shippingMethod,
         'orderNotes' => $orderNotes,
         'subtotal' => $subtotal,
         'discount' => $discount,

@@ -135,6 +135,74 @@
         setTimeout(function() { item.remove(); }, 300);
       });
     }, 4000);
+
+    // Toast Generator Helper
+    function showToast(msg, isError) {
+      var container = document.getElementById('toast-container');
+      if (!container) return;
+      var toast = document.createElement('div');
+      toast.className = 'toast-item pointer-events-auto rounded-2xl p-4 text-xs font-semibold ' +
+        (isError ? 'bg-rose-600/95 text-white border-rose-400/30' : 'bg-gray-900/95 dark:bg-white/95 text-white dark:text-gray-900 border-white/10') +
+        ' shadow-2xl backdrop-blur-md flex items-center justify-between gap-3 border animate-slide-up transition-all duration-300';
+      toast.innerHTML = '<div class="flex items-center gap-2.5"><span class="text-base">' + (isError ? '⚠️' : '✨') + '</span><span>' + msg + '</span></div><button onclick="this.parentElement.remove()" class="opacity-60 hover:opacity-100 text-sm">✕</button>';
+      container.appendChild(toast);
+      setTimeout(function() {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        setTimeout(function() { toast.remove(); }, 300);
+      }, 4000);
+    }
+
+    // Progressive Enhancement: AJAX Add-to-Cart & Wishlist
+    document.addEventListener('submit', function(e) {
+      var form = e.target;
+      var actionInput = form.querySelector('input[name="action"]');
+      var actionVal = actionInput ? actionInput.value : '';
+
+      if (actionVal === 'add_to_cart' || actionVal === 'toggle_wishlist') {
+        e.preventDefault();
+        var formData = new FormData(form);
+
+        fetch(form.action || window.location.href, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
+          }
+        })
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+          if (data && data.ok) {
+            showToast(data.message || 'Updated successfully!', false);
+
+            if (typeof data.cartCount !== 'undefined') {
+              var cBadge = document.getElementById('nav-cart-count');
+              if (cBadge) {
+                cBadge.innerText = data.cartCount;
+                cBadge.classList.toggle('hidden', data.cartCount <= 0);
+              }
+            }
+            if (typeof data.wishlistCount !== 'undefined') {
+              var wBadge = document.getElementById('nav-wishlist-count');
+              if (wBadge) {
+                wBadge.innerText = data.wishlistCount;
+                wBadge.classList.toggle('hidden', data.wishlistCount <= 0);
+              }
+            }
+
+            if (actionVal === 'add_to_cart') {
+              setCartOpen(true);
+            }
+          } else {
+            form.submit();
+          }
+        })
+        .catch(function() {
+          form.submit();
+        });
+      }
+    });
   </script>
 </body>
 </html>
