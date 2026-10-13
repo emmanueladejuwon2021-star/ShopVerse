@@ -48,8 +48,8 @@
     }
   </style>
 </head>
-<?php $_cartOpenFlag = !empty($_SESSION["cart_open"]); ?>
-<body data-cart-open="<?= $_cartOpenFlag ? 1 : 0 ?>" class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col transition-colors duration-300">
+<?php $shouldAutoOpen = !empty($auto_open_cart); ?>
+<body data-auto-open-cart="<?= $shouldAutoOpen ? '1' : '0' ?>" class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col transition-colors duration-300">
   <?php include __DIR__ . '/partials/navbar.php'; ?>
   <?php include __DIR__ . '/partials/cart-sidebar.php'; ?>
 
@@ -106,24 +106,77 @@
       var el = document.getElementById('cart-sidebar');
       var overlay = document.getElementById('cart-overlay');
       if (!el) return;
-      el.classList.toggle('translate-x-full', !open);
-      if (overlay) overlay.classList.toggle('hidden', !open);
-      document.body.style.overflow = open ? 'hidden' : '';
+      if (open) {
+        el.classList.remove('translate-x-full');
+        if (overlay) overlay.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      } else {
+        el.classList.add('translate-x-full');
+        if (overlay) overlay.classList.add('hidden');
+        document.body.style.overflow = '';
+      }
     }
-    document.querySelectorAll('[data-cart-open]').forEach(function (b) {
-      b.addEventListener('click', function (ev) { ev.preventDefault(); setCartOpen(true); });
-    });
-    document.querySelectorAll('[data-cart-close]').forEach(function (b) {
-      b.addEventListener('click', function () { setCartOpen(false); });
-    });
+
+    // Dynamic cart sidebar DOM replacement
+    function updateCartSidebarDOM(newHtml) {
+      if (!newHtml) return;
+      var temp = document.createElement('div');
+      temp.innerHTML = newHtml;
+
+      var newSidebar = temp.querySelector('#cart-sidebar');
+      var newOverlay = temp.querySelector('#cart-overlay');
+      var oldSidebar = document.getElementById('cart-sidebar');
+      var oldOverlay = document.getElementById('cart-overlay');
+
+      if (oldOverlay && newOverlay) {
+        var isOverlayVisible = !oldOverlay.classList.contains('hidden');
+        if (isOverlayVisible) newOverlay.classList.remove('hidden');
+        else newOverlay.classList.add('hidden');
+        oldOverlay.replaceWith(newOverlay);
+      }
+      if (oldSidebar && newSidebar) {
+        var isSidebarOpen = !oldSidebar.classList.contains('translate-x-full');
+        if (isSidebarOpen) newSidebar.classList.remove('translate-x-full');
+        else newSidebar.classList.add('translate-x-full');
+        oldSidebar.replaceWith(newSidebar);
+      }
+      bindCartEvents();
+    }
+
+    // Bind event listeners exclusively to interactive buttons/links
+    function bindCartEvents() {
+      document.querySelectorAll('button[data-cart-open], a[data-cart-open], [data-cart-trigger]').forEach(function (b) {
+        b.onclick = function (ev) {
+          ev.preventDefault();
+          ev.stopPropagation();
+          setCartOpen(true);
+          fetch('/api/cart')
+            .then(function(r) { return r.json(); })
+            .then(function(d) {
+              if (d && d.ok && d.sidebarHtml) updateCartSidebarDOM(d.sidebarHtml);
+            })
+            .catch(function() {});
+        };
+      });
+
+      document.querySelectorAll('[data-cart-close]').forEach(function (b) {
+        b.onclick = function (ev) {
+          ev.preventDefault();
+          ev.stopPropagation();
+          setCartOpen(false);
+        };
+      });
+    }
+
+    bindCartEvents();
 
     // ESC key closes modals / sidebars
     window.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') setCartOpen(false);
     });
 
-    // Server-instructed cart open flag
-    if (document.body.getAttribute('data-cart-open') === '1') {
+    // Server-instructed cart auto-open
+    if (document.body.getAttribute('data-auto-open-cart') === '1') {
       setCartOpen(true);
     }
 
@@ -153,13 +206,19 @@
       }, 4000);
     }
 
-    // Progressive Enhancement: AJAX Add-to-Cart & Wishlist
+    // Progressive Enhancement: AJAX Add-to-Cart, Bundles, Quantities, Wishlist
     document.addEventListener('submit', function(e) {
       var form = e.target;
       var actionInput = form.querySelector('input[name="action"]');
       var actionVal = actionInput ? actionInput.value : '';
 
-      if (actionVal === 'add_to_cart' || actionVal === 'toggle_wishlist') {
+      var ajaxActions = ['add_to_cart', 'add_bundle', 'update_quantity', 'remove_from_cart', 'clear_cart', 'toggle_wishlist'];
+      if (ajaxActions.indexOf(actionVal) !== -1) {
+        var currentPath = window.location.pathname;
+        if ((currentPath === '/cart' || currentPath === '/checkout') && (actionVal === 'update_quantity' || actionVal === 'remove_from_cart' || actionVal === 'clear_cart')) {
+          return;
+        }
+
         e.preventDefault();
         var formData = new FormData(form);
 
@@ -174,7 +233,9 @@
         .then(function(res) { return res.json(); })
         .then(function(data) {
           if (data && data.ok) {
-            showToast(data.message || 'Updated successfully!', false);
+            if (data.message) {
+              showToast(data.message, false);
+            }
 
             if (typeof data.cartCount !== 'undefined') {
               var cBadge = document.getElementById('nav-cart-count');
@@ -191,7 +252,11 @@
               }
             }
 
-            if (actionVal === 'add_to_cart') {
+            if (data.sidebarHtml) {
+              updateCartSidebarDOM(data.sidebarHtml);
+            }
+
+            if (actionVal === 'add_to_cart' || actionVal === 'add_bundle') {
               setCartOpen(true);
             }
           } else {

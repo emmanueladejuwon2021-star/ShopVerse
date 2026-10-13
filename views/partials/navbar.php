@@ -115,7 +115,7 @@ $nav = [
       </a>
 
       <!-- Cart Trigger Button -->
-      <button data-cart-open aria-label="Open cart" title="Your Cart"
+      <button type="button" data-cart-open aria-label="Open cart" title="Your Cart"
               class="relative p-2 rounded-full text-gray-500 hover:text-indigo-600 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
         <span id="nav-cart-count" class="<?= $cartCount > 0 ? '' : 'hidden' ?> absolute -top-0.5 -right-0.5 bg-indigo-600 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center shadow-sm animate-scale">
@@ -160,6 +160,10 @@ $nav = [
     <?php foreach ($nav as $href => $label): ?>
       <a href="<?= e($href) ?>" class="block py-1.5 text-sm font-semibold text-gray-800 dark:text-gray-200"><?= e($label) ?></a>
     <?php endforeach; ?>
+    <a href="/cart" class="py-1.5 text-sm font-semibold text-gray-800 dark:text-gray-200 flex items-center justify-between">
+      <span>Cart</span>
+      <span class="bg-indigo-600 text-white text-[11px] px-2 py-0.5 rounded-full font-bold"><?= (int) $cartCount ?></span>
+    </a>
     <?php if ($user): ?>
       <a href="/account" class="block py-1.5 text-sm font-semibold text-gray-800 dark:text-gray-200">Account (<?= e($user['name']) ?>)</a>
       <form method="post" action="/logout">

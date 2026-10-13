@@ -78,6 +78,20 @@ if ($path === '/api/search') {
     exit;
 }
 
+if ($path === '/api/cart') {
+    header('Content-Type: application/json');
+    ob_start();
+    include __DIR__ . '/../views/partials/cart-sidebar.php';
+    $sidebarHtml = ob_get_clean();
+    echo json_encode([
+        'ok' => true,
+        'cartCount' => cart_total_items(),
+        'cartSubtotal' => money(cart_total_price()),
+        'sidebarHtml' => $sidebarHtml,
+    ]);
+    exit;
+}
+
 $routes = [
     '/'             => 'home',
     '/products'     => 'products',
@@ -124,5 +138,6 @@ if ($page === null) {
 }
 
 // UI-only: sidebar auto-open flag is consumed by the layout on this response.
+$autoOpenCart = !empty($_SESSION['cart_open']) && $page !== 'cart' && $page !== 'checkout';
 unset($_SESSION['cart_open']);
-render_page($page, $params);
+render_page($page, $params + ['auto_open_cart' => $autoOpenCart]);

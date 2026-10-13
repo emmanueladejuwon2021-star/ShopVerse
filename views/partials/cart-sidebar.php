@@ -8,7 +8,7 @@ $subtotal = cart_total_price();
 $coupon = get_active_coupon();
 $discount = cart_discount($subtotal);
 $subAfterDiscount = max(0.0, $subtotal - $discount);
-$open = !empty($_SESSION['cart_open']);
+$open = !empty($auto_open_cart) || !empty($_SESSION['cart_open']);
 $freeShippingThreshold = 50.0;
 ?>
 <div id="cart-overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 transition-opacity <?= $open ? '' : 'hidden' ?>" data-cart-close></div>
@@ -23,7 +23,7 @@ $freeShippingThreshold = 50.0;
         <?= cart_total_items() ?>
       </span>
     </div>
-    <button data-cart-close aria-label="Close cart" class="w-8 h-8 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center text-gray-400 hover:text-gray-700 dark:hover:text-white transition-colors">
+    <button type="button" data-cart-close aria-label="Close cart" class="w-8 h-8 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center text-gray-400 hover:text-gray-700 dark:hover:text-white transition-colors">
       ✕
     </button>
   </div>
@@ -48,6 +48,11 @@ $freeShippingThreshold = 50.0;
         <div class="w-16 h-16 mx-auto rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-2xl">🛒</div>
         <p class="font-bold text-gray-900 dark:text-white">Your bag is empty</p>
         <p class="text-xs text-gray-400">Add some favorites to begin shopping.</p>
+        <div class="pt-3">
+          <a href="/products" data-cart-close class="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-5 py-2.5 shadow-md shadow-indigo-600/20 transition-all">
+            Start Shopping →
+          </a>
+        </div>
       </div>
     <?php endif; ?>
 
@@ -80,7 +85,7 @@ $freeShippingThreshold = 50.0;
                 <input type="hidden" name="product_id" value="<?= e($item['key'] ?? $p['id']) ?>">
                 <input type="hidden" name="quantity" value="<?= max(0, $item['quantity'] - 1) ?>">
                 <input type="hidden" name="redirect" value="<?= e($_SERVER['REQUEST_URI'] ?? '/') ?>">
-                <button class="w-6 h-6 rounded hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center font-bold text-xs text-gray-500">−</button>
+                <button type="submit" aria-label="Decrease quantity" class="w-6 h-6 rounded hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center font-bold text-xs text-gray-500">−</button>
               </form>
 
               <span class="w-6 text-center text-xs font-bold"><?= (int) $item['quantity'] ?></span>
@@ -91,7 +96,7 @@ $freeShippingThreshold = 50.0;
                 <input type="hidden" name="product_id" value="<?= e($item['key'] ?? $p['id']) ?>">
                 <input type="hidden" name="quantity" value="<?= $item['quantity'] + 1 ?>">
                 <input type="hidden" name="redirect" value="<?= e($_SERVER['REQUEST_URI'] ?? '/') ?>">
-                <button class="w-6 h-6 rounded hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center font-bold text-xs text-gray-500">+</button>
+                <button type="submit" aria-label="Increase quantity" class="w-6 h-6 rounded hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center font-bold text-xs text-gray-500">+</button>
               </form>
             </div>
 
@@ -101,7 +106,7 @@ $freeShippingThreshold = 50.0;
               <input type="hidden" name="action" value="remove_from_cart">
               <input type="hidden" name="product_id" value="<?= e($item['key'] ?? $p['id']) ?>">
               <input type="hidden" name="redirect" value="<?= e($_SERVER['REQUEST_URI'] ?? '/') ?>">
-              <button class="text-[11px] font-medium text-gray-400 hover:text-rose-500 transition-colors">Remove</button>
+              <button type="submit" class="text-[11px] font-medium text-gray-400 hover:text-rose-500 transition-colors">Remove</button>
             </form>
           </div>
         </div>

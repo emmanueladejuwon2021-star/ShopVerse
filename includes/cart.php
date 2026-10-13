@@ -6,8 +6,37 @@
 
 declare(strict_types=1);
 
+function sync_cart_cookie(array $cart): void
+{
+    $_SESSION['cart'] = $cart;
+    $isHttps = !empty($_SERVER['HTTPS']) || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https';
+    $json = json_encode($cart);
+    if (!headers_sent()) {
+        setcookie('shopverse_cart', $json ?: '[]', [
+            'expires' => time() + 60 * 60 * 24 * 30, // 30 days
+            'path' => '/',
+            'secure' => $isHttps,
+            'httponly' => false,
+            'samesite' => 'Lax',
+        ]);
+    }
+    $_COOKIE['shopverse_cart'] = $json ?: '[]';
+}
+
 function cart_items(): array
 {
+    if (isset($_SESSION['cart']) && is_array($_SESSION['cart']) && !empty($_SESSION['cart'])) {
+        return $_SESSION['cart'];
+    }
+
+    if (!empty($_COOKIE['shopverse_cart'])) {
+        $decoded = json_decode((string) $_COOKIE['shopverse_cart'], true);
+        if (is_array($decoded) && !empty($decoded)) {
+            $_SESSION['cart'] = $decoded;
+            return $_SESSION['cart'];
+        }
+    }
+
     return $_SESSION['cart'] ?? [];
 }
 
@@ -15,23 +44,22 @@ function cart_add(string $productId, int $qty = 1, ?string $color = null, ?strin
 {
     $product = find_product($productId);
     if (!$product) return;
+    if (isset($product['inStock']) && !$product['inStock']) return;
 
-    $adjustedProduct = $product;
-    if ($priceDiff > 0) {
-        $adjustedProduct['price'] += $priceDiff;
-        if (!empty($adjustedProduct['originalPrice'])) {
-            $adjustedProduct['originalPrice'] += $priceDiff;
-        }
-    }
-    if ($customImage) {
-        $adjustedProduct['image'] = $customImage;
-    }
-    if ($color) {
-        $adjustedProduct['selectedColor'] = $color;
-    }
-    if ($option) {
-        $adjustedProduct['selectedOption'] = $option;
-    }
+    $price = (float) $product['price'] + $priceDiff;
+    $image = $customImage ?: ($product['image'] ?? ($product['images'][0] ?? '/assets/products/placeholder.svg'));
+
+    // Compact item structure to keep storage lightweight and well within cookie bounds
+    $compactProduct = [
+        'id' => $product['id'],
+        'name' => $product['name'],
+        'price' => $price,
+        'image' => $image,
+        'brand' => $product['brand'] ?? '',
+        'category' => $product['category'] ?? '',
+    ];
+    if ($color) $compactProduct['selectedColor'] = $color;
+    if ($option) $compactProduct['selectedOption'] = $option;
 
     $cartKey = $productId;
     if ($color) $cartKey .= '-' . preg_replace('/[^a-zA-Z0-9]/', '', $color);
@@ -43,40 +71,68 @@ function cart_add(string $productId, int $qty = 1, ?string $color = null, ?strin
     } else {
         $cart[$cartKey] = [
             'key' => $cartKey,
-            'product' => $adjustedProduct,
+            'product' => $compactProduct,
             'quantity' => max(1, $qty),
             'selectedColor' => $color,
             'selectedOption' => $option,
         ];
     }
-    $_SESSION['cart'] = $cart;
+
+    sync_cart_cookie($cart);
     $_SESSION['cart_open'] = true;
 }
 
-function cart_remove(string $productId): void
+function cart_remove(string $keyOrId): void
 {
     $cart = cart_items();
-    unset($cart[$productId]);
-    $_SESSION['cart'] = $cart;
+    if (isset($cart[$keyOrId])) {
+        unset($cart[$keyOrId]);
+    } else {
+        foreach ($cart as $k => $item) {
+            if (($item['product']['id'] ?? '') === $keyOrId || ($item['key'] ?? '') === $keyOrId) {
+                unset($cart[$k]);
+                break;
+            }
+        }
+    }
+    sync_cart_cookie($cart);
 }
 
-function cart_update_qty(string $productId, int $quantity): void
+function cart_update_qty(string $keyOrId, int $quantity): void
 {
     if ($quantity <= 0) {
-        cart_remove($productId);
+        cart_remove($keyOrId);
         return;
     }
     $cart = cart_items();
-    if (isset($cart[$productId])) {
-        $cart[$productId]['quantity'] = $quantity;
-        $_SESSION['cart'] = $cart;
+    if (isset($cart[$keyOrId])) {
+        $cart[$keyOrId]['quantity'] = $quantity;
+    } else {
+        foreach ($cart as $k => $item) {
+            if (($item['product']['id'] ?? '') === $keyOrId || ($item['key'] ?? '') === $keyOrId) {
+                $cart[$k]['quantity'] = $quantity;
+                break;
+            }
+        }
     }
+    sync_cart_cookie($cart);
 }
 
 function cart_clear(): void
 {
     $_SESSION['cart'] = [];
     unset($_SESSION['active_coupon']);
+    $isHttps = !empty($_SERVER['HTTPS']) || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https';
+    if (!headers_sent()) {
+        setcookie('shopverse_cart', '', [
+            'expires' => time() - 3600,
+            'path' => '/',
+            'secure' => $isHttps,
+            'httponly' => false,
+            'samesite' => 'Lax',
+        ]);
+    }
+    unset($_COOKIE['shopverse_cart']);
 }
 
 function cart_total_items(): int
@@ -280,6 +336,13 @@ function is_ajax_request(): bool
         || (isset($_SERVER['HTTP_ACCEPT']) && str_contains($_SERVER['HTTP_ACCEPT'], 'application/json'));
 }
 
+function render_cart_sidebar_html(): string
+{
+    ob_start();
+    include __DIR__ . '/../views/partials/cart-sidebar.php';
+    return (string) ob_get_clean();
+}
+
 function handle_post_actions(): void
 {
     $action = $_POST['action'] ?? '';
@@ -303,10 +366,12 @@ function handle_post_actions(): void
                     'cartCount' => cart_total_items(),
                     'cartSubtotal' => money(cart_total_price()),
                     'wishlistCount' => count(wishlist_ids()),
+                    'sidebarHtml' => render_cart_sidebar_html(),
                 ]);
                 exit;
             }
             $_SESSION['flash'] = 'Added to your cart 🎉';
+            $_SESSION['cart_open'] = true;
             break;
 
         case 'add_bundle':
@@ -318,7 +383,20 @@ function handle_post_actions(): void
                     cart_add((string) $bId, 1);
                 }
             }
+            if (is_ajax_request()) {
+                header('Content-Type: application/json');
+                echo json_encode([
+                    'ok' => true,
+                    'message' => 'Bundle added to your cart 🎉',
+                    'cartCount' => cart_total_items(),
+                    'cartSubtotal' => money(cart_total_price()),
+                    'wishlistCount' => count(wishlist_ids()),
+                    'sidebarHtml' => render_cart_sidebar_html(),
+                ]);
+                exit;
+            }
             $_SESSION['flash'] = 'Bundle successfully added to your cart with special savings! 🎉';
+            $_SESSION['cart_open'] = true;
             break;
 
         case 'set_currency':
@@ -351,20 +429,61 @@ function handle_post_actions(): void
 
         case 'remove_from_cart':
             cart_remove((string) ($_POST['product_id'] ?? ''));
+            if (is_ajax_request()) {
+                header('Content-Type: application/json');
+                echo json_encode([
+                    'ok' => true,
+                    'message' => 'Item removed from cart.',
+                    'cartCount' => cart_total_items(),
+                    'cartSubtotal' => money(cart_total_price()),
+                    'wishlistCount' => count(wishlist_ids()),
+                    'sidebarHtml' => render_cart_sidebar_html(),
+                ]);
+                exit;
+            }
             $_SESSION['flash'] = 'Item removed from cart.';
             break;
 
         case 'update_quantity':
             cart_update_qty((string) ($_POST['product_id'] ?? ''), (int) ($_POST['quantity'] ?? 0));
+            if (is_ajax_request()) {
+                header('Content-Type: application/json');
+                echo json_encode([
+                    'ok' => true,
+                    'message' => 'Cart updated.',
+                    'cartCount' => cart_total_items(),
+                    'cartSubtotal' => money(cart_total_price()),
+                    'wishlistCount' => count(wishlist_ids()),
+                    'sidebarHtml' => render_cart_sidebar_html(),
+                ]);
+                exit;
+            }
             break;
 
         case 'clear_cart':
             cart_clear();
+            if (is_ajax_request()) {
+                header('Content-Type: application/json');
+                echo json_encode([
+                    'ok' => true,
+                    'message' => 'Your cart has been cleared.',
+                    'cartCount' => 0,
+                    'cartSubtotal' => money(0.0),
+                    'wishlistCount' => count(wishlist_ids()),
+                    'sidebarHtml' => render_cart_sidebar_html(),
+                ]);
+                exit;
+            }
             $_SESSION['flash'] = 'Your cart has been cleared.';
             break;
 
         case 'close_cart':
             $_SESSION['cart_open'] = false;
+            if (is_ajax_request()) {
+                header('Content-Type: application/json');
+                echo json_encode(['ok' => true]);
+                exit;
+            }
             break;
 
         case 'toggle_wishlist':
@@ -454,7 +573,6 @@ function handle_post_actions(): void
             return;
     }
 
-    $_SESSION['cart_open'] = false;
     redirect($redirect);
 }
 
