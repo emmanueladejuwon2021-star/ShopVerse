@@ -53,15 +53,17 @@ $uri = rawurldecode(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '
 $path = rtrim($uri, '/') ?: '/';
 
 $routes = [
-    '/'            => 'home',
-    '/products'    => 'products',
-    '/product'     => 'product_detail',   // /product/{id}
-    '/cart'        => 'cart',
-    '/checkout'    => 'checkout',         // requires login
-    '/login'       => 'login',
-    '/logout'      => 'logout',
-    '/orders'      => 'orders',           // requires login
-    '/account'     => 'account',          // requires login
+    '/'             => 'home',
+    '/products'     => 'products',
+    '/product'      => 'product_detail',   // /product/{id}
+    '/cart'         => 'cart',
+    '/wishlist'     => 'wishlist',
+    '/checkout'     => 'checkout',         // requires login
+    '/order-success'=> 'order_success',    // requires login
+    '/login'        => 'login',
+    '/logout'       => 'logout',
+    '/orders'       => 'orders',           // requires login
+    '/account'      => 'account',          // requires login
 ];
 
 $page = $routes[$path] ?? null;

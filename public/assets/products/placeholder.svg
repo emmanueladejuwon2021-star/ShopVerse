@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f8fafc" />
+      <stop offset="100%" stop-color="#e2e8f0" />
+    </linearGradient>
+    <linearGradient id="iconGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1" />
+      <stop offset="100%" stop-color="#8b5cf6" />
+    </linearGradient>
+  </defs>
+  <rect width="600" height="600" fill="url(#bg)" rx="24"/>
+  <circle cx="300" cy="270" r="90" fill="url(#iconGrad)" opacity="0.12"/>
+  <path d="M260 250 L340 250 L355 310 L245 310 Z" fill="none" stroke="url(#iconGrad)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="270" cy="330" r="12" fill="url(#iconGrad)"/>
+  <circle cx="330" cy="330" r="12" fill="url(#iconGrad)"/>
+  <path d="M280 230 C280 215 320 215 320 230" fill="none" stroke="url(#iconGrad)" stroke-width="6" stroke-linecap="round"/>
+  <text x="300" y="390" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="600" fill="#64748b" text-anchor="middle" letter-spacing="1">ShopVerse Premium Product</text>
+  <text x="300" y="420" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="500" fill="#94a3b8" text-anchor="middle">Official Catalog Collection</text>
+</svg>

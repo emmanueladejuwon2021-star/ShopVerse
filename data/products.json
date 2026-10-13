@@ -1,153 +1,754 @@
 [
   {
     "id": "1",
+    "sku": "SV-ELC-001",
     "name": "Wireless Headphones Pro",
-    "description": "Premium noise-cancelling wireless headphones with 40-hour battery life, spatial audio, and ultra-comfortable memory foam ear cushions.",
+    "brand": "SonicMax Audio",
+    "badge": "Bestseller",
+    "description": "Engineered for pure audiophile performance. Features active noise cancellation with 8 environmental microphones, 40-hour rapid-charge battery, custom 40mm neodymium drivers, and spatial audio with dynamic head tracking.",
     "price": 299.99,
     "originalPrice": 399.99,
-    "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=500&fit=crop",
+    "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=85",
+    "images": [
+      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1484704849700-f032a568e944?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1583394838336-acd977736f90?w=800&auto=format&fit=crop&q=85"
+    ],
     "category": "Electronics",
-    "rating": 4.8,
-    "reviews": 1240,
+    "rating": 4.9,
+    "reviews": 1420,
     "inStock": true,
-    "features": ["Active Noise Cancellation", "40-hour battery", "Bluetooth 5.3", "Spatial Audio"]
+    "stock_count": 18,
+    "features": [
+      "Hybrid Active Noise Cancellation (42dB reduction)",
+      "40-Hour Battery with 10-Min Fast Charge for 5 Hours",
+      "Multipoint Bluetooth 5.3 + Lossless Audio Codec",
+      "Plush Memory Foam Cushions & Aviation Aluminum Frame"
+    ],
+    "specs": {
+      "Driver Size": "40mm Custom Neodymium",
+      "Battery Life": "40 hrs (ANC On) / 55 hrs (ANC Off)",
+      "Weight": "250g (Ultra-Lightweight)",
+      "Connectivity": "Bluetooth 5.3 / 3.5mm Aux / USB-C Audio",
+      "Warranty": "2-Year Manufacturer Replacement"
+    },
+    "reviews_list": [
+      {
+        "author": "David K.",
+        "date": "2 days ago",
+        "rating": 5,
+        "title": "Unreal soundstage and comfort",
+        "comment": "Upgraded from my Sony XM4s and the build quality here is far superior. The aluminum hinges feel solid, and the ANC cuts out all train noise on my daily commute.",
+        "verified": true
+      },
+      {
+        "author": "Elena M.",
+        "date": "1 week ago",
+        "rating": 5,
+        "title": "Battery life lasts forever",
+        "comment": "I use these 8 hours a day for work and music. I only charge them once every week and a half. Spatial audio is shockingly good.",
+        "verified": true
+      },
+      {
+        "author": "Marcus T.",
+        "date": "3 weeks ago",
+        "rating": 4,
+        "title": "Premium quality, crisp highs",
+        "comment": "Very comfortable memory foam cups. Bass is punchy without overpowering vocals. Highly recommend for developers and remote workers.",
+        "verified": true
+      }
+    ]
   },
   {
     "id": "2",
+    "sku": "SV-ELC-002",
     "name": "Smart Watch Series X",
-    "description": "Advanced fitness tracking smartwatch with GPS, heart-rate monitoring, sleep insights, and a vivid always-on AMOLED display.",
+    "brand": "PulseFit Technologies",
+    "badge": "Trending",
+    "description": "Your 24/7 personal health cockpit. Features sapphire crystal glass, always-on Retina AMOLED display, continuous ECG/SpO2 biometric sensors, precision dual-frequency GPS, and 50m water resistance.",
     "price": 399.00,
     "originalPrice": 499.00,
-    "image": "https://images.unsplash.com/photo-1523275335684-37898b6b3327?w=400&h=300&fit=crop",
+    "image": "https://images.unsplash.com/photo-1523275335684-37898b6b3327?w=800&auto=format&fit=crop&q=85",
+    "images": [
+      "https://images.unsplash.com/photo-1523275335684-37898b6b3327?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1434493789847-2f02dc6ca35d?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=800&auto=format&fit=crop&q=85"
+    ],
     "category": "Electronics",
-    "rating": 4.6,
-    "reviews": 892,
+    "rating": 4.8,
+    "reviews": 985,
     "inStock": true,
-    "features": ["GPS + Cellular", "Heart Rate Monitor", "Water Resistant 50m", "7-day Battery"]
+    "stock_count": 9,
+    "features": [
+      "Always-On 1.9\" AMOLED Touchscreen (1000 nits)",
+      "Clinical-Grade ECG, Optical Heart Rate & SpO2",
+      "Multi-Band GPS Tracking for Runners & Cyclists",
+      "5ATM Water Resistance & 7-Day Smart Battery"
+    ],
+    "specs": {
+      "Display": "1.9\" AMOLED (484 x 396 px, 326 ppi)",
+      "Case Material": "Aerospace Titanium & Ceramic Back",
+      "Sensors": "ECG, SpO2, Heart Rate, Skin Temp, Gyroscope",
+      "Battery": "Up to 7 Days (Typical) / 48 hrs GPS",
+      "Water Rating": "50m (Swimproof)"
+    },
+    "reviews_list": [
+      {
+        "author": "Jordan P.",
+        "date": "4 days ago",
+        "rating": 5,
+        "title": "Best smartwatch for marathon training",
+        "comment": "The dual-band GPS is exceptionally accurate under dense city buildings. Sleep tracking insights helped me optimize my recovery intervals.",
+        "verified": true
+      },
+      {
+        "author": "Aisha R.",
+        "date": "2 weeks ago",
+        "rating": 5,
+        "title": "Gorgeous design, bright screen",
+        "comment": "Readable in direct sunlight without squinting. Looks sleek in the gym and in the boardroom with formal shirts.",
+        "verified": true
+      }
+    ]
   },
   {
     "id": "3",
-    "name": "Running Shoes Elite",
-    "description": "Lightweight performance running shoes with responsive cushioning and breathable engineered knit upper for race day comfort.",
+    "sku": "SV-SPT-001",
+    "name": "Running Shoes Elite Pro",
+    "brand": "AeroStrides Athletics",
+    "badge": "Top Rated",
+    "description": "Built for breaking personal records. Packed with ultralight responsive nitrogen-infused foam, an embedded curved carbon fiber propulsion plate, and a seamless engineered breathable mesh upper.",
     "price": 159.99,
     "originalPrice": 189.99,
-    "image": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=300&fit=crop",
+    "image": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&auto=format&fit=crop&q=85",
+    "images": [
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=800&auto=format&fit=crop&q=85"
+    ],
     "category": "Sports",
-    "rating": 4.7,
-    "reviews": 2103,
+    "rating": 4.9,
+    "reviews": 2340,
     "inStock": true,
-    "features": ["Responsive Foam Midsole", "Breathable Knit Upper", "Carbon Fiber Plate", "230g Lightweight"]
+    "stock_count": 24,
+    "features": [
+      "Dual-Density Nitrogen-Infused Cushion Midsole",
+      "Full-Length Carbon Fiber Propulsion Shank",
+      "Engineered Monomesh Breathable Upper",
+      "High-Traction Continental Rubber Outsole"
+    ],
+    "specs": {
+      "Weight": "218g (Men's US 9)",
+      "Heel-to-Toe Drop": "8mm",
+      "Shoe Type": "Neutral Road Racing & High-Speed Tempo",
+      "Closure": "Anti-Slip Asymmetrical Lace System",
+      "Fit": "True to Size"
+    },
+    "reviews_list": [
+      {
+        "author": "Carlos V.",
+        "date": "Yesterday",
+        "rating": 5,
+        "title": "Shaved 4 minutes off my half marathon!",
+        "comment": "The energy return is unreal. Feels like you are propelled forward with every stride. Zero blisters after 21km.",
+        "verified": true
+      },
+      {
+        "author": "Sophia N.",
+        "date": "1 week ago",
+        "rating": 5,
+        "title": "Featherlight with amazing bounce",
+        "comment": "My legs feel noticeably fresher the day after long tempo runs. Outsole grip on wet asphalt is rock solid.",
+        "verified": true
+      }
+    ]
   },
   {
     "id": "4",
-    "name": "Classic Denim Jacket",
-    "description": "Timeless denim jacket crafted from premium selvedge denim with a modern tailored fit and vintage wash finish.",
-    "price": 89.99,
-    "image": "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=400&h=500&fit=crop",
+    "sku": "SV-CLO-001",
+    "name": "Classic Selvedge Denim Jacket",
+    "brand": "Heritage Iron & Thread",
+    "badge": "Handcrafted",
+    "description": "Constructed from 14.5oz shuttle-loom Japanese selvedge denim. Features custom antique copper hardware, reinforced flat-felled seams, and internal hidden utility pockets. Cut with a contemporary tailored trucker silhouette.",
+    "price": 129.99,
+    "originalPrice": 169.99,
+    "image": "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=800&auto=format&fit=crop&q=85",
+    "images": [
+      "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1551537482-f2075a1d41f2?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1601333144130-8cbb312386b6?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1543076447-215ad9ba6923?w=800&auto=format&fit=crop&q=85"
+    ],
     "category": "Clothing",
-    "rating": 4.5,
-    "reviews": 567,
+    "rating": 4.7,
+    "reviews": 680,
     "inStock": true,
-    "features": ["100% Selvedge Denim", "Tailored Fit", "Brass Hardware", "Machine Washable"]
+    "stock_count": 12,
+    "features": [
+      "14.5oz Raw Japanese Cotton Selvedge Denim",
+      "Antique Patina Copper Shank Buttons",
+      "Internal Welt Pockets Sized for Smartphones",
+      "Pre-Shrunk Sanforized Fabric with Contrast ID Line"
+    ],
+    "specs": {
+      "Material": "100% Organic Long-Staple Cotton",
+      "Weave": "Right-Hand Twill Shuttle Loom",
+      "Hardware": "Solid Cast Copper & Brass",
+      "Care": "Cold Hand Wash, Hang Dry",
+      "Country of Origin": "Kojima, Okayama"
+    },
+    "reviews_list": [
+      {
+        "author": "Liam W.",
+        "date": "3 days ago",
+        "rating": 5,
+        "title": "The real deal selvedge denim",
+        "comment": "Heavier and more substantial than any mall brand. The selvedge ticker on the inside placket is a great detail. Fits like a glove.",
+        "verified": true
+      }
+    ]
   },
   {
     "id": "5",
-    "name": "Leather Messenger Bag",
-    "description": "Handcrafted full-grain leather messenger bag with padded laptop compartment and solid brass hardware. Ages beautifully.",
+    "sku": "SV-ACC-001",
+    "name": "Full-Grain Leather Messenger Bag",
+    "brand": "Artisan Guild & Co.",
+    "badge": "Signature",
+    "description": "Crafted from hand-selected 2.2mm full-grain vegetable-tanned cowhide. Features high-density padded protection for laptops up to 16 inches, solid antiqued brass buckles, and an ergonomic padded shoulder strap.",
     "price": 219.99,
     "originalPrice": 279.99,
-    "image": "https://images.unsplash.com/photo-1553062407-98578ae6212f?w=400&h=500&fit=crop",
+    "image": "https://images.unsplash.com/photo-1553062407-98578ae6212f?w=800&auto=format&fit=crop&q=85",
+    "images": [
+      "https://images.unsplash.com/photo-1553062407-98578ae6212f?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1622560480605-d83c853bc5c3?w=800&auto=format&fit=crop&q=85"
+    ],
     "category": "Accessories",
     "rating": 4.9,
-    "reviews": 342,
+    "reviews": 430,
     "inStock": true,
-    "features": ["Full-Grain Leather", "Fits 15\" Laptop", "Adjustable Strap", "Brass Buckles"]
+    "stock_count": 7,
+    "features": [
+      "100% Full-Grain Vegetable-Tanned Italian Leather",
+      "Reinforced Padded Compartment for 16\" MacBook Pro",
+      "Heavy-Duty YKK Excella Brass Zippers & Solid Hardware",
+      "Lifetime Craftsmanship Warranty on Stitching & Rivets"
+    ],
+    "specs": {
+      "Dimensions": "41cm x 30cm x 11cm (16.1\" x 11.8\" x 4.3\")",
+      "Laptop Sleeve": "Fits up to 16\" Devices",
+      "Strap Drop": "Adjustable 38cm - 68cm with Shoulder Pad",
+      "Lining": "Water-Resistant 12oz Waxed Cotton Canvas",
+      "Weight": "1.4 kg"
+    },
+    "reviews_list": [
+      {
+        "author": "Alexander H.",
+        "date": "1 week ago",
+        "rating": 5,
+        "title": "A lifetime heirloom bag",
+        "comment": "The leather aroma out of the box was incredible. Already developing a handsome patina after just a month of client meetings.",
+        "verified": true
+      }
+    ]
   },
   {
     "id": "6",
-    "name": "Minimalist Desk Lamp",
-    "description": "Architect-style LED desk lamp with stepless dimming, adjustable color temperature, and a weighted anti-tip base.",
-    "price": 64.99,
-    "image": "https://images.unsplash.com/photo-1507473885765-e5ed58dc2416?w=400&h=500&fit=crop",
+    "sku": "SV-HOM-001",
+    "name": "Architect Minimalist Desk Lamp",
+    "brand": "Lumina Nordic Studio",
+    "badge": "Design Award",
+    "description": "Anodized aluminum counter-balanced articulating desk lamp with CRI 98+ full-spectrum daylight LEDs. Stepless rotary dial controls brightness and color temperature from 2700K warm tungsten to 6500K crisp daylight.",
+    "price": 89.99,
+    "originalPrice": 119.99,
+    "image": "https://images.unsplash.com/photo-1507473885765-e5ed58dc2416?w=800&auto=format&fit=crop&q=85",
+    "images": [
+      "https://images.unsplash.com/photo-1507473885765-e5ed58dc2416?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1534349762230-e0cadf78f5da?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1517991104123-1d56a6e81ed9?w=800&auto=format&fit=crop&q=85"
+    ],
     "category": "Home",
-    "rating": 4.3,
-    "reviews": 198,
+    "rating": 4.8,
+    "reviews": 312,
     "inStock": true,
-    "features": ["Stepless Dimming", "3 Color Temperatures", "USB Charging Port", "Eye-Care Glow"]
+    "stock_count": 15,
+    "features": [
+      "Museum-Grade 98+ CRI Eye-Care LED Panel (Zero Flicker)",
+      "Continuous Stepless Dimming (5% to 100% Lumens)",
+      "Dual Integrated USB-C 30W Fast Charging Ports in Base",
+      "Precision Machined Counterweighted Aluminum Arm"
+    ],
+    "specs": {
+      "Luminous Output": "1200 Lumens Max",
+      "Color Temp Range": "2700K - 6500K Adjustable",
+      "Power Rating": "18W LED (Equivalent to 100W Incandescent)",
+      "Base Diameter": "18cm Weighted Anti-Tip Cast Base",
+      "Lifespan": "50,000+ Operating Hours"
+    },
+    "reviews_list": [
+      {
+        "author": "Rachel B.",
+        "date": "5 days ago",
+        "rating": 5,
+        "title": "Zero eye strain during late night coding",
+        "comment": "The warm light setting at 3000K has completely cured my evening headaches. The heavy base doesn't budge when repositioning the arm.",
+        "verified": true
+      }
+    ]
   },
   {
     "id": "7",
-    "name": "Yoga Mat Premium",
-    "description": "Extra-thick non-slip yoga mat made from eco-friendly TPE with alignment lines and a carry strap included.",
-    "price": 49.99,
-    "originalPrice": 69.99,
-    "image": "https://images.unsplash.com/photo-1592432678016-e910b452f9a2?w=400&h=500&fit=crop",
+    "sku": "SV-SPT-002",
+    "name": "Eco-Grip Alignment Yoga Mat",
+    "brand": "PranaForm Athletics",
+    "badge": "Eco-Friendly",
+    "description": "Engineered with dual-layer sustainable natural tree rubber and an ultra-absorbent polyurethane top surface that gets grippier as you sweat. Laser-etched body alignment geometric grid assists posture and balance.",
+    "price": 59.99,
+    "originalPrice": 79.99,
+    "image": "https://images.unsplash.com/photo-1592432678016-e910b452f9a2?w=800&auto=format&fit=crop&q=85",
+    "images": [
+      "https://images.unsplash.com/photo-1592432678016-e910b452f9a2?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=800&auto=format&fit=crop&q=85"
+    ],
     "category": "Sports",
-    "rating": 4.4,
-    "reviews": 780,
+    "rating": 4.8,
+    "reviews": 845,
     "inStock": true,
-    "features": ["6mm Cushioning", "Non-Slip Surface", "Eco-Friendly TPE", "Alignment Lines"]
+    "stock_count": 21,
+    "features": [
+      "6mm High-Density Cushioning for Joint Protection",
+      "Laser-Etched Alignment Lines for Precision Poses",
+      "Non-Slip Wet & Dry Grip with Sweat-Activated Texture",
+      "100% Biodegradable Natural Rubber (PVC-Free & Non-Toxic)"
+    ],
+    "specs": {
+      "Dimensions": "183cm x 68cm (72\" x 26.8\")",
+      "Thickness": "6mm Extra-Dense Cushion",
+      "Material": "Natural Rubber Base + Absorbent PU Surface",
+      "Weight": "2.8 kg",
+      "Included": "Heavy-Duty Cotton Carry Sling Strap"
+    },
+    "reviews_list": [
+      {
+        "author": "Chloe S.",
+        "date": "2 weeks ago",
+        "rating": 5,
+        "title": "Best grip in hot yoga classes",
+        "comment": "No towel needed whatsoever. Even in 40°C hot vinyasa, my palms never slide an inch. The alignment lines are surprisingly helpful.",
+        "verified": true
+      }
+    ]
   },
   {
     "id": "8",
-    "name": "Polarized Aviator Sunglasses",
-    "description": "Iconic aviator sunglasses with polarized lenses, UV400 protection, and featherlight titanium frame.",
-    "price": 129.99,
-    "image": "https://images.unsplash.com/photo-1572635196237-14b3f2496322?w=400&h=500&fit=crop",
+    "sku": "SV-ACC-002",
+    "name": "Titanium Polarized Aviators",
+    "brand": "AeroOptics Heritage",
+    "badge": "Limited Edition",
+    "description": "Hand-buffed Grade-5 titanium frames weighing only 18 grams. Ultra-thin mineral glass polarized lenses with 9-layer anti-reflective and hydrophobic coating deliver 100% UV400 radiation shielding with zero distortion.",
+    "price": 149.99,
+    "originalPrice": 189.99,
+    "image": "https://images.unsplash.com/photo-1572635196237-14b3f2496322?w=800&auto=format&fit=crop&q=85",
+    "images": [
+      "https://images.unsplash.com/photo-1572635196237-14b3f2496322?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1473496169904-658ba7c44d8a?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1508296695146-257a814070b4?w=800&auto=format&fit=crop&q=85"
+    ],
     "category": "Accessories",
-    "rating": 4.6,
-    "reviews": 1120,
-    "inStock": false,
-    "features": ["Polarized Lenses", "UV400 Protection", "Titanium Frame", "Hard Case Included"]
+    "rating": 4.7,
+    "reviews": 1180,
+    "inStock": true,
+    "stock_count": 5,
+    "features": [
+      "Japanese Aerospace Grade-5 Titanium Frame",
+      "Scratch-Resistant Polarized Mineral Glass Lenses",
+      "100% UV400 UVA/UVB Eye Protection",
+      "Includes Magnetic Leather Hard Case & Microfiber Cloth"
+    ],
+    "specs": {
+      "Frame Material": "Pure Grade-5 Titanium (18g)",
+      "Lens Technology": "9-Layer HD Polarized Glass",
+      "Bridge Width": "14mm with Hypoallergenic Silicon Pads",
+      "Temple Length": "145mm",
+      "Hinge Type": "German Monobloc Barrel Screws"
+    },
+    "reviews_list": [
+      {
+        "author": "Vincent T.",
+        "date": "1 week ago",
+        "rating": 5,
+        "title": "Light as a feather",
+        "comment": "You literally forget you have them on. The polarization cuts straight through road glare while driving into morning sun.",
+        "verified": true
+      }
+    ]
   },
   {
     "id": "9",
-    "name": "Ceramic Pour-Over Set",
-    "description": "Hand-glazed ceramic pour-over coffee set with reusable stainless filter and matching carafe. Brews 2 cups.",
-    "price": 54.99,
-    "image": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&h=500&fit=crop",
+    "sku": "SV-HOM-002",
+    "name": "Artisan Ceramic Pour-Over Set",
+    "brand": "Kuro Craft Ceramics",
+    "badge": "Handmade",
+    "description": "Handcrafted on traditional pottery wheels with black volcanic stoneware clay and a matte reactive glaze. Features optimized 60-degree internal spiral water extraction ribs and a heat-resistant 600ml matching carafe.",
+    "price": 64.99,
+    "originalPrice": 79.99,
+    "image": "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=800&auto=format&fit=crop&q=85",
+    "images": [
+      "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1517256064527-09c73fc73e38?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1497935586351-b67a49e012bf?w=800&auto=format&fit=crop&q=85"
+    ],
     "category": "Home",
-    "rating": 4.7,
-    "reviews": 425,
+    "rating": 4.9,
+    "reviews": 510,
     "inStock": true,
-    "features": ["Hand-Glazed Ceramic", "Reusable Steel Filter", "Dishwasher Safe", "Brews 2 Cups"]
+    "stock_count": 14,
+    "features": [
+      "Kiln-Fired High-Density Volcanic Stoneware",
+      "60-Degree Internal Spiral Ribs for Uniform Extraction",
+      "600ml Ergonomic Carafe with Drip-Free Pouring Spout",
+      "Dishwasher Safe & Extreme Thermal Shock Resistant"
+    ],
+    "specs": {
+      "Capacity": "600ml (2-4 Cups)",
+      "Filter Compatibility": "Standard Cone Filters (02 Size)",
+      "Material": "Volcanic Stoneware with Reactive Matte Glaze",
+      "Weight": "780g",
+      "Included": "Dripper Cone, Serving Carafe, 40 Unbleached Filters"
+    },
+    "reviews_list": [
+      {
+        "author": "Oliver G.",
+        "date": "3 days ago",
+        "rating": 5,
+        "title": "Brews the cleanest cup of coffee",
+        "comment": "Thermal retention of this ceramic is miles ahead of glass drippers. It looks stunning sitting on the kitchen counter.",
+        "verified": true
+      }
+    ]
   },
   {
     "id": "10",
-    "name": "Merino Wool Sweater",
-    "description": "Ultra-soft 100% merino wool crew-neck sweater. Temperature regulating, odor resistant, and machine washable.",
-    "price": 119.99,
-    "originalPrice": 149.99,
-    "image": "https://images.unsplash.com/photo-1620799140408-b5be12582072?w=400&h=500&fit=crop",
+    "sku": "SV-CLO-002",
+    "name": "Superfine Merino Wool Sweater",
+    "brand": "Alps & Heather Knits",
+    "badge": "Pure Wool",
+    "description": "Knitted from 100% Australian superfine 17.5-micron merino wool on Italian seamless knitting machines. Naturally temperature-regulating, naturally odor-resistant, and pill-resistant for years of sophisticated layering.",
+    "price": 129.99,
+    "originalPrice": 159.99,
+    "image": "https://images.unsplash.com/photo-1620799140408-b5be12582072?w=800&auto=format&fit=crop&q=85",
+    "images": [
+      "https://images.unsplash.com/photo-1620799140408-b5be12582072?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1576871337622-98d48d1cf531?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1614975058789-41316d0e2e9c?w=800&auto=format&fit=crop&q=85"
+    ],
     "category": "Clothing",
-    "rating": 4.5,
-    "reviews": 290,
+    "rating": 4.8,
+    "reviews": 395,
     "inStock": true,
-    "features": ["100% Merino Wool", "Crew Neck", "Machine Washable", "Odor Resistant"]
+    "stock_count": 16,
+    "features": [
+      "100% Australian 17.5-Micron Extra-Fine Merino Wool",
+      "Seamless Circular 3D Knit Construction (Zero Chafe)",
+      "Natural Thermoregulation & Natural Odor Resistance",
+      "Pre-Washed for Shape Stability & Machine Washable (Wool Cycle)"
+    ],
+    "specs": {
+      "Yarn Count": "2/30 Nm Superfine Gauge",
+      "Collar": "Ribbed Classical Crewneck with Lycra Core",
+      "Care": "Machine Wash Cold on Wool Cycle or Hand Wash",
+      "Origin": "Biella, Italy",
+      "Fit": "Tailored European Standard"
+    },
+    "reviews_list": [
+      {
+        "author": "Matthew B.",
+        "date": "1 week ago",
+        "rating": 5,
+        "title": "Silky soft, zero scratchiness",
+        "comment": "I have sensitive skin and usually itch in wool sweaters. This feels closer to cashmere. Super warm yet lightweight under an overcoat.",
+        "verified": true
+      }
+    ]
   },
   {
     "id": "11",
-    "name": "Mechanical Keyboard MX",
-    "description": "Hot-swappable mechanical keyboard with gasket mount, PBT keycaps, RGB backlight, and tactile linear switches.",
-    "price": 149.99,
-    "image": "https://images.unsplash.com/photo-1541140532154-b024d705b90a?w=400&h=500&fit=crop",
+    "sku": "SV-ELC-003",
+    "name": "Custom Mechanical Keyboard MX-75",
+    "brand": "KeyCraft Laboratories",
+    "badge": "Enthusiast",
+    "description": "75% compact enthusiast mechanical keyboard featuring gasket-mounted acoustic design, CNC anodized aluminum chassis, pre-lubricated Gateron linear switches, dye-sub PBT cherry profile keycaps, and multi-mode wireless.",
+    "price": 179.99,
+    "originalPrice": 219.99,
+    "image": "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=800&auto=format&fit=crop&q=85",
+    "images": [
+      "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1595225476474-87563907a212?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1541140532154-b024d705b90a?w=800&auto=format&fit=crop&q=85"
+    ],
     "category": "Electronics",
-    "rating": 4.8,
-    "reviews": 1567,
+    "rating": 4.9,
+    "reviews": 1690,
     "inStock": true,
-    "features": ["Hot-Swap Switches", "Gasket Mount", "PBT Keycaps", "Per-Key RGB"]
+    "stock_count": 8,
+    "features": [
+      "Heavy CNC Machined 6063 Aluminum Case (1.8kg)",
+      "5-Layer Acoustic Sound Dampening (Deep 'Thock' Profile)",
+      "Hot-Swappable 5-Pin Switch Sockets with South-Facing RGB",
+      "Tri-Mode: 2.4GHz Low-Latency, Bluetooth 5.1 & Type-C"
+    ],
+    "specs": {
+      "Layout": "75% Compact (82 Keys + Aluminum Rotary Knob)",
+      "Switches": "Factory Pre-Lubed Custom Linear (45g Actuation)",
+      "Keycaps": "Dye-Sublimated 1.5mm Thick PBT",
+      "Battery": "4000mAh Lithium-Polymer (up to 200h usage)",
+      "Firmware": "QMK / VIA Fully Programmable"
+    },
+    "reviews_list": [
+      {
+        "author": "Nathan K.",
+        "date": "4 days ago",
+        "rating": 5,
+        "title": "Pure typing bliss",
+        "comment": "The acoustics straight out of the box sound like a $400 custom build. Solid heavy weight, beautiful brass knob, and instant Bluetooth switching.",
+        "verified": true
+      }
+    ]
   },
   {
     "id": "12",
-    "name": "Insulated Water Bottle",
-    "description": "Double-wall vacuum insulated bottle keeps drinks cold 24h or hot 12h. Leak-proof lid, BPA free, 750ml.",
-    "price": 34.99,
-    "originalPrice": 44.99,
-    "image": "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=400&h=500&fit=crop",
+    "sku": "SV-SPT-003",
+    "name": "Vacuum Insulated Thermal Flask 750ml",
+    "brand": "HydroForge Outdoors",
+    "badge": "Pro Gear",
+    "description": "Double-wall copper-core vacuum insulated water flask constructed from 18/8 kitchen-grade pro stainless steel. Keeps iced water ice-cold for 36 hours or piping hot coffee steaming for 18 hours.",
+    "price": 38.99,
+    "originalPrice": 48.99,
+    "image": "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=800&auto=format&fit=crop&q=85",
+    "images": [
+      "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1544816155-12df9643f363?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1570554886111-e80fcca6a029?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1527661591475-527312dd65f5?w=800&auto=format&fit=crop&q=85"
+    ],
     "category": "Sports",
-    "rating": 4.6,
-    "reviews": 2340,
+    "rating": 4.8,
+    "reviews": 2450,
     "inStock": true,
-    "features": ["24h Cold / 12h Hot", "Leak-Proof Lid", "BPA Free", "750ml Capacity"]
+    "stock_count": 30,
+    "features": [
+      "TempLock Copper-Coated Double Vacuum Chamber",
+      "36h Cold / 18h Hot Guaranteed Performance",
+      "Pro-Grade 18/8 Stainless Steel (Zero Taste Transfer)",
+      "Sweat-Proof Matte Powder Coat & Paracord Carry Handle"
+    ],
+    "specs": {
+      "Capacity": "750ml (25.4 fl oz)",
+      "Material": "18/8 Food-Grade Stainless Steel, BPA-Free Polypropylene",
+      "Mouth Diameter": "54mm Wide Mouth (Fits Ice Cubes Easily)",
+      "Weight": "385g (Empty)",
+      "Cap Type": "Leak-Proof Chug Cap + Straw Cap Included"
+    },
+    "reviews_list": [
+      {
+        "author": "Jessica L.",
+        "date": "6 days ago",
+        "rating": 5,
+        "title": "Still had ice cubes after a day at the beach",
+        "comment": "Left this in a scorching hot car all afternoon, and the water was freezing cold. The textured powder coat never slips even with wet hands.",
+        "verified": true
+      }
+    ]
+  },
+  {
+    "id": "13",
+    "sku": "SV-ELC-004",
+    "name": "34\" Curved UltraWide 4K Monitor",
+    "brand": "ViewPro Precision",
+    "badge": "Staff Pick",
+    "description": "Immersive 34-inch 1500R curved professional productivity and gaming display. Boasts 3440 x 1440 WQHD resolution, 99% DCI-P3 color accuracy, 165Hz refresh rate with 1ms response, and USB-C 90W single-cable power delivery.",
+    "price": 549.99,
+    "originalPrice": 699.99,
+    "image": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=800&auto=format&fit=crop&q=85",
+    "images": [
+      "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1547082299-de196ea013d6?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&auto=format&fit=crop&q=85"
+    ],
+    "category": "Electronics",
+    "rating": 4.9,
+    "reviews": 760,
+    "inStock": true,
+    "stock_count": 6,
+    "features": [
+      "34\" 1500R Immersive UltraWide Curved VA Panel",
+      "WQHD 3440 x 1440 Resolution with 99% DCI-P3 Color Gamut",
+      "USB-C Hub: 90W Laptop Charging + Display + Data over 1 Cable",
+      "Smooth 165Hz Refresh Rate & AMD FreeSync Premium Pro"
+    ],
+    "specs": {
+      "Screen Size": "34-inch Diagonal (21:9 Aspect Ratio)",
+      "Resolution": "3440 x 1440 @ 165Hz",
+      "Ports": "1x USB-C (90W PD), 2x HDMI 2.1, 1x DisplayPort 1.4, 3x USB 3.2",
+      "Stand": "Height, Tilt & Swivel Adjustable Stand",
+      "VESA Mount": "100 x 100 mm Supported"
+    },
+    "reviews_list": [
+      {
+        "author": "Daniel S.",
+        "date": "1 week ago",
+        "rating": 5,
+        "title": "Productivity boosted 200%",
+        "comment": "Replaced two dual monitors on my desk. Having code editor and documentation side by side on one seamless curved glass is game changing.",
+        "verified": true
+      }
+    ]
+  },
+  {
+    "id": "14",
+    "sku": "SV-CLO-003",
+    "name": "Heavyweight 450GSM Cotton Hoodie",
+    "brand": "Standard Heavywear",
+    "badge": "New Arrival",
+    "description": "Constructed from heavyweight 450 GSM combed organic French terry cotton. Engineered with reverse weave cross-grain body to eliminate vertical shrinkage, double-layered generous hood, and ribbed side gussets.",
+    "price": 89.99,
+    "originalPrice": 110.00,
+    "image": "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=800&auto=format&fit=crop&q=85",
+    "images": [
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1509967419530-da38b4704bc6?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1578587018452-892bacefd3f2?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=800&auto=format&fit=crop&q=85"
+    ],
+    "category": "Clothing",
+    "rating": 4.8,
+    "reviews": 420,
+    "inStock": true,
+    "stock_count": 17,
+    "features": [
+      "Substantial 450 GSM 100% Organic French Terry Cotton",
+      "Double-Layer Stiff Hood (Holds Perfect Structure)",
+      "Ribbed Side Gussets for Unrestricted Range of Motion",
+      "Heavy-Duty Flatlock Stitching Throughout"
+    ],
+    "specs": {
+      "Fabric Weight": "450 GSM (Heavyweight)",
+      "Composition": "100% Ring-Spun Organic Cotton",
+      "Ribbing": "95% Cotton / 5% Elastane Heavy Rib",
+      "Fit": "Relaxed Boxy Fit",
+      "Care": "Cold Machine Wash, Tumble Dry Low"
+    },
+    "reviews_list": [
+      {
+        "author": "Brandon C.",
+        "date": "3 days ago",
+        "rating": 5,
+        "title": "The holy grail hoodie",
+        "comment": "Thick, structured, and warm without needing a jacket. The hood actually stays up without looking floppy. Best hoodie on the market.",
+        "verified": true
+      }
+    ]
+  },
+  {
+    "id": "15",
+    "sku": "SV-ACC-003",
+    "name": "Slim RFID Bifold Wallet",
+    "brand": "Sentry Leathercraft",
+    "badge": "Everyday Carry",
+    "description": "Minimalist ultra-slim front-pocket bifold wallet handcrafted from full-grain vegetable-tanned bridle leather. Features integrated German-certified RFID blocking mesh lining and holds 10 cards plus folded currency without pocket bulge.",
+    "price": 49.99,
+    "originalPrice": 65.00,
+    "image": "https://images.unsplash.com/photo-1627123424574-724758594e93?w=800&auto=format&fit=crop&q=85",
+    "images": [
+      "https://images.unsplash.com/photo-1627123424574-724758594e93?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1606503825008-909a67e753bf?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1554412933-514a83d2f3c8?w=800&auto=format&fit=crop&q=85"
+    ],
+    "category": "Accessories",
+    "rating": 4.9,
+    "reviews": 890,
+    "inStock": true,
+    "stock_count": 25,
+    "features": [
+      "Hand-Burnished Vegetable Tanned Italian Bridle Leather",
+      "Full 13.56MHz RFID/NFC Scanning Protection Layer",
+      "Quick-Access Exterior Card Thumb Slot for Daily Transit",
+      "Ultra-Slim 8mm Profile Loaded with 8 Cards"
+    ],
+    "specs": {
+      "Dimensions": "10.2cm x 7.6cm x 0.8cm (4.0\" x 3.0\" x 0.3\")",
+      "Capacity": "Up to 10 Cards + 12 Bills",
+      "Weight": "48 grams",
+      "Hardware": "Nil (Zero-Bulk Thread Construction)",
+      "Warranty": "10-Year Replacement Guarantee"
+    },
+    "reviews_list": [
+      {
+        "author": "Timothy H.",
+        "date": "1 week ago",
+        "rating": 5,
+        "title": "Finally ditching the fat wallet",
+        "comment": "Fits completely flat in my front jeans pocket. The quick draw thumb slot makes paying for subway rides effortless.",
+        "verified": true
+      }
+    ]
+  },
+  {
+    "id": "16",
+    "sku": "SV-HOM-003",
+    "name": "Ultrasonic Stone Aroma Diffuser",
+    "brand": "AuraZen Living",
+    "badge": "Wellness",
+    "description": "Artisan matte ceramic shell ultrasonic mist diffuser that doubles as an ambient minimalist sculpture. Whisper-quiet 2.4MHz ultrasonic transducer disperses essential oils and hydrates indoor air for up to 12 hours.",
+    "price": 69.99,
+    "originalPrice": 89.99,
+    "image": "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=800&auto=format&fit=crop&q=85",
+    "images": [
+      "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1617897903246-719242758050?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1602928321679-560bb453f190?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=800&auto=format&fit=crop&q=85"
+    ],
+    "category": "Home",
+    "rating": 4.8,
+    "reviews": 360,
+    "inStock": true,
+    "stock_count": 13,
+    "features": [
+      "Handcrafted Matte Ceramic Cover with Warm Ambient Glow",
+      "Whisper-Quiet Ultrasonic Ultrasonic Vibration (under 20dB)",
+      "Continuous & Intermittent Diffusion Modes (up to 12 hours)",
+      "Auto Safety Shut-Off Sensor When Water Depletes"
+    ],
+    "specs": {
+      "Water Tank": "280ml Capacity",
+      "Coverage Area": "Up to 450 sq. ft (42 sq. meters)",
+      "Timer Modes": "1h / 3h / 6h / Continuous",
+      "Light": "Warm 2200K Ambient LED with Breathing Mode",
+      "Power": "USB-C Powered (Adapter Included)"
+    },
+    "reviews_list": [
+      {
+        "author": "Samantha W.",
+        "date": "4 days ago",
+        "rating": 5,
+        "title": "Zen aesthetic, completely silent",
+        "comment": "Looks like an expensive ceramic art piece on my nightstand. The warm light creates the perfect bedtime mood.",
+        "verified": true
+      }
+    ]
   }
 ]

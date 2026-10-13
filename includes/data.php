@@ -74,6 +74,14 @@ function filter_products(array $opts): array
         $items = array_values(array_filter($items, fn($p) => $p['rating'] >= $min));
     }
 
+    if (!empty($opts['inStockOnly'])) {
+        $items = array_values(array_filter($items, fn($p) => !empty($p['inStock'])));
+    }
+
+    if (!empty($opts['onSaleOnly'])) {
+        $items = array_values(array_filter($items, fn($p) => !empty($p['originalPrice']) && $p['originalPrice'] > $p['price']));
+    }
+
     switch ($opts['sort'] ?? 'featured') {
         case 'price-low':
             usort($items, fn($a, $b) => $a['price'] <=> $b['price']);
