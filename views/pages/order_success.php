@@ -170,7 +170,7 @@ if (!$order): ?>
       </p>
       <?php if ($isPaid): ?>
         <p class="text-xs text-gray-500 mt-1">
-          Paid via Paystack<?= !empty($shippingAddr['paystackCardBrand']) ? ' · ' . e((string) $shippingAddr['paystackCardBrand']) : '' ?><?= !empty($shippingAddr['paystackCardLast4']) ? ' •••• ' . e((string) $shippingAddr['paystackCardLast4']) : '' ?><?= !empty($shippingAddr['paystackChannel']) ? ' · ' . e(ucfirst((string) $shippingAddr['paystackChannel'])) : '' ?>
+          Paid via Paystack<?= !empty($shippingAddr['paystackCardBrand']) ? ' · ' . e((string) $shippingAddr['paystackCardBrand']) : '' ?><?= !empty($shippingAddr['paystackCardLast4']) ? ' •••• ' . e((string) $shippingAddr['paystackCardLast4']) : '' ?><?= !empty($shippingAddr['paystackChannel']) ? ' · ' . e(ucfirst((string) $shippingAddr['paystackChannel'])) : '' ?><?= !empty($shippingAddr['paystackCurrency']) ? ' · ' . e((string) $shippingAddr['paystackCurrency']) : '' ?>
         </p>
         <?php if (!empty($shippingAddr['paystackReceipt'])): ?>
           <p class="text-xs text-gray-500 mt-0.5 font-mono">Receipt: <?= e((string) $shippingAddr['paystackReceipt']) ?></p>

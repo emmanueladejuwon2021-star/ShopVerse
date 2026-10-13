@@ -85,6 +85,13 @@ $styles = [
           <dt class="text-gray-400">Amount</dt>
           <dd class="font-semibold text-gray-900 dark:text-white"><?= money((float) ($order['total'] ?? 0)) ?></dd>
         </div>
+        <?php if (!empty($order['shippingAddress']['paystackCurrency'])): ?>
+          <!-- The currency actually collected at the gateway (from Paystack's verify response) -->
+          <div class="flex justify-between px-4 py-2.5">
+            <dt class="text-gray-400">Charged in</dt>
+            <dd class="font-semibold text-gray-900 dark:text-white font-mono"><?= e((string) $order['shippingAddress']['paystackCurrency']) ?></dd>
+          </div>
+        <?php endif; ?>
       </dl>
     <?php endif; ?>
 
@@ -93,6 +100,13 @@ $styles = [
         <a href="/checkout"
            class="inline-flex items-center justify-center gap-2 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-3 text-sm transition-colors shadow-lg shadow-indigo-600/25">
           ↻ Try Payment Again
+        </a>
+      <?php endif; ?>
+      <?php if ($state === 'unknown'): ?>
+        <!-- No matching order on this server — recover via the cart instead of a dead end -->
+        <a href="/cart"
+           class="inline-flex items-center justify-center gap-2 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-3 text-sm transition-colors shadow-lg shadow-indigo-600/25">
+          Back to My Cart
         </a>
       <?php endif; ?>
       <a href="/orders"

@@ -24,6 +24,14 @@ if ($user) {
 $shippingMethods = get_shipping_methods();
 $paystackReady = paystack_is_configured();
 $paystackLive  = $paystackReady && paystack_is_live();
+// Paystack collects in its own account currency (PAYSTACK_CURRENCY, default
+// NGN). Show customers BOTH what they see while browsing and what they will
+// actually be charged at the gateway — no surprise conversion at handoff.
+$chargeTotalFmt = paystack_money($total);
+$browsingCur   = active_currency();
+$curMismatch   = $paystackReady && strcasecmp($browsingCur, paystack_currency()) !== 0;
+// An abandoned/failed redirect from a previous attempt? Offer an honest note.
+$pendingIntent = !empty($_SESSION['paystack_return_order']);
 ?>
 <div class="max-w-6xl mx-auto px-4 py-8 lg:py-12">
   <div class="flex items-center gap-2 text-xs text-gray-400 uppercase tracking-widest font-semibold mb-2">
@@ -229,6 +237,21 @@ $paystackLive  = $paystackReady && paystack_is_live();
             </label>
           </div>
 
+          <?php if ($curMismatch): ?>
+            <!-- Transparency: browsing currency vs the currency Paystack charges in -->
+            <div class="p-3.5 rounded-2xl bg-indigo-50/70 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-800/60 text-xs text-indigo-800 dark:text-indigo-300 leading-relaxed">
+              💱 <strong>Payment currency:</strong> you are browsing prices in <?= e($browsingCur) ?>, but Paystack will charge your account in
+              <strong><?= e(paystack_currency()) ?></strong>. The exact amount collected at the gateway will be
+              <span class="font-mono font-bold"><?= e($chargeTotalFmt) ?></span>.
+            </div>
+          <?php endif; ?>
+
+          <?php if ($pendingIntent): ?>
+            <div class="p-3.5 rounded-2xl bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-xs text-gray-600 dark:text-gray-300">
+              ↩️ You returned from a previous payment attempt. Your cart is intact — starting a new payment below is safe, and any abandoned attempt was never charged.
+            </div>
+          <?php endif; ?>
+
           <p class="text-[11px] text-gray-400 flex items-center gap-1.5">
             🔒 256-bit SSL encrypted · Powered by Paystack · Verified server-side before your order is confirmed
           </p>
@@ -329,8 +352,9 @@ $paystackLive  = $paystackReady && paystack_is_live();
 
           <!-- Place Order / Pay Button -->
           <button id="checkout-submit" form="checkout-form" type="submit" data-paystack="<?= $paystackReady ? '1' : '0' ?>"
+                  data-charge-symbol="<?= e(paystack_currency_symbol()) ?>" data-charge-decimals="<?= in_array(paystack_currency(), ['JPY', 'KRW', 'XOF'], true) ? '0' : '2' ?>"
                   class="w-full rounded-2xl bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 disabled:opacity-60 disabled:cursor-wait text-white font-bold py-4 shadow-lg shadow-indigo-600/25 transition-all text-sm flex items-center justify-center gap-2">
-            <span id="checkout-submit-label"><?= $paystackReady ? '🔒 Pay ' . e(money($total)) . ' Securely with Paystack' : 'Place Order Now' ?></span>
+            <span id="checkout-submit-label"><?= $paystackReady ? '🔒 Pay ' . e($curMismatch ? $chargeTotalFmt : money($total)) . ' Securely with Paystack' : 'Place Order Now' ?></span>
             <svg id="checkout-submit-spinner" class="hidden animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
@@ -353,10 +377,6 @@ $paystackLive  = $paystackReady && paystack_is_live();
   var subtotalAfterDiscount = <?= (float) $subAfterDiscount ?>;
   var taxCost = <?= (float) $tax ?>;
 
-  function togglePaymentTab(type) {
-    // Legacy no-op kept for safety; payment UI is now radio-card based.
-  }
-
   function updateShippingRate(cost) {
     var shipDisplay = document.getElementById('summary-shipping');
     var totalDisplay = document.getElementById('summary-total');
@@ -368,8 +388,15 @@ $paystackLive  = $paystackReady && paystack_is_live();
       totalDisplay.innerText = '$' + newTotal.toFixed(2);
     }
     var label = document.getElementById('checkout-submit-label');
-    if (label && label.dataset.paystackOn === '1') {
-      label.textContent = '\uD83D\uDD12 Pay $' + newTotal.toFixed(2) + ' Securely with Paystack';
+    var btn = document.getElementById('checkout-submit');
+    if (label && btn && label.dataset.paystackOn === '1') {
+      // Mirror the server: show the exact currency Paystack will charge in.
+      var sym = btn.getAttribute('data-charge-symbol') || '$';
+      var dec = parseInt(btn.getAttribute('data-charge-decimals') || '2', 10);
+      var newTotal = subtotalAfterDiscount + cost + taxCost;
+      label.textContent = '\uD83D\uDD12 Pay ' + sym + newTotal.toLocaleString(undefined, {
+        minimumFractionDigits: dec, maximumFractionDigits: dec
+      }) + ' Securely with Paystack';
     }
   }
 

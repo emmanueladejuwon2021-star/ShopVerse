@@ -162,6 +162,33 @@ function paystack_reference(): string
 }
 
 /* ------------------------------------------------------------------ */
+/* Display currency helpers                                            */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Currency symbol for the configured PAYSTACK_CURRENCY (the money actually
+ * charged). Falls back to the ISO code when no symbol is known.
+ */
+function paystack_currency_symbol(?string $code = null): string
+{
+    $symbols = ['NGN' => '₦', 'GHS' => '₵', 'ZAR' => 'R', 'USD' => '$', 'XOF' => 'CFA'];
+    $code = strtoupper($code ?? paystack_currency());
+    return $symbols[$code] ?? $code . ' ';
+}
+
+/**
+ * Format an amount in the CHARGE currency (what Paystack will collect), as
+ * opposed to money() which formats in the customer's browsing currency.
+ * Whole-unit currencies (JPY, KRW…) carry no minor units.
+ */
+function paystack_money(float|int $major): string
+{
+    $c = paystack_currency();
+    $decimals = in_array($c, ['JPY', 'KRW', 'XOF'], true) ? 0 : 2;
+    return paystack_currency_symbol($c) . number_format((float) $major, $decimals);
+}
+
+/* ------------------------------------------------------------------ */
 /* Intent creation (checkout → hosted Paystack session)                */
 /* ------------------------------------------------------------------ */
 
@@ -412,6 +439,8 @@ function paystack_complete_payment(string $reference, array $txData): bool
         'paymentStatus'  => 'paid',
         'paystackDomain' => (string) ($txData['domain'] ?? 'test'),
         'paystackChannel' => (string) ($txData['channel'] ?? 'card'),
+        'paystackCurrency' => strtoupper((string) ($txData['currency'] ?? paystack_currency())),
+        'paystackAmountPaidMinor' => $chargedMinor ?: null,
         'paystackAuthCode' => (string) (($txData['authorization']['auth_code'] ?? $txData['authorization']['authorization_code'] ?? '')),
         'paystackCardLast4' => (string) ($txData['authorization']['last4'] ?? ''),
         'paystackCardBrand' => (string) ($txData['authorization']['brand'] ?? ''),
