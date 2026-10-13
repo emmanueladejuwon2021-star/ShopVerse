@@ -23,6 +23,11 @@ if ($user) {
 }
 $shippingMethods = get_shipping_methods();
 $paystackReady = paystack_is_configured();
+// Until PAYSTACK_SECRET_KEY is added, "Pay with Paystack" transparently
+// places the order as Cash on Delivery (server-side fallback in
+// paystack_create_transaction) so the store works end-to-end on preview
+// deployments. The UI says so honestly instead of disabling checkout.
+$codFallback   = !$paystackReady;
 $paystackLive  = $paystackReady && paystack_is_live();
 // Paystack collects in its own account currency (PAYSTACK_CURRENCY, default
 // NGN). Show customers BOTH what they see while browsing and what they will
@@ -189,7 +194,7 @@ $pendingIntent = !empty($_SESSION['paystack_return_order']);
               <strong>⚙️ Online payments are not configured yet.</strong><br>
               Add <code class="font-mono bg-white/60 dark:bg-gray-900/60 px-1.5 py-0.5 rounded">PAYSTACK_SECRET_KEY</code> to the server environment
               (Vercel → Project Settings → Environment Variables) to accept cards, bank transfer, USSD and mobile money via Paystack.
-              Until then you can continue with Cash on Delivery.
+              Until then you can continue with Cash on Delivery — <strong>checkout still works end-to-end</strong>.
             </div>
           <?php endif; ?>
 
@@ -203,13 +208,17 @@ $pendingIntent = !empty($_SESSION['paystack_return_order']);
 
           <!-- Payment method options -->
           <div class="space-y-3">
-            <label class="block <?= $paystackReady ? '' : 'opacity-60' ?>">
+            <label class="block">
               <div class="flex items-start gap-3.5 p-4 rounded-2xl border-2 transition-all cursor-pointer border-gray-200 dark:border-gray-700 hover:border-indigo-400 has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-50/60 dark:has-[:checked]:bg-indigo-950/40">
-                <input type="radio" name="paymentMethod" value="paystack" <?= $paystackReady ? 'checked' : 'disabled' ?> class="mt-1 w-4 h-4 text-indigo-600 focus:ring-indigo-500">
+                <input type="radio" name="paymentMethod" value="paystack" <?= $paystackReady ? 'checked' : '' ?> class="mt-1 w-4 h-4 text-indigo-600 focus:ring-indigo-500">
                 <div class="flex-1 min-w-0">
                   <div class="flex items-center gap-2 flex-wrap">
                     <span class="font-bold text-sm text-gray-900 dark:text-white">💳 Pay with Paystack</span>
-                    <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-950/70 px-2 py-0.5 rounded-full">Recommended</span>
+                    <?php if ($paystackReady): ?>
+                      <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-950/70 px-2 py-0.5 rounded-full">Recommended</span>
+                    <?php else: ?>
+                      <span class="text-[10px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-300 bg-amber-100 dark:bg-amber-950/70 px-2 py-0.5 rounded-full">Not live yet — placed as COD</span>
+                    <?php endif; ?>
                   </div>
                   <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
                     Card · Bank Transfer · USSD · Mobile Money · Apple&nbsp;Pay — completed on Paystack's PCI-DSS&nbsp;Level&nbsp;1 certified checkout. Your card details never touch our servers.
@@ -228,7 +237,7 @@ $pendingIntent = !empty($_SESSION['paystack_return_order']);
               <div class="flex items-start gap-3.5 p-4 rounded-2xl border-2 transition-all cursor-pointer border-gray-200 dark:border-gray-700 hover:border-indigo-400 has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-50/60 dark:has-[:checked]:bg-indigo-950/40">
                 <input type="radio" name="paymentMethod" value="cod" <?= $paystackReady ? '' : 'checked' ?> class="mt-1 w-4 h-4 text-indigo-600 focus:ring-indigo-500">
                 <div class="flex-1 min-w-0">
-                  <span class="font-bold text-sm text-gray-900 dark:text-white">📦 Cash on Delivery</span>
+                  <span class="font-bold text-sm text-gray-900 dark:text-white">📦 Cash on Delivery<?php if ($codFallback): ?> <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/70 px-2 py-0.5 rounded-full ml-1">Available now</span><?php endif; ?></span>
                   <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
                     Pay in cash or by card terminal when the courier delivers your package. Order is placed immediately.
                   </p>
@@ -253,7 +262,7 @@ $pendingIntent = !empty($_SESSION['paystack_return_order']);
           <?php endif; ?>
 
           <p class="text-[11px] text-gray-400 flex items-center gap-1.5">
-            🔒 256-bit SSL encrypted · Powered by Paystack · Verified server-side before your order is confirmed
+            🔒 256-bit SSL encrypted · <?= $paystackReady ? 'Powered by Paystack' : 'Cash on Delivery available' ?> · Verified server-side before your order is confirmed
           </p>
         </section>
       </form>
@@ -354,7 +363,7 @@ $pendingIntent = !empty($_SESSION['paystack_return_order']);
           <button id="checkout-submit" form="checkout-form" type="submit" data-paystack="<?= $paystackReady ? '1' : '0' ?>"
                   data-charge-symbol="<?= e(paystack_currency_symbol()) ?>" data-charge-decimals="<?= in_array(paystack_currency(), ['JPY', 'KRW', 'XOF'], true) ? '0' : '2' ?>"
                   class="w-full rounded-2xl bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 disabled:opacity-60 disabled:cursor-wait text-white font-bold py-4 shadow-lg shadow-indigo-600/25 transition-all text-sm flex items-center justify-center gap-2">
-            <span id="checkout-submit-label"><?= $paystackReady ? '🔒 Pay ' . e($curMismatch ? $chargeTotalFmt : money($total)) . ' Securely with Paystack' : 'Place Order Now' ?></span>
+            <span id="checkout-submit-label"><?= $paystackReady ? '🔒 Pay ' . e($curMismatch ? $chargeTotalFmt : money($total)) . ' Securely with Paystack' : ($codFallback ? '📦 Place Order — Cash on Delivery' : 'Place Order Now') ?></span>
             <svg id="checkout-submit-spinner" class="hidden animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
@@ -362,7 +371,7 @@ $pendingIntent = !empty($_SESSION['paystack_return_order']);
           </button>
 
           <div class="text-center space-y-1.5">
-            <span class="block text-[11px] text-gray-400 font-medium">You will be redirected to Paystack's secure checkout to complete payment.</span>
+            <span class="block text-[11px] text-gray-400 font-medium"><?php if ($paystackReady): ?>You will be redirected to Paystack's secure checkout to complete payment.<?php else: ?>Online payments activate automatically once <code class="font-mono">PAYSTACK_SECRET_KEY</code> is set — until then orders are placed as Cash on Delivery.<?php endif; ?></span>
             <span class="inline-flex items-center gap-1.5 text-xs text-gray-400 font-medium">
               <span>🛡️</span> 30-Day Money-Back Guarantee
             </span>
