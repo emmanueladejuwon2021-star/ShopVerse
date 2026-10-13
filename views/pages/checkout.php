@@ -32,8 +32,11 @@ $paystackLive  = $paystackReady && paystack_is_live();
 // Paystack collects in its own account currency (PAYSTACK_CURRENCY, default
 // NGN). Show customers BOTH what they see while browsing and what they will
 // actually be charged at the gateway — no surprise conversion at handoff.
-$chargeTotalFmt = paystack_money($total);
-$browsingCur   = active_currency();
+// Display-only preview of the charge in the gateway's account currency.
+// NOTE: totals are server-authoritative and always computed in USD (the store
+// base currency) — this conversion only informs the customer up front.
+$chargeTotalFmt  = paystack_money($total * (supported_currencies()[paystack_currency()]['rate'] ?? 1.0));
+$browsingCur     = active_currency();
 $curMismatch   = $paystackReady && strcasecmp($browsingCur, paystack_currency()) !== 0;
 // An abandoned/failed redirect from a previous attempt? Offer an honest note.
 $pendingIntent = !empty($_SESSION['paystack_return_order']);
