@@ -1,8 +1,10 @@
 <?php
 /**
  * Production Checkout View
- * Features promo code engine, shipping speed selector, express payment method tabs,
- * saved address auto-fill, and itemized summary.
+ * Promo code engine, shipping speed selector, Paystack-secured payment methods,
+ * saved address auto-fill, and itemized summary. Card data is NEVER collected
+ * here — online payments are completed on Paystack's PCI-DSS Level 1 hosted
+ * checkout; this page only chooses the method and hands off.
  */
 $items = cart_items();
 $subtotal = cart_total_price();
@@ -20,6 +22,8 @@ if ($user) {
     $savedAddresses = $acct['addresses'] ?? [];
 }
 $shippingMethods = get_shipping_methods();
+$paystackReady = paystack_is_configured();
+$paystackLive  = $paystackReady && paystack_is_live();
 ?>
 <div class="max-w-6xl mx-auto px-4 py-8 lg:py-12">
   <div class="flex items-center gap-2 text-xs text-gray-400 uppercase tracking-widest font-semibold mb-2">
@@ -152,71 +156,81 @@ $shippingMethods = get_shipping_methods();
 
         <!-- Payment Section -->
         <section class="bg-white dark:bg-gray-800 rounded-3xl p-6 sm:p-8 border border-gray-100 dark:border-gray-700/60 shadow-sm space-y-5">
-          <div class="flex items-center justify-between">
+          <div class="flex items-center justify-between flex-wrap gap-2">
             <div class="flex items-center gap-3">
               <span class="w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-bold">3</span>
               <h2 class="text-lg font-bold text-gray-900 dark:text-white">Payment Method</h2>
             </div>
-            <span class="text-xs text-gray-400">Step 3 of 3</span>
-          </div>
-
-          <!-- Payment Method Selector Tabs -->
-          <div class="grid grid-cols-3 gap-2 p-1.5 bg-gray-100 dark:bg-gray-900 rounded-2xl">
-            <label class="cursor-pointer">
-              <input type="radio" name="paymentMethod" value="Credit / Debit Card" checked class="peer sr-only" onchange="togglePaymentTab('card')">
-              <div class="peer-checked:bg-white dark:peer-checked:bg-gray-800 peer-checked:text-indigo-600 dark:peer-checked:text-indigo-400 peer-checked:shadow-sm rounded-xl py-2.5 text-xs font-semibold text-center transition-all text-gray-600 dark:text-gray-300">
-                💳 Card
-              </div>
-            </label>
-            <label class="cursor-pointer">
-              <input type="radio" name="paymentMethod" value="Apple / Google Pay" class="peer sr-only" onchange="togglePaymentTab('express')">
-              <div class="peer-checked:bg-white dark:peer-checked:bg-gray-800 peer-checked:text-indigo-600 dark:peer-checked:text-indigo-400 peer-checked:shadow-sm rounded-xl py-2.5 text-xs font-semibold text-center transition-all text-gray-600 dark:text-gray-300">
-                ⚡ Express Pay
-              </div>
-            </label>
-            <label class="cursor-pointer">
-              <input type="radio" name="paymentMethod" value="Cash on Delivery" class="peer sr-only" onchange="togglePaymentTab('cod')">
-              <div class="peer-checked:bg-white dark:peer-checked:bg-gray-800 peer-checked:text-indigo-600 dark:peer-checked:text-indigo-400 peer-checked:shadow-sm rounded-xl py-2.5 text-xs font-semibold text-center transition-all text-gray-600 dark:text-gray-300">
-                📦 Pay on Delivery
-              </div>
-            </label>
-          </div>
-
-          <!-- Card Details Input -->
-          <div id="payment-card-panel" class="space-y-4 pt-2">
-            <div>
-              <label class="block text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider mb-1.5">Card Number *</label>
-              <div class="relative">
-                <input name="cardNumber" inputmode="numeric" placeholder="4242 •••• •••• 4242" maxlength="19" value="4242 4242 4242 4242"
-                       class="w-full rounded-xl border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 pl-4 pr-12 py-2.5 text-sm font-mono focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                <span class="absolute right-3.5 top-2.5 text-sm">🔒</span>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <label class="block text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider mb-1.5">Expires (MM/YY) *</label>
-                <input name="expiry" placeholder="12/28" pattern="\d{2}/\d{2}" value="12/28"
-                       class="w-full rounded-xl border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-4 py-2.5 text-sm font-mono focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-              </div>
-              <div>
-                <label class="block text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider mb-1.5">Security Code (CVC) *</label>
-                <input name="cvc" inputmode="numeric" placeholder="123" maxlength="4" value="888"
-                       class="w-full rounded-xl border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-4 py-2.5 text-sm font-mono focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-              </div>
+            <div class="flex items-center gap-2">
+              <?php if ($paystackReady): ?>
+                <span class="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full border
+                  <?= $paystackLive
+                      ? 'text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/50 border-emerald-200 dark:border-emerald-800'
+                      : 'text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/50 border-amber-200 dark:border-amber-800' ?>">
+                  <span class="w-1.5 h-1.5 rounded-full <?= $paystackLive ? 'bg-emerald-500' : 'bg-amber-500 animate-pulse' ?>"></span>
+                  Paystack · <?= $paystackLive ? 'Live' : 'Test Mode' ?>
+                </span>
+              <?php endif; ?>
+              <span class="text-xs text-gray-400">Step 3 of 3</span>
             </div>
           </div>
 
-          <div id="payment-express-panel" class="hidden p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 text-sm text-indigo-700 dark:text-indigo-300">
-            ⚡ Ready for one-touch biometric authorization at order placement.
+          <?php if (!$paystackReady): ?>
+            <!-- Honest operator notice — no fake gateway, no fake card form. -->
+            <div class="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 text-xs text-amber-800 dark:text-amber-300 leading-relaxed">
+              <strong>⚙️ Online payments are not configured yet.</strong><br>
+              Add <code class="font-mono bg-white/60 dark:bg-gray-900/60 px-1.5 py-0.5 rounded">PAYSTACK_SECRET_KEY</code> to the server environment
+              (Vercel → Project Settings → Environment Variables) to accept cards, bank transfer, USSD and mobile money via Paystack.
+              Until then you can continue with Cash on Delivery.
+            </div>
+          <?php endif; ?>
+
+          <!-- Billing email (used for the Paystack receipt) -->
+          <div>
+            <label class="block text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider mb-1.5">Billing Email *</label>
+            <input type="email" name="billingEmail" required value="<?= e($user['email'] ?? '') ?>" placeholder="you@example.com"
+                   class="w-full rounded-xl border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+            <p class="text-[11px] text-gray-400 mt-1.5">Paystack sends the official payment receipt to this address.</p>
           </div>
 
-          <div id="payment-cod-panel" class="hidden p-4 rounded-2xl bg-gray-50 dark:bg-gray-900 text-sm text-gray-600 dark:text-gray-300">
-            📦 You can pay in cash or via card terminal when the courier delivers your package.
+          <!-- Payment method options -->
+          <div class="space-y-3">
+            <label class="block <?= $paystackReady ? '' : 'opacity-60' ?>">
+              <div class="flex items-start gap-3.5 p-4 rounded-2xl border-2 transition-all cursor-pointer border-gray-200 dark:border-gray-700 hover:border-indigo-400 has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-50/60 dark:has-[:checked]:bg-indigo-950/40">
+                <input type="radio" name="paymentMethod" value="paystack" <?= $paystackReady ? 'checked' : 'disabled' ?> class="mt-1 w-4 h-4 text-indigo-600 focus:ring-indigo-500">
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <span class="font-bold text-sm text-gray-900 dark:text-white">💳 Pay with Paystack</span>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-950/70 px-2 py-0.5 rounded-full">Recommended</span>
+                  </div>
+                  <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    Card · Bank Transfer · USSD · Mobile Money · Apple&nbsp;Pay — completed on Paystack's PCI-DSS&nbsp;Level&nbsp;1 certified checkout. Your card details never touch our servers.
+                  </p>
+                  <div class="flex items-center gap-3 mt-2 text-[10px] font-semibold text-gray-400">
+                    <span class="rounded border border-gray-200 dark:border-gray-700 px-1.5 py-0.5">VISA</span>
+                    <span class="rounded border border-gray-200 dark:border-gray-700 px-1.5 py-0.5">Mastercard</span>
+                    <span class="rounded border border-gray-200 dark:border-gray-700 px-1.5 py-0.5">Verve</span>
+                    <span class="rounded border border-gray-200 dark:border-gray-700 px-1.5 py-0.5">Bank Transfer</span>
+                  </div>
+                </div>
+              </div>
+            </label>
+
+            <label class="block">
+              <div class="flex items-start gap-3.5 p-4 rounded-2xl border-2 transition-all cursor-pointer border-gray-200 dark:border-gray-700 hover:border-indigo-400 has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-50/60 dark:has-[:checked]:bg-indigo-950/40">
+                <input type="radio" name="paymentMethod" value="cod" <?= $paystackReady ? '' : 'checked' ?> class="mt-1 w-4 h-4 text-indigo-600 focus:ring-indigo-500">
+                <div class="flex-1 min-w-0">
+                  <span class="font-bold text-sm text-gray-900 dark:text-white">📦 Cash on Delivery</span>
+                  <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    Pay in cash or by card terminal when the courier delivers your package. Order is placed immediately.
+                  </p>
+                </div>
+              </div>
+            </label>
           </div>
 
-          <p class="text-[11px] text-gray-400">
-            🔒 Test demo mode active: 256-bit SSL encrypted gateway.
+          <p class="text-[11px] text-gray-400 flex items-center gap-1.5">
+            🔒 256-bit SSL encrypted · Powered by Paystack · Verified server-side before your order is confirmed
           </p>
         </section>
       </form>
@@ -313,13 +327,18 @@ $shippingMethods = get_shipping_methods();
             </div>
           </dl>
 
-          <!-- Place Order Button -->
-          <button form="checkout-form" type="submit"
-                  class="w-full rounded-2xl bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-bold py-4 shadow-lg shadow-indigo-600/25 transition-all text-sm flex items-center justify-center gap-2">
-            <span>Place Order Now</span>
+          <!-- Place Order / Pay Button -->
+          <button id="checkout-submit" form="checkout-form" type="submit" data-paystack="<?= $paystackReady ? '1' : '0' ?>"
+                  class="w-full rounded-2xl bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 disabled:opacity-60 disabled:cursor-wait text-white font-bold py-4 shadow-lg shadow-indigo-600/25 transition-all text-sm flex items-center justify-center gap-2">
+            <span id="checkout-submit-label"><?= $paystackReady ? '🔒 Pay ' . e(money($total)) . ' Securely with Paystack' : 'Place Order Now' ?></span>
+            <svg id="checkout-submit-spinner" class="hidden animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg>
           </button>
 
-          <div class="text-center">
+          <div class="text-center space-y-1.5">
+            <span class="block text-[11px] text-gray-400 font-medium">You will be redirected to Paystack's secure checkout to complete payment.</span>
             <span class="inline-flex items-center gap-1.5 text-xs text-gray-400 font-medium">
               <span>🛡️</span> 30-Day Money-Back Guarantee
             </span>
@@ -335,9 +354,7 @@ $shippingMethods = get_shipping_methods();
   var taxCost = <?= (float) $tax ?>;
 
   function togglePaymentTab(type) {
-    document.getElementById('payment-card-panel').classList.toggle('hidden', type !== 'card');
-    document.getElementById('payment-express-panel').classList.toggle('hidden', type !== 'express');
-    document.getElementById('payment-cod-panel').classList.toggle('hidden', type !== 'cod');
+    // Legacy no-op kept for safety; payment UI is now radio-card based.
   }
 
   function updateShippingRate(cost) {
@@ -350,6 +367,10 @@ $shippingMethods = get_shipping_methods();
       var newTotal = subtotalAfterDiscount + cost + taxCost;
       totalDisplay.innerText = '$' + newTotal.toFixed(2);
     }
+    var label = document.getElementById('checkout-submit-label');
+    if (label && label.dataset.paystackOn === '1') {
+      label.textContent = '\uD83D\uDD12 Pay $' + newTotal.toFixed(2) + ' Securely with Paystack';
+    }
   }
 
   function fillAddress(addr) {
@@ -361,4 +382,30 @@ $shippingMethods = get_shipping_methods();
     if (addr.zipCode) document.getElementById('addr-zip').value = addr.zipCode;
     if (addr.country) document.getElementById('addr-country').value = addr.country;
   }
+
+  (function () {
+    var form = document.getElementById('checkout-form');
+    var btn = document.getElementById('checkout-submit');
+    var spinner = document.getElementById('checkout-submit-spinner');
+    var label = document.getElementById('checkout-submit-label');
+    if (!form || !btn) return;
+
+    var paystackOn = btn.getAttribute('data-paystack') === '1';
+    if (label) label.dataset.paystackOn = paystackOn ? '1' : '0';
+
+    form.addEventListener('submit', function () {
+      // Double-submit guard: the server creates a fresh pending order + Paystack
+      // session per POST, so one click must equal exactly one request.
+      if (form.dataset.submitting === '1') return false;
+      form.dataset.submitting = '1';
+      btn.disabled = true;
+      if (spinner) spinner.classList.remove('hidden');
+      if (label) {
+        label.textContent = paystackOn
+          ? 'Redirecting to Paystack…'
+          : 'Placing your order…';
+      }
+      return true;
+    });
+  })();
 </script>

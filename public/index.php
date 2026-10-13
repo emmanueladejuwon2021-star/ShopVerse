@@ -35,6 +35,49 @@ require __DIR__ . '/../includes/functions.php';
 require __DIR__ . '/../includes/data.php';
 require __DIR__ . '/../includes/auth.php';
 require __DIR__ . '/../includes/cart.php';
+require __DIR__ . '/../includes/payments.php';
+
+// ---- Route dispatch (mirrors the routes in src/App.tsx) ----
+$uri = rawurldecode(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/');
+$path = rtrim($uri, '/') ?: '/';
+
+// ---- Paystack webhook receiver (POST /payments/webhook) ----
+// Signature-verified, idempotent event processor. Authenticity comes from the
+// HMAC-SHA512 x-paystack-signature header (not session CSRF), so this runs
+// before the CSRF gate below.
+if ($path === '/payments/webhook' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    handle_paystack_webhook(); // exits
+}
+
+function handle_paystack_webhook(): never
+{
+    header('Content-Type: application/json');
+    $raw = file_get_contents('php://input') ?: '';
+    $signature = (string) ($_SERVER['HTTP_X_PAYSTACK_SIGNATURE'] ?? '');
+
+    if (!paystack_is_configured() || !paystack_verify_webhook_signature($raw, $signature)) {
+        http_response_code(401);
+        echo json_encode(['ok' => false, 'error' => 'invalid signature']);
+        exit;
+    }
+
+    $event = json_decode($raw, true);
+    if (!is_array($event)) {
+        http_response_code(400);
+        echo json_encode(['ok' => false, 'error' => 'malformed payload']);
+        exit;
+    }
+
+    // Completion itself is idempotent (paymentStatus guard), so duplicate
+    // deliveries are safe; we still log the event id for replay auditing.
+    $eventId = (string) ($event['id'] ?? '');
+    $result = paystack_handle_webhook($event, $eventId ?: null);
+    error_log('ShopVerse Paystack webhook: ' . json_encode([
+        'event' => $event['event'] ?? '?', 'id' => $eventId, 'result' => $result,
+    ]));
+    echo json_encode(['ok' => true] + $result);
+    exit;
+}
 
 // ---- CSRF protection (audit fix) ----
 if (!isset($_SESSION['csrf_token']) || !is_string($_SESSION['csrf_token'])) {
@@ -101,6 +144,7 @@ $routes = [
     '/track'        => 'track',
     '/checkout'     => 'checkout',         // requires login
     '/order-success'=> 'order_success',    // requires login
+    '/payment/callback' => 'payment_return', // Paystack redirect target (requires login)
     '/login'        => 'login',
     '/logout'       => 'logout',
     '/orders'       => 'orders',           // requires login
@@ -115,11 +159,84 @@ if ($page === null && preg_match('#^/product/([^/]+)$#', $path, $m)) {
     $params['id'] = $m[1];
 }
 
-// Auth guards (mirror the ProtectedRoute behaviour of Checkout/Orders/Account)
+// Auth guards (mirror the ProtectedRoute behaviour of Checkout/Orders/Account).
+// The Paystack callback is handled specially below (it verifies payments even
+// for expired sessions), so it is exempt here.
 $protected = ['checkout', 'orders', 'account'];
 if (in_array($page, $protected, true) && !is_logged_in()) {
     $_SESSION['flash_error'] = 'Please sign in to continue.';
     header('Location: /login?redirect=' . urlencode($path));
+    exit;
+}
+
+// ---- Paystack return handler (GET /payment/callback?reference=SV-...) ----
+// The customer lands back here from checkout.paystack.co. We NEVER trust the
+// redirect alone: the reference is re-verified against the Paystack API
+// server-side before the order is marked paid. Idempotent on refresh.
+if ($page === 'payment_return') {
+    $reference = preg_replace('/[^A-Za-z0-9\-_]/', '', (string) ($_GET['reference'] ?? ''));
+
+    if ($reference === '') {
+        $_SESSION['flash_error'] = 'Payment could not be completed: missing transaction reference.';
+        redirect(is_logged_in() ? '/checkout' : '/cart');
+    }
+
+    $verify = paystack_verify_transaction((string) $reference);
+    $order  = find_order_by_reference((string) $reference);
+
+    if (!$order) {
+        http_response_code(404);
+        render('pages/payment_return', [
+            'title' => 'Payment — ShopVerse',
+            'state' => 'unknown',
+            'reference' => $reference,
+            'auto_open_cart' => false,
+        ]);
+        exit;
+    }
+
+    // Reconcile the payment regardless of session state — money is money, and
+    // the webhook may not have arrived yet. This is idempotent.
+    if ($verify['ok'] && $verify['paid']) {
+        paystack_complete_payment((string) $reference, is_array($verify['data']) ? $verify['data'] : []);
+        unset($_SESSION['paystack_return_order']);
+    }
+
+    $fresh = find_order_by_reference((string) $reference) ?? $order;
+    $isPaid = (($fresh['shippingAddress']['paymentStatus'] ?? '') === 'paid');
+
+    // Success → receipt page (protected; login first if the session expired).
+    if ($isPaid) {
+        if (!is_logged_in()) {
+            $_SESSION['flash'] = 'Payment confirmed! Sign in to view your order and receipt.';
+            header('Location: /login?redirect=' . urlencode('/order-success?id=' . rawurlencode((string) $fresh['id'])));
+            exit;
+        }
+        $_SESSION['last_order'] = array_merge($_SESSION['last_order'] ?? [], $fresh);
+        redirect('/order-success?id=' . urlencode((string) $fresh['id']));
+    }
+
+    // Not paid yet: either failed/abandoned, or still pending verification
+    // (webhook may finalise shortly). Keep the cart intact so we can retry.
+    $status = is_array($verify['data']) ? (string) ($verify['data']['status'] ?? 'failed') : 'pending';
+    if ($status === 'failed' || $status === 'error') {
+        paystack_mark_status((string) $order['id'], 'payment_failed');
+    }
+    if (!is_logged_in()) {
+        $_SESSION['flash_error'] = 'Your payment is ' . ($status === 'pending' ? 'still being confirmed' : 'not completed') . '. Sign in to review it.';
+        header('Location: /login?redirect=' . urlencode('/payment/callback?reference=' . rawurlencode($reference)));
+        exit;
+    }
+    render('layout', [
+        'page' => 'payment_return',
+        'params' => [
+            'state' => $status === 'success' ? 'processing' : ($status === 'pending' ? 'pending' : 'failed'),
+            'reference' => $reference,
+            'order' => $order,
+            'auto_open_cart' => false,
+        ],
+        'title' => 'Payment Status — ShopVerse',
+    ]);
     exit;
 }
 

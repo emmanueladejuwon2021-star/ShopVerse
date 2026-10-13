@@ -216,7 +216,7 @@ $progressPercent = min(100, (int) round(($subtotal / $freeShippingThreshold) * 1
 
           <div class="text-center pt-2">
             <span class="inline-flex items-center gap-1.5 text-xs text-gray-400 font-medium">
-              <span>🔒</span> 256-Bit SSL Encrypted Checkout
+              <span>🔒</span> Secure checkout powered by Paystack · Cards, Bank Transfer, USSD &amp; Mobile Money
             </span>
           </div>
         </div>
