@@ -27,44 +27,22 @@ The SQLite schema auto-creates itself on first write (`storage/shopverse.db`).
 
 ## Deploy (Vercel or any PHP host)
 
-Vercel notes (fixed after the "unexpected internal error" deploy failure):
-- Serverless Functions must live in `/api`: `vercel.json` declares
-  `functions: { "api/index.php": ... }` and a catch-all route rewriting every
-  request to `/api/index.php`. That function is a thin wrapper that requires
-  `public/index.php` (the front controller), so routing logic stays in one file.
-  (The previous pattern `public/index.php` matched no function inside `api/`,
-  which is what aborted the build.)
-- `vercel.json` uses the community **`vercel-php@0.8.0`** runtime (the previously
-  referenced `vercel/php@8.3` / `@vercel/php` do not exist on Vercel, which made
-  every build fail). No legacy `builds` key is used.
+Vercel notes:
+- Serverless Functions live in `/api`: `vercel.json` declares
+  `functions: { "api/*.php": { "runtime": "vercel-php@0.9.0", "includeFiles": "{includes,views,data}/**" } }`.
+  `api/index.php` serves as the front controller for all dynamic routes.
+- Static assets (CSS, images) are served directly from `public/assets/` via Vercel CDN routing rules.
+- Executable `.php` files are kept out of `public/` so Vercel never serves PHP code as static file downloads.
 - Sessions are stored in `/tmp` and the SQLite fallback auto-probes writable
   directories — required because Vercel's deployed filesystem is read-only.
-- A committed dev `storage/shopverse.db` was removed from git; always set
-  `TURSO_DB_URL` + `TURSO_AUTH_TOKEN` in Project Settings → Environment Variables
+- Always set `TURSO_DB_URL` + `TURSO_AUTH_TOKEN` in Project Settings → Environment Variables
   for production persistence, then run `php scripts/init-db.php` once to create
   the Turso schema.
-- **Deployment "Blocked" fix (PR #11):** the repo shipped a stale `.vercel/`
-  directory containing a `project.json` that hard-linked builds to a placeholder
-  project (`prj_shopverse_fast` / `team_placeholder`). Vercel refuses ("Blocked")
-  any build whose committed link doesn't match the deploying project — this was
-  the sole cause of both preview deployments failing, not the PHP code itself.
-  The stale `.vercel/` folder has been deleted and `vercel.json` simplified to:
-  `outputDirectory: public`, `handle: filesystem` first (so `/assets/*` static
-  files are served directly), and one catch-all rewrite to `/api/index.php`.
-  If a project still shows *Blocked*, re-link it once: `vercel link` (or delete
-  the Git-connection integration and reconnect the correct project).
 
-- Point the web root at `public/`.
-- Set environment variables for cloud storage:
-  - `TURSO_DB_URL` (e.g. `libsql://your-db.turso.io`)
-  - `TURSO_AUTH_TOKEN`
-- Bootstrap the schema once:
+- Local development:
   ```bash
-  php scripts/init-db.php
+  php -S localhost:8000 router.php
   ```
-- Without those vars it falls back to local SQLite (persistent hosts) or JSON
-  files in `storage/` (must be writable); writes degrade gracefully with a
-  user-safe error message instead of a crash.
 
 ## Features
 
@@ -80,12 +58,14 @@ Vercel notes (fixed after the "unexpected internal error" deploy failure):
 ## Structure
 
 ```
-public/          # web root: index.php (front controller), router.php, assets/
+api/             # serverless entry point: index.php (front controller)
+public/          # static web assets: assets/app.css, assets/products/
 includes/        # functions, data catalog, auth, cart, db abstraction, http client
 views/           # layout.php, pages/, partials/, 404.php
 data/            # products.json (static catalog)
 storage/         # runtime data (gitignored): shopverse.db / *.json fallback
 scripts/         # init-db.php (Turso bootstrap)
+router.php       # local dev router
 ```
 
 ### Paystack environment variables (Project Settings → Environment Variables)
